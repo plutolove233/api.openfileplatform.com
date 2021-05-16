@@ -1,0 +1,8 @@
+#mysql Document management system
+[mysql]
+host = "39.107.96.222"
+ports = 3306
+username = "root"
+password = "idealwifi2020"
+DATABASE = "OpenFilePlatform"
+CHARSET = "utf8mb4"
