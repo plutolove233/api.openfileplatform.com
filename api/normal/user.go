@@ -11,15 +11,7 @@ import (
 func Login(c *gin.Context) {
 	var user models.NormalUsers
 	c.ShouldBind(&user)
-	verificode := c.PostForm("verifi_code")
 	token, _ := myJWT.GetToken(user.Name)
-	if verificode=="123231"{
-		c.JSON(200,gin.H{
-			"code":401,
-			"msg":"验证码错误",
-		})
-		return
-	}
 	if user.Login(){
 		fmt.Println("you login successed")
 		c.JSON(200,gin.H{
@@ -71,4 +63,8 @@ func View(c *gin.Context) {
 		"status":"ok",
 		"msg":user,
 	})
+}
+
+func Upload(c *gin.Context){
+
 }
