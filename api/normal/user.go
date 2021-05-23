@@ -34,6 +34,7 @@ func Register(c *gin.Context){
 	err,ok := user.Register()
 	if err!=nil{
 		c.JSON(200,gin.H{
+			"code":400,
 			"error":err,
 		})
 		return
@@ -42,6 +43,7 @@ func Register(c *gin.Context){
 		c.JSON(200,user)
 	}else{
 		c.JSON(200, gin.H{
+			"code":400,
 			"error":"the nickname has been existed",
 			"msg":user,
 		})
@@ -53,14 +55,14 @@ func View(c *gin.Context) {
 	err := dao.DB.Find(&user).Error
 	if err!=nil{
 		c.JSON(200,gin.H{
-			"status":"error",
+			"code":405,
 			"msg":user,
 			"error":err,
 		})
 		return
 	}
 	c.JSON(200,gin.H{
-		"status":"ok",
+		"code":200,
 		"msg":user,
 	})
 }
