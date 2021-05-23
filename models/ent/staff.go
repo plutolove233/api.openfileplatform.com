@@ -13,6 +13,8 @@ type EntStaff struct {
 	Phone int	`form:"phone"`
 	Salary int	`form:"salary"`
 	DepartId int	`form:"depart_id"`
+	College string	`form:"college"`
+	Status int 	`form:"status"`//员工是否转正 1--正式员工 0--实习生
 	EntId int	`form:"ent_id"`
 	Deleted bool
 	CreateTime time.Time
@@ -24,6 +26,7 @@ type EntStaffModels interface {
 	IncreaseSalary(much int)error
 	DecreaseSalary(much int)error
 	TransDepart(d int)error
+	TransEmployee()error
 }
 
 func (s *EntStaff)AddStaff()error{
@@ -44,4 +47,8 @@ func (s *EntStaff)DecreaseSalary(much int)error{
 
 func (s *EntStaff)TransDepart(d int)error{
 	return dao.DB.Model(&EntStaff{}).Where("id = ?",s.Id).Update("depart_id",d).Error
+}
+
+func (s *EntStaff)TransEmployee()error{
+	return dao.DB.Model(&EntStaff{}).Where("id = ?",s.Id).Update("status",1).Error
 }

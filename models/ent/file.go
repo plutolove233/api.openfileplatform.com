@@ -7,3 +7,8 @@ type EntFileinfo struct{
 	Name string	`form:"name"`
 	TypeId int
 }
+
+type EntFileModels interface {
+	Add()error
+	Find()error
+}
