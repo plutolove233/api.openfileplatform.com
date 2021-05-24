@@ -16,5 +16,18 @@ func Upload(c *gin.Context){
 		return
 	}
 	log.Println(file.Filename)
-	dst := fmt.Sprintf("..")
+	dst := fmt.Sprintf("./save/%s",file.Filename)
+	Err := c.SaveUploadedFile(file,dst)
+	if Err != nil{
+		c.JSON(200,gin.H{
+			"code":408,
+			"error":Err,
+		})
+		return
+	}
+	c.JSON(200,gin.H{
+		"code":200,
+		"path":dst,
+	})
 }
+
