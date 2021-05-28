@@ -8,18 +8,18 @@ import (
 )
 
 type EntUser struct{
-	Id int `gorm:"AUTO_INCREMENT"`
-	IsAdmin int
-	EntId int
-	Name string `form:"username"`
-	Pwd string `form:"password"`
-	Company string `form:"company"`
-	Phone string `form:"phone"`
-	Email string `form:"email"`
-	LastLoginTime time.Time `form:"lastlogintime"`
-	LoginTime time.Time `form:"logintime"`
-	Times int64 `form:"times"`
-	Face string //user avatar like the address
+	EntUserID int `gorm:"AUTO_INCREMENT;column:EntUserID"`
+	IsAdmin int `gorm:"column:IsAdmin"`
+	EntID int `gorm:"column:EntID"`
+	EntUserName string `form:"username" gorm:"column:EntUserName"`
+	EntUserPwd string `form:"password" gorm:"column:EntUserPwd"`
+	Company string `form:"company" gorm:"column:Company"`
+	EntUserPhone string `form:"phone" gorm:"column:EntUserPhone"`
+	EntUserEmail string `form:"email" gorm:"column:EntUserEmail"`
+	LastLoginTime time.Time `form:"lastlogintime" gorm:"column:LastLoginTime"`
+	LoginTime time.Time `form:"logintime" gorm:"column:LoginTime"`
+	Times int64 `form:"times" gorm:"column:Times"`
+	Face string `gorm:"column:Face"`//user avatar like the address
 }
 
 type EntUserModels interface {
@@ -45,8 +45,8 @@ func (u *EntUser)Register() (error, bool){
 
 func (u *EntUser)Login() bool {
 	var user EntUser
-	dao.DB.Where("name = ?",u.Name).Find(&user)
-	ok := user.Pwd==u.Pwd
+	dao.DB.Where("EntUserName = ?",u.EntUserName).Find(&user)
+	ok := user.EntUserPwd==u.EntUserPwd
 	if ok{
 		u.LastLoginTime = u.LoginTime
 		u.LoginTime = time.Now()
@@ -57,13 +57,13 @@ func (u *EntUser)Login() bool {
 }
 
 func (u *EntUser)ChangeName(nick string) error{
-	return dao.DB.Model(EntUser{}).Where("name = ?",u.Name).Update("name",nick).Error
+	return dao.DB.Model(EntUser{}).Where("EntUserName = ?",u.EntUserName).Update("EntUserName",nick).Error
 }
 
 func (u *EntUser)ChangePwd(word string) error{
-	return dao.DB.Model(EntUser{}).Where("name = ?",u.Name).Update("pwd",word).Error
+	return dao.DB.Model(EntUser{}).Where("EntUserName = ?",u.EntUserName).Update("EntUserPwd",word).Error
 }
 
 func (u *EntUser)ChangeFace(add string) error{
-	return dao.DB.Model(EntUser{}).Where("name = ?",u.Name).Update("face",add).Error
+	return dao.DB.Model(EntUser{}).Where("EntUserName = ?",u.EntUserName).Update("Face",add).Error
 }

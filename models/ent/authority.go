@@ -5,10 +5,11 @@ package ent
 import "DocumentSystem/dao"
 
 type EntAuthority struct {
-	Id int
-	Url string
-	Code int//权限唯一code代码
-	Info string//权限信息
+	AuthorityID int `gorm:"column:AuthorityID"`
+	AuthorityUrl string `gorm:"column:AuthorityUrl"`
+	AuthorityInfo string `gorm:"column:AuthorityInfo"`//权限信息
+	FunctionCode string `gorm:"column:FunctionCode"`
+	FunctionUrl string `gorm:"column:FunctionUrl"`
 }
 
 type EntAuthorityModels interface {

@@ -45,7 +45,7 @@ func Register(c *gin.Context){
 		c.JSON(200, gin.H{
 			"code":400,
 			"error":"the nickname has been existed",
-			"msg":user,
+			"data":user,
 		})
 	}
 }
@@ -56,14 +56,14 @@ func View(c *gin.Context) {
 	if err!=nil{
 		c.JSON(200,gin.H{
 			"code":405,
-			"msg":user,
+			"data":user,
 			"error":err,
 		})
 		return
 	}
 	c.JSON(200,gin.H{
 		"code":200,
-		"msg":user,
+		"data":user,
 	})
 }
 

@@ -3,11 +3,11 @@
 package platform
 
 type PlatEnterprise struct {
-	Id int `gorm:"AUTO_INCREMENT"`
-	Name string	`form:"name"`
-	Admin string	`form:"admin"`
-	AdminId int
-	Location string	`form:"location"`
-	Phone string	`form:"phone"`
-	Url string		`form:"url"`
+	EnterpriseID int `gorm:"AUTO_INCREMENT;column:EnterpriseID"`
+	EnterpriseName string	`form:"name" gorm:"column:EnterpriseName"`
+	Admin string	`form:"admin" gorm:"column:Admin"`
+	AdminID int `gorm:"column:AdminID"`
+	Location string	`form:"location" gorm:"column:Location"`
+	EnterprisePhone string	`form:"phone" gorm:"column:EnterprisePhone"`
+	EnterpriseUrl string		`form:"url" gorm:"column:EnterpriseUrl"`
 }

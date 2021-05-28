@@ -16,12 +16,12 @@ func StartEngine()(r *gin.Engine){
 	r = gin.Default()
 	r.Use(cors.Default())
 
-	_normal := r.Group("normal")
+	_normal := r.Group("normal")//普通用户url
 	{
 		_normal.POST("login",normal.Login)
 		_normal.POST("register",normal.Register)
 		_normal.GET("view",normal.View)
-		_normal.POST("upload",)
+		_normal.POST("upload",normal.Upload)
 	}
 
 	r.GET("verification", func(c *gin.Context) {

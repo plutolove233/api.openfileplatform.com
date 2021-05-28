@@ -8,13 +8,13 @@ import (
 )
 
 type EntUserRole struct{
-	Id int `gorm:"AUTO_INCREMENT"`
-	UserId int
-	RoleId int
-	Created time.Time
-	Creator string
-	Edited time.Time
-	Deleted bool
+	UserRoleID int `gorm:"AUTO_INCREMENT;column:UserRoleID"`
+	EntUserID int `gorm:"column:EntUserID"`
+	RoleID int `gorm:"column:RoleID"`
+	Created time.Time `gorm:"column:Created"`
+	Creator string `gorm:"column:Creator"`
+	Edited time.Time `gorm:"column:Edited"`
+	Deleted bool `gorm:"column:Deleted"`
 }
 
 type EntUserRoleModels interface {
@@ -24,21 +24,21 @@ type EntUserRoleModels interface {
 }
 
 func (ur *EntUserRole)LinkUserRole(u *EntUser,r *EntRole)(error,bool){
-	ur.RoleId = r.Id
-	ur.UserId = u.Id
+	ur.RoleID = r.RoleID
+	ur.EntUserID = u.EntUserID
 	ur.Created = time.Now()
 	var p EntUserRole
-	dao.DB.Where("role_id = ?", r.Id).Find(&p)
-	if p.UserId == u.Id && p.RoleId == r.Id{
+	dao.DB.Where("role_id = ?", r.RoleID).Find(&p)
+	if p.EntUserID == u.EntUserID && p.RoleID == r.RoleID{
 		return nil,false
 	}
 	return dao.DB.Create(ur).Error,true
 }
 
 func (ur *EntUserRole)DeleteUserRole() error{
-	return dao.DB.Model(EntUserRole{}).Where("id = ?",ur.Id).Update("deleted",true).Error
+	return dao.DB.Model(EntUserRole{}).Where("id = ?",ur.UserRoleID).Update("deleted",true).Error
 }
 
 func (ur *EntUserRole)ReverseUserRole()error{
-	return dao.DB.Model(EntUserRole{}).Where("id = ?",ur.Id).Update("deleted",false).Error
+	return dao.DB.Model(EntUserRole{}).Where("id = ?",ur.UserRoleID).Update("deleted",false).Error
 }

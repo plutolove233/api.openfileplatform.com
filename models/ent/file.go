@@ -5,9 +5,9 @@ package ent
 import "DocumentSystem/dao"
 
 type EntFileinfo struct{
-	Address string
-	Name string	`form:"name"`
-	TypeId int
+	FileAddress string `gorm:"column:FileAddress"`
+	FileName string	`form:"name" gorm:"column:FileName"`
+	TypeID int `gorm:"column:TypeID"`
 
 }
 

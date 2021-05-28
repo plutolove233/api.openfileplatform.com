@@ -28,6 +28,9 @@ func main() {
 	dao.DB.AutoMigrate(&platform.PlatEnterprise{})
 	dao.DB.AutoMigrate(&platform.PlatUser{})
 	dao.DB.AutoMigrate(&models.NormalUsers{})
+	dao.DB.AutoMigrate(&platform.PlatFunctionNavigation{})
+	dao.DB.AutoMigrate(&platform.PlatFunction{})
+	dao.DB.AutoMigrate(&platform.PlatModule{})
 
 	engine := router.StartEngine()
 	err2 :=  engine.Run(":9090")

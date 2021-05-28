@@ -5,11 +5,11 @@ package ent
 import "DocumentSystem/dao"
 
 type EntDepartment struct {
-	Id int `gorm:"AUTO_INCREMENT"`
-	Name string	`form:"name"`
-	Code int
-	HeadId int
-	Deleted bool
+	DepartmentID int `gorm:"AUTO_INCREMENT;column:DepartmentID"`
+	DepartmentName string	`form:"name" gorm:"column:DepartmentName"`
+	DepartmentCode int `gorm:"column:DepartmentCode"`
+	HeadID int `gorm:"column:HeadID"`
+	Deleted bool `gorm:"column:Deleted"`
 }
 
 type EntDepartmentModels interface {
@@ -24,13 +24,13 @@ func (d *EntDepartment)AddDepart()error{
 }
 
 func (d *EntDepartment)DeleteDepart()error{
-	return dao.DB.Model(&EntDepartment{}).Where("id = ? ",d.Id).Update("deleted",true).Error
+	return dao.DB.Model(&EntDepartment{}).Where("DepartmentID = ? ",d.DepartmentID).Update("deleted",true).Error
 }
 
 func (d *EntDepartment)ReverseDepart()error{
-	return dao.DB.Model(&EntDepartment{}).Where("id = ? ",d.Id).Update("deleted",false).Error
+	return dao.DB.Model(&EntDepartment{}).Where("DepartmentID = ? ",d.DepartmentID).Update("deleted",false).Error
 }
 
 func (d *EntDepartment)ChangeHeader(id int)error{
-	return  dao.DB.Model(&EntDepartment{}).Where("head_id = ?",d.HeadId).Update("head_id",id).Error
+	return  dao.DB.Model(&EntDepartment{}).Where("HeadID = ?",d.HeadID).Update("HeadID",id).Error
 }

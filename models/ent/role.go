@@ -8,14 +8,13 @@ import (
 )
 
 type EntRole struct{
-	Id int//role的ID
-	Code int//角色唯一code代码
-	Info string//角色信息
-	Name string
-	Created time.Time
-	Creator string
-	Deleted bool
-	AuthId int//权限id
+	RoleID int `gorm:"column:RoleID"`//role的ID
+	RoleInfo string `gorm:"column:RoleInfo"`//角色信息
+	RoleName string `gorm:"column:RoleName"`
+	Created time.Time `gorm:"column:Created"`
+	Creator string `gorm:"column:Creator"`
+	Deleted bool `gorm:"column:Deleted"`
+	AuthID int `gorm:"column:AuthID"`//权限id
 }
 
 type EntRoleModel interface {

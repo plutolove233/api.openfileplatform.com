@@ -8,13 +8,14 @@ import (
 )
 
 type EntRoleAuthority struct{
-	Id int `gorm:"AUTO_INCREMENT"`
-	RoleId int `form:"role_id"`//角色ID
-	AuthId int `form:"permission_id"`//权限ID
-	Created time.Time //创建时间
-	Creator string //创建人
-	Edited time.Time//修改时间
-	Deleted bool
+	RoleAuthorityID int `gorm:"AUTO_INCREMENT;column:RoleAuthorityID"`
+	RoleID int `form:"role_id" gorm:"column:RoleID"`//角色ID
+	AuthorityID int `form:"permission_id" gorm:"column:AuthorityID"`//权限ID
+	Created time.Time `gorm:"column:Created"`//创建时间
+	Creator string `gorm:"column:Creator"`//创建人
+	Edited time.Time `gorm:"column:Edited"`//修改时间
+	Deleted bool `gorm:"column:Deleted"`
+	FunctionCode string `gorm:"column:FunctionCode"`
 }
 
 type EntRoleAuthorityModels interface {
@@ -25,27 +26,27 @@ type EntRoleAuthorityModels interface {
 }
 
 func (rp *EntRoleAuthority)LinkRoleAuth(role *EntRole,per *EntAuthority) (error,bool){
-	rp.RoleId = role.Id
-	rp.AuthId = per.Id
+	rp.RoleID = role.RoleID
+	rp.AuthorityID = per.AuthorityID
 	rp.Created = time.Now()
 	var p EntRoleAuthority
-	dao.DB.Where("role_id = ?",role.Id).Find(&p)
-	if p.RoleId==role.Id && p.AuthId==per.Id{
+	dao.DB.Where("role_id = ?",role.RoleID).Find(&p)
+	if p.RoleID==role.RoleID && p.AuthorityID==per.AuthorityID{
 		return nil,false
 	}
 	return dao.DB.Create(rp).Error,true
 }
 
 func (rp *EntRoleAuthority)DeleteRoleAuth() error{
-	return dao.DB.Model(EntRoleAuthority{}).Where("id = ?",rp.Id).Update("deleted",true).Error
+	return dao.DB.Model(EntRoleAuthority{}).Where("RoleAuthorityID = ?",rp.RoleAuthorityID).Update("deleted",true).Error
 }
 
 func (rp *EntRoleAuthority)ReverseRoleAuth()error{
-	return dao.DB.Model(EntRoleAuthority{}).Where("id = ?",rp.Id).Update("deleted",false).Error
+	return dao.DB.Model(EntRoleAuthority{}).Where("RoleAuthorityID = ?",rp.RoleAuthorityID).Update("deleted",false).Error
 }
 
 func (rp *EntRoleAuthority)ModifyRoleAuth()error{
 	var rp1 EntRoleAuthority
-	dao.DB.Where("id = ?",rp.Id).Find(&rp1)
+	dao.DB.Where("RoleAuthorityID = ?",rp.RoleAuthorityID).Find(&rp1)
 	return dao.DB.Model(rp1).Update(rp).Error
 }
