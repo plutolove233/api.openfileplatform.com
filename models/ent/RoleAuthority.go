@@ -20,22 +20,14 @@ type EntRoleAuthority struct{
 }
 
 type EntRoleAuthorityModels interface {
-	LinkRoleAuth(r *EntRole,p *EntAuthority)(error,bool)
+	LinkRoleAuth(r *EntRole)error
 	DeleteRoleAuth()error
 	ReverseRoleAuth()error
 	ModifyRoleAuth()error
 }
 
-func (rp *EntRoleAuthority)LinkRoleAuth(role *EntRole,per *EntAuthority) (error,bool){
-	rp.RoleID = role.RoleID
-	rp.AuthorityID = per.AuthorityID
-	rp.Created = time.Now()
-	var p EntRoleAuthority
-	dao.DB.Where("role_id = ?",role.RoleID).Find(&p)
-	if p.RoleID==role.RoleID && p.AuthorityID==per.AuthorityID{
-		return nil,false
-	}
-	return dao.DB.Create(rp).Error,true
+func (rp *EntRoleAuthority)LinkRoleAuth() error{
+	return dao.DB.Create(rp).Error
 }
 
 func (rp *EntRoleAuthority)DeleteRoleAuth() error{

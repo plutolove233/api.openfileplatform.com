@@ -17,14 +17,12 @@ func main() {
 	}
 	defer dao.DB.Close()
 
-	dao.DB.AutoMigrate(&ent.EntAuthority{})
 	dao.DB.AutoMigrate(&ent.EntDepartment{})
 	dao.DB.AutoMigrate(&ent.EntFileinfo{})
 	dao.DB.AutoMigrate(&ent.EntRole{})
 	dao.DB.AutoMigrate(&ent.EntRoleAuthority{})
 	dao.DB.AutoMigrate(&ent.EntStaff{})
 	dao.DB.AutoMigrate(&ent.EntUser{})
-	dao.DB.AutoMigrate(&ent.EntUserRole{})
 	dao.DB.AutoMigrate(&platform.PlatEnterprise{})
 	dao.DB.AutoMigrate(&platform.PlatUser{})
 	dao.DB.AutoMigrate(&models.NormalUsers{})
