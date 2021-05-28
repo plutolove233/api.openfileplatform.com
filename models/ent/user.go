@@ -9,6 +9,7 @@ import (
 
 type EntUser struct{
 	EntUserID int `gorm:"AUTO_INCREMENT;column:EntUserID"`
+	UserRoleID int `gorm:"AUTO_INCREMENT;column:UserRoleID"`
 	IsAdmin int `gorm:"column:IsAdmin"`
 	EntID int `gorm:"column:EntID"`
 	EntUserName string `form:"username" gorm:"column:EntUserName"`

@@ -16,6 +16,7 @@ type EntRoleAuthority struct{
 	Edited time.Time `gorm:"column:Edited"`//修改时间
 	Deleted bool `gorm:"column:Deleted"`
 	FunctionCode string `gorm:"column:FunctionCode"`
+	FunctionUrl string `gorm:"column:FunctionUrl"`
 }
 
 type EntRoleAuthorityModels interface {
