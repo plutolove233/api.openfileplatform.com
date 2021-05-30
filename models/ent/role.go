@@ -8,13 +8,13 @@ import (
 )
 
 type EntRole struct{
-	RoleID int `gorm:"column:RoleID"`//role的ID
+	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
+	RoleID int64 `gorm:"column:RoleID"`//role的ID
 	RoleInfo string `gorm:"column:RoleInfo"`//角色信息
 	RoleName string `gorm:"column:RoleName"`
-	Created time.Time `gorm:"column:Created"`
-	Creator string `gorm:"column:Creator"`
-	Deleted bool `gorm:"column:Deleted"`
-	AuthID int `gorm:"column:AuthID"`//权限id
+	CreatTime time.Time `gorm:"column:CreatTime"`
+	UserID string `gorm:"column:UserID"`//创建人ID
+	IsDeleted bool `gorm:"column:IsDeleted"`
 }
 
 type EntRoleModel interface {

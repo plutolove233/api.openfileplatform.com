@@ -2,7 +2,7 @@ package platform
 
 
 type PlatFunction struct{
-	AutoID int `gorm:"column:AutoID"`
+	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
 	FunctionCode string `gorm:"column:FunctionCode"`
 	FunctionName string `gorm:"column:FunctionName"`
 	FunctionUrl string `gorm:"column:FunctionUrl"`

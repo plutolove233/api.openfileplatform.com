@@ -2,12 +2,27 @@ package main
 
 import (
 	"DocumentSystem/dao"
-	"DocumentSystem/models"
 	"DocumentSystem/models/ent"
 	"DocumentSystem/models/platform"
 	"DocumentSystem/router"
 	"fmt"
 )
+
+func ReadyDataBase(){
+	dao.DB.AutoMigrate(&ent.EntDepartment{})
+	dao.DB.AutoMigrate(&ent.EntFileinfo{})
+	dao.DB.AutoMigrate(&ent.EntRole{})
+	dao.DB.AutoMigrate(&ent.EntRoleAuthority{})
+	dao.DB.AutoMigrate(&ent.EntStaff{})
+	dao.DB.AutoMigrate(&ent.EntUser{})
+	dao.DB.AutoMigrate(&ent.EntUserLog{})
+	dao.DB.AutoMigrate(&platform.PlatEnterprise{})
+	dao.DB.AutoMigrate(&platform.PlatUser{})
+	dao.DB.AutoMigrate(&platform.PlatFunctionNavigation{})
+	dao.DB.AutoMigrate(&platform.PlatFunction{})
+	dao.DB.AutoMigrate(&platform.PlatModule{})
+	dao.DB.AutoMigrate(&platform.PlatSystemLog{})
+}
 
 func main() {
 	err:= dao.StartMysql()
@@ -17,7 +32,7 @@ func main() {
 	}
 	defer dao.DB.Close()
 
-	dao.DB.AutoMigrate(&ent.EntDepartment{})
+	/*dao.DB.AutoMigrate(&ent.EntDepartment{})
 	dao.DB.AutoMigrate(&ent.EntFileinfo{})
 	dao.DB.AutoMigrate(&ent.EntRole{})
 	dao.DB.AutoMigrate(&ent.EntRoleAuthority{})
@@ -28,7 +43,9 @@ func main() {
 	dao.DB.AutoMigrate(&models.NormalUsers{})
 	dao.DB.AutoMigrate(&platform.PlatFunctionNavigation{})
 	dao.DB.AutoMigrate(&platform.PlatFunction{})
-	dao.DB.AutoMigrate(&platform.PlatModule{})
+	dao.DB.AutoMigrate(&platform.PlatModule{})*/
+
+	ReadyDataBase()
 
 	engine := router.StartEngine()
 	err2 :=  engine.Run(":9090")

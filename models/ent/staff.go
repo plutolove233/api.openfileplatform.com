@@ -8,15 +8,15 @@ import (
 )
 
 type EntStaff struct {
-	StaffID int `gorm:"AUTO_INCREMENT;column:StaffID"`
+	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
+	StaffID int64 `gorm:"column:StaffID"`
 	StaffName string	`form:"name" gorm:"column:StaffName"`
 	StaffPhone int	`form:"phone" gorm:"column:StaffPhone"`
 	Salary int	`form:"salary" gorm:"column:Salary"`
-	DepartID int	`form:"depart_id" gorm:"column:DepartID"`
-	College string	`form:"college" gorm:"column:College"`
-	Status int 	`form:"status" gorm:"column:Status"`//员工是否转正 1--正式员工 0--实习生
-	EntID int	`form:"ent_id" gorm:"column:EntID"`
-	Deleted bool `gorm:"column:Deleted"`
+	DepartmentID int64	`form:"depart_id" gorm:"column:DepartmentID"`
+	Status int 	`form:"status" gorm:"column:Status"`//员工是否转正 0--正式员工 1--临时工
+	EnterpriseID int64	`form:"ent_id" gorm:"column:EntID"`
+	IsDeleted bool `gorm:"column:Deleted"`
 	CreateTime time.Time `gorm:"column:CreateTime"`
 }
 
@@ -46,7 +46,7 @@ func (s *EntStaff)DecreaseSalary(much int)error{
 }
 
 func (s *EntStaff)TransDepart(d int)error{
-	return dao.DB.Model(&EntStaff{}).Where("StaffID = ?",s.StaffID).Update("DepartID",d).Error
+	return dao.DB.Model(&EntStaff{}).Where("StaffID = ?",s.StaffID).Update("DepartmentID",d).Error
 }
 
 func (s *EntStaff)TransEmployee()error{

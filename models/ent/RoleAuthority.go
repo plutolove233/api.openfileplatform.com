@@ -8,13 +8,12 @@ import (
 )
 
 type EntRoleAuthority struct{
-	RoleAuthorityID int `gorm:"AUTO_INCREMENT;column:RoleAuthorityID"`
-	RoleID int `form:"role_id" gorm:"column:RoleID"`//角色ID
+	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
+	RoleID int64 `form:"role_id" gorm:"column:RoleID"`//角色ID
 	AuthorityID int `form:"permission_id" gorm:"column:AuthorityID"`//权限ID
-	Created time.Time `gorm:"column:Created"`//创建时间
+	CreatTime time.Time `gorm:"column:CreatTime"`//创建时间
 	Creator string `gorm:"column:Creator"`//创建人
-	Edited time.Time `gorm:"column:Edited"`//修改时间
-	Deleted bool `gorm:"column:Deleted"`
+	IsDeleted bool `gorm:"column:IsDeleted"`
 	FunctionCode string `gorm:"column:FunctionCode"`
 	FunctionUrl string `gorm:"column:FunctionUrl"`
 }
@@ -31,15 +30,15 @@ func (rp *EntRoleAuthority)LinkRoleAuth() error{
 }
 
 func (rp *EntRoleAuthority)DeleteRoleAuth() error{
-	return dao.DB.Model(EntRoleAuthority{}).Where("RoleAuthorityID = ?",rp.RoleAuthorityID).Update("deleted",true).Error
+	return dao.DB.Model(EntRoleAuthority{}).Where("AutoID = ?",rp.AutoID).Update("IsDeleted",true).Error
 }
 
 func (rp *EntRoleAuthority)ReverseRoleAuth()error{
-	return dao.DB.Model(EntRoleAuthority{}).Where("RoleAuthorityID = ?",rp.RoleAuthorityID).Update("deleted",false).Error
+	return dao.DB.Model(EntRoleAuthority{}).Where("AutoID = ?",rp.AutoID).Update("IsDeleted",false).Error
 }
 
 func (rp *EntRoleAuthority)ModifyRoleAuth()error{
 	var rp1 EntRoleAuthority
-	dao.DB.Where("RoleAuthorityID = ?",rp.RoleAuthorityID).Find(&rp1)
+	dao.DB.Where("AutoID = ?",rp.AutoID).Find(&rp1)
 	return dao.DB.Model(rp1).Update(rp).Error
 }

@@ -8,19 +8,19 @@ import (
 )
 
 type EntUser struct{
-	EntUserID int `gorm:"AUTO_INCREMENT;column:EntUserID"`
-	UserRoleID int `gorm:"AUTO_INCREMENT;column:UserRoleID"`
+	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
+	UserID int `gorm:"AUTO_INCREMENT;column:UserID"`
+	EnterpriseID int64 `gorm:"column:EnterpriseID"`
+	Account string `gorm:"column:Account"`//账号
+	Pwd string `form:"Pwd" gorm:"column:Pwd"`
+	UserName string `form:"UserName" gorm:"column:UserName"`//用户真实姓名
+	UserRoleID string `gorm:"column:UserRoleID"`
+	Phone string `gorm:"column:Phone"`
+	Email string `gorm:"column:Email"`
+	FacePicUrl string `gorm:"column:FacePicUrl"`//user avatar like the address
 	IsAdmin int `gorm:"column:IsAdmin"`
-	EntID int `gorm:"column:EntID"`
-	EntUserName string `form:"username" gorm:"column:EntUserName"`
-	EntUserPwd string `form:"password" gorm:"column:EntUserPwd"`
-	Company string `form:"company" gorm:"column:Company"`
-	EntUserPhone string `form:"phone" gorm:"column:EntUserPhone"`
-	EntUserEmail string `form:"email" gorm:"column:EntUserEmail"`
-	LastLoginTime time.Time `form:"lastlogintime" gorm:"column:LastLoginTime"`
-	LoginTime time.Time `form:"logintime" gorm:"column:LoginTime"`
-	Times int64 `form:"times" gorm:"column:Times"`
-	Face string `gorm:"column:Face"`//user avatar like the address
+	IsDeleted bool `gorm:"column:IsDeleted"`
+	CreateTime time.Time `gorm:"column:CreateTime"`
 }
 
 type EntUserModels interface {
@@ -46,25 +46,22 @@ func (u *EntUser)Register() (error, bool){
 
 func (u *EntUser)Login() bool {
 	var user EntUser
-	dao.DB.Where("EntUserName = ?",u.EntUserName).Find(&user)
-	ok := user.EntUserPwd==u.EntUserPwd
+	dao.DB.Where("UserName = ?",u.UserName).Find(&user)
+	ok := user.Pwd==u.Pwd
 	if ok{
-		u.LastLoginTime = u.LoginTime
-		u.LoginTime = time.Now()
-		u.Times++
 		dao.DB.Model(user).Update(u)
 	}
 	return ok
 }
 
 func (u *EntUser)ChangeName(nick string) error{
-	return dao.DB.Model(EntUser{}).Where("EntUserName = ?",u.EntUserName).Update("EntUserName",nick).Error
+	return dao.DB.Model(EntUser{}).Where("UserName = ?",u.UserName).Update("UserName",nick).Error
 }
 
 func (u *EntUser)ChangePwd(word string) error{
-	return dao.DB.Model(EntUser{}).Where("EntUserName = ?",u.EntUserName).Update("EntUserPwd",word).Error
+	return dao.DB.Model(EntUser{}).Where("UserName = ?",u.UserName).Update("UserPwd",word).Error
 }
 
 func (u *EntUser)ChangeFace(add string) error{
-	return dao.DB.Model(EntUser{}).Where("EntUserName = ?",u.EntUserName).Update("Face",add).Error
+	return dao.DB.Model(EntUser{}).Where("UserName = ?",u.UserName).Update("FacePicUrl",add).Error
 }

@@ -5,6 +5,7 @@ package ent
 import "DocumentSystem/dao"
 
 type EntFileinfo struct{
+	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
 	FileAddress string `gorm:"column:FileAddress"`
 	FileName string	`form:"name" gorm:"column:FileName"`
 	TypeID int `gorm:"column:TypeID"`
