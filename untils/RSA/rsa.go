@@ -49,7 +49,7 @@ func GenerateRSAKey(bits int)error{
 	return nil
 }
 
-func Encrypt(plaintext []byte) []byte{
+func Encrypt(plaintext []byte) ([]byte,error){//加密
 	file,err := os.Open("untils/RSA/public.pem")
 	if err!=nil {
 		panic(err)
@@ -62,17 +62,17 @@ func Encrypt(plaintext []byte) []byte{
 	block,_ := pem.Decode(buf)
 	publicKeyInterface,err:= x509.ParsePKIXPublicKey(block.Bytes)
 	if err!=nil{
-		panic(err)
+		return nil,err
 	}
 	publicKey := publicKeyInterface.(*rsa.PublicKey)
 	cipherText,err:=rsa.EncryptPKCS1v15(rand.Reader,publicKey,plaintext)
 	if err!=nil{
-		panic(err)
+		return nil,err
 	}
-	return cipherText
+	return cipherText,nil
 }
 
-func Decrypt(cipherText []byte)([]byte,error){
+func Decrypt(cipherText []byte)([]byte,error){//解密
 	file,err:=os.Open("untils/RSA/private.pem")
 	if err!=nil{
 		return nil,err

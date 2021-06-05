@@ -4,7 +4,7 @@ import (
 	"DocumentSystem/dao"
 	"DocumentSystem/models/ent"
 	"DocumentSystem/models/platform"
-	"DocumentSystem/router"
+	"DocumentSystem/settings"
 	"fmt"
 )
 
@@ -32,11 +32,11 @@ func main() {
 	}
 	defer dao.DB.Close()
 
-	//ReadyDataBase()
+	ReadyDataBase()
 
 	//settings.InitRSAKey()
 
-	engine := router.StartEngine()
+	engine,err := settings.InitEngine()
 	err2 :=  engine.Run(":9090")
 	if err2!=nil{
 		fmt.Println("Engine start error")

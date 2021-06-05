@@ -1,8 +1,8 @@
 package router
 
 import (
+	"DocumentSystem/router/apis"
 	"github.com/diguacheng/mycaptcha"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,20 +11,9 @@ func init(){
 	mycaptcha.LoadFonts("router/fonts")
 }
 
-func StartEngine()(r *gin.Engine){
-	r = gin.Default()
-	r.Use(cors.Default())
-
-
-
-	r.GET("verification", func(c *gin.Context) {
-		base64image,_ := mycaptcha.GetCaptchaBase64(300,100,4)
-		c.JSON(200,gin.H{
-			"code":200,
-			"verification":base64image,
-			//"ans":key,
-		})
+func InitRouter(engine *gin.Engine){
+	apis.InitApiGroup(engine)
+	engine.GET("/", func(c *gin.Context) {
+		c.HTML(200,"index.html",nil)
 	})
-
-	return
 }

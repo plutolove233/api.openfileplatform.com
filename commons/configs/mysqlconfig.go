@@ -1,13 +1,14 @@
 package configs
 
-import(
-	"github.com/spf13/viper"
+import (
 	"fmt"
+	"github.com/spf13/viper"
 	"sync"
 )
 
 type Config struct {
 	Mysql MysqlConfig
+	Reddis RedisConfig
 }
 
 type MysqlConfig struct{
@@ -19,11 +20,17 @@ type MysqlConfig struct{
 	Charset string
 }
 
+type RedisConfig struct{
+	Host string
+	Port int
+	Password string
+}
+
 var once sync.Once
 var c *Config
 
 func (p *Config)initConfig(){
-	viper.SetConfigFile("configs/config.toml")
+	viper.SetConfigFile("commons/configs/config.toml")
 	if err:=viper.ReadInConfig(); err!=nil {
 		fmt.Println("Failed to load toml file")
 	}
