@@ -52,7 +52,22 @@ func PlatUserLogin(c *gin.Context){
 }
 
 func PlatGetUserList(c *gin.Context){
+	var users []platform.PlatUser
+	err := dao.DB.Find(&users).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DBError,
+			"error":err,
+			"msg":"数据导出失败",
+		})
+		return
+	}
 
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"error":"nil",
+		"msg":users,
+	})
 }
 
 func PlatUserRegister(c *gin.Context){
