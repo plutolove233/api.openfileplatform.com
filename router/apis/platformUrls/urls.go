@@ -9,7 +9,7 @@ func InitPlatformApiGroup(r *gin.Engine){
 	plat := r.Group("plat")
 	{
 		plat.GET("list",platform.PlatGetUserList)
-		plat.PUT("login",platform.PlatUserLogin)
-		plat.PUT("register",platform.PlatUserRegister)
+		plat.POST("login",platform.PlatUserLogin)
+		plat.POST("register",platform.PlatUserRegister)
 	}
 }
