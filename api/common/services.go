@@ -1,8 +1,8 @@
 package common
 
 import (
-	"DocumentSystem/commons/codes"
-	"DocumentSystem/utils/email"
+	"api.openfileplatform.com/commons/codes"
+	"api.openfileplatform.com/utils/email"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"time"

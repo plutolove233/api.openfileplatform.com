@@ -3,7 +3,7 @@
 package models
 
 import (
-	"DocumentSystem/dao"
+	"api.openfileplatform.com/dao"
 	"time"
 )
 

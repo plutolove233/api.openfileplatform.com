@@ -2,7 +2,7 @@
 
 package models
 
-import "DocumentSystem/dao"
+import "api.openfileplatform.com/dao"
 
 type EntFileinfo struct{
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`

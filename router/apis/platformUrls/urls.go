@@ -1,7 +1,7 @@
 package platform
 
 import (
-	"DocumentSystem/api/platform"
+	"api.openfileplatform.com/api/platform"
 	"github.com/gin-gonic/gin"
 )
 

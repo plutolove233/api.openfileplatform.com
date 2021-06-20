@@ -1,7 +1,7 @@
 package router
 
 import (
-	"DocumentSystem/router/apis"
+	"api.openfileplatform.com/router/apis"
 	"github.com/diguacheng/mycaptcha"
 	"github.com/gin-gonic/gin"
 )

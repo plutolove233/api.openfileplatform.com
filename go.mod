@@ -1,4 +1,4 @@
-module DocumentSystem
+module 	api.openfileplatform.com
 
 go 1.16
 

@@ -1,9 +1,9 @@
 package apis
 
 import (
-	"DocumentSystem/api/common"
-	enterpriseApi "DocumentSystem/router/apis/enterpriseUrls"
-	platformApi "DocumentSystem/router/apis/platformUrls"
+	"api.openfileplatform.com/api/common"
+	enterpriseApi "api.openfileplatform.com/router/apis/enterpriseUrls"
+	platformApi "api.openfileplatform.com/router/apis/platformUrls"
 	"github.com/gin-gonic/gin"
 )
 

@@ -3,9 +3,9 @@
 package platform
 
 import (
-	"DocumentSystem/commons/codes"
-	"DocumentSystem/dao"
-	"DocumentSystem/models"
+	"api.openfileplatform.com/commons/codes"
+	"api.openfileplatform.com/dao"
+	"api.openfileplatform.com/models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"time"

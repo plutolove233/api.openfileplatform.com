@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"DocumentSystem/commons/configs"
+	"api.openfileplatform.com/commons/configs"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )

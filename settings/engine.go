@@ -1,7 +1,7 @@
 package settings
 
 import (
-	"DocumentSystem/router"
+	"api.openfileplatform.com/router"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

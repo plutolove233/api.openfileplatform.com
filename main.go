@@ -1,9 +1,9 @@
 package main
 
 import (
-	"DocumentSystem/dao"
-	"DocumentSystem/models"
-	"DocumentSystem/settings"
+	"api.openfileplatform.com/dao"
+	"api.openfileplatform.com/models"
+	"api.openfileplatform.com/settings"
 	"fmt"
 )
 

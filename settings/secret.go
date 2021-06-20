@@ -1,6 +1,6 @@
 package settings
 
-import "DocumentSystem/utils/RSA"
+import "api.openfileplatform.com/utils/RSA"
 
 func InitRSAKey()error{
 	err := RSA.GenerateRSAKey(2048)
