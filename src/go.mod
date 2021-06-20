@@ -1,4 +1,4 @@
-module 	api.openfileplatform.com
+module api.openfileplatform.com
 
 go 1.16
 

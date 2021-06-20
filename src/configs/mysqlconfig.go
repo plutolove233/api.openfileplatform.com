@@ -30,7 +30,7 @@ var once sync.Once
 var c *Config
 
 func (p *Config)initConfig(){
-	viper.SetConfigFile("commons/configs/database.toml")
+	viper.SetConfigFile("configs/database.toml")
 	if err:=viper.ReadInConfig(); err!=nil {
 		fmt.Println("Failed to load toml file")
 	}
