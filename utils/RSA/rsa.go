@@ -15,7 +15,7 @@ func GenerateRSAKey(bits int)error{
 		panic(err)
 	}
 	X509PrivateKey := x509.MarshalPKCS1PrivateKey(privateKey)
-	privateFile,err:= os.Create("untils/RSA/private.pem")
+	privateFile,err:= os.Create("utils/RSA/private.pem")
 	if err!=nil{
 		panic(err)
 	}
@@ -34,7 +34,7 @@ func GenerateRSAKey(bits int)error{
 		panic(err)
 	}
 
-	publicFile,err:= os.Create("untils/RSA/public.pem")
+	publicFile,err:= os.Create("utils/RSA/public.pem")
 	if err!=nil{
 		panic(err)
 	}
@@ -50,7 +50,7 @@ func GenerateRSAKey(bits int)error{
 }
 
 func Encrypt(plaintext []byte) ([]byte,error){//加密
-	file,err := os.Open("untils/RSA/public.pem")
+	file,err := os.Open("utils/RSA/public.pem")
 	if err!=nil {
 		panic(err)
 	}
@@ -73,7 +73,7 @@ func Encrypt(plaintext []byte) ([]byte,error){//加密
 }
 
 func Decrypt(cipherText []byte)([]byte,error){//解密
-	file,err:=os.Open("untils/RSA/private.pem")
+	file,err:=os.Open("utils/RSA/private.pem")
 	if err!=nil{
 		return nil,err
 	}
