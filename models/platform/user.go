@@ -9,7 +9,7 @@ import (
 
 type PlatUser struct {
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
-	UserID int64 `gorm:"column:PlatUserID"`
+	UserID int64 `gorm:"column:UserID" form:"userID"`
 	UserName string `gorm:"column:UserName" form:"username"`//用户真实姓名
 	Account string `gorm:"column:Account" form:"account"`//用户账号
 	Pwd string `gorm:"column:Pwd" form:"pwd"`

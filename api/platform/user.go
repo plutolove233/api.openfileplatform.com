@@ -1,3 +1,5 @@
+//平台用户UserID与AutoID一致
+//平台用户Account由平台管理员分配
 package platform
 
 import (
@@ -6,6 +8,7 @@ import (
 	"DocumentSystem/models/platform"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 func PlatUserLogin(c *gin.Context){
@@ -47,7 +50,7 @@ func PlatUserLogin(c *gin.Context){
 	c.JSON(200,gin.H{
 		"code":codes.OK,
 		"error":"nil",
-		"msg":plat_user,
+		"msg":user,
 	})
 }
 
@@ -72,6 +75,8 @@ func PlatGetUserList(c *gin.Context){
 
 func PlatUserRegister(c *gin.Context){
 	var plat_user platform.PlatUser
+	var last platform.PlatUser
+	dao.DB.Model(&platform.PlatUser{}).Last(&last)
 	err:= c.ShouldBind(&plat_user)
 	if err != nil{
 		c.JSON(200,gin.H{
@@ -81,6 +86,9 @@ func PlatUserRegister(c *gin.Context){
 		})
 		return
 	}
+
+	plat_user.CreateTime = time.Now()
+	plat_user.UserID = last.AutoID+101
 
 	user := platform.PlatUser{}
 
@@ -121,5 +129,153 @@ func PlatUserRegister(c *gin.Context){
 		"code":codes.OK,
 		"error":"nil",
 		"msg":user,
+	})
+}
+
+type ResetPwd struct {
+	Email string `form:"email" binding:"required"`
+	Verification string `form:"verify" binding:"required"`
+	Pwd string `form:"pwd" binding:"required"`
+}
+
+func PlatResetPwd(c *gin.Context){
+	var change ResetPwd
+	err := c.ShouldBind(&change)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.ParamIllegal,
+			"error":err,
+			"msg":"数据绑定错误",
+		})
+		return
+	}
+
+	var plat_user platform.PlatUser
+	err = dao.DB.Model(&platform.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.NotData,
+			"error":err,
+			"msg":"该邮箱用户不存在",
+		})
+		return
+	}
+
+	cipherTEXT,err := bcrypt.GenerateFromPassword([]byte(plat_user.Pwd),bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.InternetError,
+			"error":err,
+			"msg":"密码加密出错",
+		})
+		return
+	}
+
+	err = plat_user.ChangePwd(string(cipherTEXT))
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.InternetError,
+			"error":err,
+			"msg":"数据库存储失败",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"error":"nil",
+		"msg":plat_user,
+	})
+}
+
+type ResetPhone struct {
+	Email string `form:"email" binding:"required"`
+	Verification string `form:"verify" binding:"required"`
+	Phone string `form:"phone" binding:"required"`
+}
+
+func PlatResetPhone(c *gin.Context){
+	var change ResetPhone
+	err := c.ShouldBind(&change)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.ParamIllegal,
+			"error":err,
+			"msg":"数据绑定错误",
+		})
+		return
+	}
+
+	var plat_user platform.PlatUser
+	err = dao.DB.Model(&platform.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.NotData,
+			"error":err,
+			"msg":"该邮箱用户不存在",
+		})
+		return
+	}
+
+	err = plat_user.ChangePhone(change.Phone)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.InternetError,
+			"error":err,
+			"msg":"数据库存储失败",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"error":"nil",
+		"msg":plat_user,
+	})
+}
+
+type ResetEmail struct {
+	Email string `form:"email" binding:"required"`
+	Verification string `form:"verify" binding:"required"`
+	NewEmail string `form:"pwd" binding:"required"`
+}
+
+func PlatResetEmail(c *gin.Context){
+	var change ResetEmail
+	err := c.ShouldBind(&change)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.ParamIllegal,
+			"error":err,
+			"msg":"数据绑定错误",
+		})
+		return
+	}
+
+	var plat_user platform.PlatUser
+	err = dao.DB.Model(&platform.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.NotData,
+			"error":err,
+			"msg":"该邮箱用户不存在",
+		})
+		return
+	}
+
+	err = plat_user.ChangeEmail(change.NewEmail)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.InternetError,
+			"error":err,
+			"msg":"数据库存储失败",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"error":"nil",
+		"msg":plat_user,
 	})
 }
