@@ -1,6 +1,6 @@
 //企业用户表
 
-package ent
+package models
 
 import (
 	"DocumentSystem/dao"

@@ -1,6 +1,6 @@
 //企业部门信息表
 
-package ent
+package models
 
 import "DocumentSystem/dao"
 

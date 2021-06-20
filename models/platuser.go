@@ -1,6 +1,6 @@
 //平台超级管理员账号信息
 
-package platform
+package models
 
 import (
 	"DocumentSystem/dao"

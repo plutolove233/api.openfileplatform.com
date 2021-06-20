@@ -1,6 +1,6 @@
 package settings
 
-import "DocumentSystem/untils/RSA"
+import "DocumentSystem/utils/RSA"
 
 func InitRSAKey()error{
 	err := RSA.GenerateRSAKey(2048)

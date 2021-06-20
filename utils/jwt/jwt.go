@@ -1,6 +1,6 @@
 //token生成
 
-package myJWT
+package jwt
 
 import (
 	"errors"

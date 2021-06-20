@@ -5,14 +5,14 @@ package platform
 import (
 	"DocumentSystem/commons/codes"
 	"DocumentSystem/dao"
-	"DocumentSystem/models/platform"
+	"DocumentSystem/models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
 func PlatUserLogin(c *gin.Context){
-	var plat_user platform.PlatUser
+	var plat_user models.PlatUser
 	err := c.ShouldBind(&plat_user)
 	if err != nil{
 		c.JSON(200,gin.H{
@@ -23,8 +23,8 @@ func PlatUserLogin(c *gin.Context){
 		return
 	}
 
-	user := platform.PlatUser{}
-	err = dao.DB.Model(&platform.PlatUser{}).Where("Account = ?",plat_user.Account).Find(&user).Error
+	user := models.PlatUser{}
+	err = dao.DB.Model(&models.PlatUser{}).Where("Account = ?",plat_user.Account).Find(&user).Error
 
 	//验证登录信息是否存在
 	if err != nil{
@@ -55,7 +55,7 @@ func PlatUserLogin(c *gin.Context){
 }
 
 func PlatGetUserList(c *gin.Context){
-	var users []platform.PlatUser
+	var users []models.PlatUser
 	err := dao.DB.Find(&users).Error
 	if err != nil {
 		c.JSON(200,gin.H{
@@ -74,9 +74,9 @@ func PlatGetUserList(c *gin.Context){
 }
 
 func PlatUserRegister(c *gin.Context){
-	var plat_user platform.PlatUser
-	var last platform.PlatUser
-	dao.DB.Model(&platform.PlatUser{}).Last(&last)
+	var plat_user models.PlatUser
+	var last models.PlatUser
+	dao.DB.Model(&models.PlatUser{}).Last(&last)
 	err:= c.ShouldBind(&plat_user)
 	if err != nil{
 		c.JSON(200,gin.H{
@@ -90,9 +90,9 @@ func PlatUserRegister(c *gin.Context){
 	plat_user.CreateTime = time.Now()
 	plat_user.UserID = last.AutoID+101
 
-	user := platform.PlatUser{}
+	user := models.PlatUser{}
 
-	err = dao.DB.Model(&platform.PlatUser{}).Where("Account = ?",plat_user.Account).Find(&user).Error
+	err = dao.DB.Model(&models.PlatUser{}).Where("Account = ?",plat_user.Account).Find(&user).Error
 	if err == nil {
 		c.JSON(200,gin.H{
 			"code":codes.DataExist,
@@ -150,8 +150,8 @@ func PlatResetPwd(c *gin.Context){
 		return
 	}
 
-	var plat_user platform.PlatUser
-	err = dao.DB.Model(&platform.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
+	var plat_user models.PlatUser
+	err = dao.DB.Model(&models.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.NotData,
@@ -206,8 +206,8 @@ func PlatResetPhone(c *gin.Context){
 		return
 	}
 
-	var plat_user platform.PlatUser
-	err = dao.DB.Model(&platform.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
+	var plat_user models.PlatUser
+	err = dao.DB.Model(&models.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.NotData,
@@ -252,8 +252,8 @@ func PlatResetEmail(c *gin.Context){
 		return
 	}
 
-	var plat_user platform.PlatUser
-	err = dao.DB.Model(&platform.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
+	var plat_user models.PlatUser
+	err = dao.DB.Model(&models.PlatUser{}).Where("Email = ?", change.Email).Find(&plat_user).Error
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.NotData,

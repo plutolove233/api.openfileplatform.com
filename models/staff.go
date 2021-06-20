@@ -1,6 +1,6 @@
 //员工信息表
 
-package ent
+package models
 
 import (
 	"DocumentSystem/dao"

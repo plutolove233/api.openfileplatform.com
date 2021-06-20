@@ -1,6 +1,6 @@
 //企业角色权限表
 
-package ent
+package models
 
 import (
 	"DocumentSystem/dao"

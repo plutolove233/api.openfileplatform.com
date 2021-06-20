@@ -1,11 +1,12 @@
-package platform
+package models
 
 import "time"
 
-type PlatSystemLog struct{
+type EntUserLog struct{
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
 	UserID int64 `gorm:"column:UserID"`
 	UserName string `gorm:"column:UserName"`
+	Account string `gorm:"column:Account"`//登录账号
 	OperationIP string `gorm:"column:OperationIP"`//发出操作的IP地址
 	OperationType string `gorm:"column:OperationType"`//操作类型：1:正常登录；2 登录异常（密码出错超出次数）；3 Ip地址异常；4-非法链接访问
 	OperationContent string `gorm:"column:OperationContent"`

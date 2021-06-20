@@ -2,7 +2,7 @@ package api
 
 import (
 	"DocumentSystem/commons/codes"
-	"DocumentSystem/untils/email"
+	"DocumentSystem/utils/email"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"time"

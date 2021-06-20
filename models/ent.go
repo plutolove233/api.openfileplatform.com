@@ -1,6 +1,6 @@
 //平台用户表
 
-package platform
+package models
 
 type PlatEnterprise struct {
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`

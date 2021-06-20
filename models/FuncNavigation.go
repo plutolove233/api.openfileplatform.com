@@ -1,4 +1,4 @@
-package platform
+package models
 
 type PlatFunctionNavigation struct{
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`

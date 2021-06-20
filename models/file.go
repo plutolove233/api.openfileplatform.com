@@ -1,6 +1,6 @@
 //企业文档信息
 
-package ent
+package models
 
 import "DocumentSystem/dao"
 
