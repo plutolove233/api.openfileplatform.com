@@ -2,14 +2,19 @@
 
 package models
 
-import "api.openfileplatform.com/dao"
+import (
+	"api.openfileplatform.com/dao"
+	"time"
+)
 
 type EntFileinfo struct{
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
 	FileAddress string `gorm:"column:FileAddress"`
 	FileName string	`form:"name" gorm:"column:FileName"`
 	TypeID int `gorm:"column:TypeID"`
-
+	UpTime time.Time `gorm:"column:UpTime"`
+	BorrowTimes int64	`gorm:"column:BorrowTimes"`
+	Status int `gorm:"column:Status"`//0表示没有被借出，1表示已经借出
 }
 
 type EntFileModels interface {

@@ -2,18 +2,23 @@ package codes
 
 const (
 	//通用错误
-	OK 				= 200	//执行成功
-	NotData 		= 2001	//没有请求数据
-	DataExist 		= 2002	//请求数据存在
-	DataError 		= 2003	//请求数据错误
+	OK = 2000                            //成功
+	NotData = 2001                       //无数据
+	DataExist = 2002                     //数据已存在
+	DataError = 2003                     //数据错误
 
-	//用户端错误
-	NotLogin		= 1000	//用户未登录
+	ParamError = 4000                    //参数错误
+	SessionError = 4001                  //用户未登录
+	LoginError = 4002                    //用户登录失败
+	UserError = 4003                     //用户不存在或未激活
+	RoleError = 4004                     //用户身份错误
+	PwdError = 4005                      //密码错误
+	REQError = 4006                      //非法请求或请求次数受限
+	IPError = 4007                       //IP受限
 
-	//网络端错误
-	ParamIllegal	= 400	//参数请求错误
-
-	//系统错误
-	InternetError 	= 500
-	DBError			= 501
+	InternetError = 5000                 //服务器内部错误
+	DBError = 5001                       //数据库错误
+	ThirdError = 5002                    //第三方系统错误
+	IOError = 5003                       //文件读写错误
+	UnknowError = 5004                   //未知错误
 )

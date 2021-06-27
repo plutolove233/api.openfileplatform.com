@@ -16,7 +16,7 @@ func PlatUserLogin(c *gin.Context){
 	err := c.ShouldBind(&plat_user)
 	if err != nil{
 		c.JSON(200,gin.H{
-			"code":codes.ParamIllegal,
+			"code":codes.ParamError,
 			"error":err,
 			"msg":"参数错误",
 		})
@@ -80,7 +80,7 @@ func PlatUserRegister(c *gin.Context){
 	err:= c.ShouldBind(&plat_user)
 	if err != nil{
 		c.JSON(200,gin.H{
-			"code":codes.ParamIllegal,
+			"code":codes.ParamError,
 			"error":err,
 			"msg":"数据绑定错误",
 		})
@@ -143,7 +143,7 @@ func PlatResetPwd(c *gin.Context){
 	err := c.ShouldBind(&change)
 	if err != nil {
 		c.JSON(200,gin.H{
-			"code":codes.ParamIllegal,
+			"code":codes.ParamError,
 			"error":err,
 			"msg":"数据绑定错误",
 		})
@@ -199,7 +199,7 @@ func PlatResetPhone(c *gin.Context){
 	err := c.ShouldBind(&change)
 	if err != nil {
 		c.JSON(200,gin.H{
-			"code":codes.ParamIllegal,
+			"code":codes.ParamError,
 			"error":err,
 			"msg":"数据绑定错误",
 		})
@@ -245,7 +245,7 @@ func PlatResetEmail(c *gin.Context){
 	err := c.ShouldBind(&change)
 	if err != nil {
 		c.JSON(200,gin.H{
-			"code":codes.ParamIllegal,
+			"code":codes.ParamError,
 			"error":err,
 			"msg":"数据绑定错误",
 		})
