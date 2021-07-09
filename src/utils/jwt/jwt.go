@@ -3,6 +3,7 @@
 package jwt
 
 import (
+	"api.openfileplatform.com/models"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -12,18 +13,30 @@ import (
 )
 
 type MyClaims struct{
-	Username string
+	models.EntUser
 	jwt.StandardClaims
 }
 
+const TokenExpireDuration = time.Hour * 2
+
 var MyKey = []byte("MyNameIsShyHao")
 
-func GetToken(username string)(string,error){
+func GetToken(user models.EntUser)(string,error){
+	/*reqIP := ctx.ClientIP()
+	if reqIP == "::1" {
+		reqIP = "127.0.0.1"
+	}*/
+
 	c := MyClaims{
-		Username:username,
-		StandardClaims:jwt.StandardClaims{
-			ExpiresAt: time.Now().Unix()+60*60*2,
-			Issuer: "PlutoLove233",
+		EntUser:       models.EntUser{
+			UserID:user.UserID,
+			UserName:user.UserName,
+			EnterpriseID:user.EnterpriseID,
+			UserRoleID:user.UserRoleID,
+		},
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
+			Issuer:    "PlutoLove233",                               // 签发人
 		},
 	}
 	token:=jwt.NewWithClaims(jwt.SigningMethodHS256,c)
@@ -78,7 +91,10 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			return
 		}
 		// 将当前请求的username信息保存到请求的上下文c上
-		c.Set("username", mc.Username)
+		c.Set("UserName", mc.UserName)
+		c.Set("UserID",mc.UserID)
+		c.Set("EnterpriseID",mc.EnterpriseID)
+		c.Set("UserRoleID",mc.UserRoleID)
 		c.Next() // 后续的处理函数可以用过c.Get("username")来获取当前请求的用户信息
 	}
 }

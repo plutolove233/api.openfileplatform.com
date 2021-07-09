@@ -266,7 +266,7 @@ func PlatResetEmail(c *gin.Context){
 	err = plat_user.ChangeEmail(change.NewEmail)
 	if err != nil {
 		c.JSON(200,gin.H{
-			"code":codes.InternetError,
+			"code":codes.DBError,
 			"error":err,
 			"msg":"数据库存储失败",
 		})

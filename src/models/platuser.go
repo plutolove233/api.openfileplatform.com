@@ -13,6 +13,7 @@ type PlatUser struct {
 	UserName string `gorm:"column:UserName" form:"username"`//用户真实姓名
 	Account string `gorm:"column:Account" form:"account"`//用户账号
 	Pwd string `gorm:"column:Pwd" form:"pwd"`
+	Token string `gorm:"column:Token"`
 	Phone string `gorm:"column:Phone" form:"phone"`
 	Email string `gorm:"column:Email" form:"email"`
 	IsDeleted bool `gorm:"column:IsDeleted"`

@@ -37,6 +37,8 @@ func Upload(c *gin.Context){
 		"code":200,
 		"path":dst,
 	})
+	var logs models.PlatSystemLog
+	logs.UserID = c.MustGet("userID")
 }
 
 func BorrowFile(c *gin.Context){
