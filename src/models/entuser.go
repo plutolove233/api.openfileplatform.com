@@ -32,17 +32,8 @@ type EntUserModels interface {
 	ChangeFace(u string) error
 }
 
-func (u *EntUser)Register() (error, bool){
-	var user []EntUser
-	ok := true
-	dao.DB.Find(&user)
-	for _,index := range user{
-		if index==*u{
-			ok = false
-			return nil,ok
-		}
-	}
-	return dao.DB.Create(u).Error,ok
+func (u *EntUser)Register() error{
+	return dao.DB.Create(u).Error
 }
 
 func (u *EntUser)Login() bool {

@@ -99,7 +99,60 @@ func UserLogin(c *gin.Context){
 }
 
 func UserRegister(c *gin.Context){
+	var ent_user models.EntUser
+	err := c.ShouldBind(&ent_user).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.ParamError,
+			"error":err,
+			"msg":"注册用户信息获取失败",
+		})
+		return
+	}
 
+	var user models.EntUser
+	err1  := dao.DB.Model(&models.EntUser{}).Where("Account = ?",ent_user.Account).Find(&user).Error
+	if err1 != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DataExist,
+			"error":err,
+			"msg":"用户已注册",
+		})
+		return
+	}
+
+	var last models.EntUser
+	dao.DB.Model(&models.EntUser{}).Last(&last)
+	ent_user.CreateTime = time.Now()
+	ent_user.UserID = last.AutoID+101
+
+	user = ent_user
+	cipherText,err1 := bcrypt.GenerateFromPassword([]byte(ent_user.Pwd),bcrypt.DefaultCost)
+	if err1 != nil {
+		c.JSON(200,gin.H{
+			"code":codes.InternetError,
+			"error":err1,
+			"msg":"密码加密错误",
+		})
+		return
+	}
+	ent_user.Pwd = string(cipherText)
+
+	err1  = ent_user.Register()
+	if err1 != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DBError,
+			"error":err1,
+			"msg":"数据库存储失败",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"error":"nil",
+		"msg":ent_user,
+	})
 }
 
 func GetUsers(c *gin.Context){
@@ -116,7 +169,7 @@ func GetUsers(c *gin.Context){
 
 	c.JSON(200,gin.H{
 		"code":codes.OK,
-		"error":nil,
+		"error":"nil",
 		"msg":ent_users,
 	})
 }

@@ -8,7 +8,7 @@ type EntUserLog struct{
 	UserName string `gorm:"column:UserName"`
 	Account string `gorm:"column:Account"`//登录账号
 	OperationIP string `gorm:"column:OperationIP"`//发出操作的IP地址
-	OperationType string `gorm:"column:OperationType"`//操作类型：1:正常登录；2 登录异常（密码出错超出次数）；3 Ip地址异常；4-非法链接访问
+	OperationType string `gorm:"column:OperationType"`//操作类型:1创建、2修改、3删除 4审核等操作
 	OperationContent string `gorm:"column:OperationContent"`
 	OperationResult int `gorm:"column:OperationResult"`//0--failed 1--succeed
 	OperationStatus int `gorm:"column:OperationStatus"`//0--error 1--regular
