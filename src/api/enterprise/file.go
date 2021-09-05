@@ -4,9 +4,11 @@ import (
 	"api.openfileplatform.com/commons/codes"
 	"api.openfileplatform.com/dao"
 	"api.openfileplatform.com/models"
+	"api.openfileplatform.com/utils/authority"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 	"strconv"
 	"time"
 )
@@ -67,7 +69,7 @@ func Upload(c *gin.Context){
 		Account:res.Account,
 		OperationIP:reqIP,
 		OperationType:"1",
-		OperationContent:fmt.Sprintf("%d",res.Account)+"upload file",
+		OperationContent:fmt.Sprintf("%d",res.Account)+" upload file",
 		OperationResult:1,
 		OperationStatus:1,
 		CreateTime:time.Now(),
@@ -81,16 +83,10 @@ func Upload(c *gin.Context){
 		})
 		return
 	}
-
-	c.JSON(200,gin.H{
-		"code":codes.OK,
-		"error":"nil",
-		"msg":logs,
-	})
 }
 
 func BorrowFile(c *gin.Context){
-	file_number,err := strconv.ParseInt(c.Param("id"),10,64)
+	fileNumber,err := strconv.ParseInt(c.Param("id"),10,64)
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.InternetError,
@@ -101,7 +97,7 @@ func BorrowFile(c *gin.Context){
 	}
 
 	var file models.EntFileinfo
-	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?",file_number).Find(&file).Error
+	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?", fileNumber).Find(&file).Error
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.NotData,
@@ -111,7 +107,26 @@ func BorrowFile(c *gin.Context){
 		return
 	}
 
-	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?",file_number).Update("BorrowTimes",file.BorrowTimes+1).Error
+	if authority.CheckAuthority(c.MustGet("UserID").(int64), codes.BorrowPermission)==false {
+		c.JSON(200,gin.H{
+			"code":codes.RoleError,
+			"error":"permission error",
+			"msg":"用户没有权限访问",
+		})
+		return
+	}
+
+	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?", fileNumber).Update("BorrowTimes",file.BorrowTimes+1).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DBError,
+			"error":err,
+			"msg":"借出失败",
+		})
+		return
+	}
+
+	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?",fileNumber).Update("Status",1).Error
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.DBError,
@@ -165,4 +180,71 @@ func ReturnFile(c *gin.Context){
 		"error":"nil",
 		"msg":"归还成功",
 	})
+}
+
+func DeleteFile(c *gin.Context){
+	fileID,err := strconv.ParseInt(c.Param("id"),10,64)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.InternetError,
+			"error":err,
+			"msg":"删除文档编号获取失败",
+		})
+	}
+
+	var aFile models.EntFileinfo
+	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?",fileID).Find(&aFile).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DBError,
+			"error":err,
+			"msg":"删除文档不存在",
+		})
+		return
+	}
+
+	dst := aFile.FileAddress
+
+	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.DeletePermission) == false{
+		c.JSON(200,gin.H{
+			"code":codes.RoleError,
+			"error":"permission error",
+			"msg":"用户没有权限删除文档",
+		})
+		return
+	}
+
+	err = os.Remove(dst)
+	if err != nil{
+		c.JSON(200,gin.H{
+			"code":codes.IOError,
+			"error":err,
+			"msg":"文件删除失败",
+		})
+		return
+	}
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"error":"nil",
+		"msg":"文件删除成功",
+	})
+
+	var onelog models.EntUserLog
+	reqIP := c.ClientIP()//获取IP
+	if reqIP == "::1" {
+		reqIP = "127.0.0.1"
+	}
+
+	onelog = models.EntUserLog{
+		UserID:           c.MustGet("UserID").(int64),
+		UserName:         c.MustGet("UserName").(string),
+		Account:          c.MustGet("Account").(string),
+		OperationIP:      reqIP,
+		OperationType:    "3",
+		OperationContent: fmt.Sprintf(c.MustGet("Account").(string)+" delete file"),
+		OperationResult:  1,
+		OperationStatus:  1,
+		CreateTime:       time.Time{},
+	}
+	dao.DB.Model(&models.EntUserLog{}).Create(&onelog)
 }

@@ -10,7 +10,7 @@ import (
 type EntRoleAuthority struct{
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
 	RoleID int64 `form:"role_id" gorm:"column:RoleID"`//角色ID
-	AuthorityID int `form:"permission_id" gorm:"column:AuthorityID"`//权限ID
+	AuthorityID int64 `form:"permission_id" gorm:"column:AuthorityID"`//权限ID
 	CreatTime time.Time `gorm:"column:CreatTime"`//创建时间
 	Creator string `gorm:"column:Creator"`//创建人
 	IsDeleted bool `gorm:"column:IsDeleted"`

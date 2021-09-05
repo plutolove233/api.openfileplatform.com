@@ -19,7 +19,14 @@ func InitEnterpriseApiGroup(r *gin.Engine){
 				file.POST("upload",jwt.JWTAuthMiddleware(),enterprise.Upload)
 				file.POST("borrow/:id",enterprise.BorrowFile)
 				file.POST("return/:id",enterprise.ReturnFile)
+				file.DELETE("delete/:id",enterprise.DeleteFile)
 			}
+		}
+		role:=ent.Group("role")
+		{
+			role.POST("new",enterprise.NewRole)
+			role.GET("list",enterprise.GetRoleList)
+			role.DELETE("delete",enterprise.DeleteRole)
 		}
 	}
 }

@@ -32,7 +32,6 @@ func GetToken(user models.EntUser)(string,error){
 			UserID:user.UserID,
 			UserName:user.UserName,
 			EnterpriseID:user.EnterpriseID,
-			UserRoleID:user.UserRoleID,
 		},
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
@@ -94,7 +93,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		c.Set("UserName", mc.UserName)
 		c.Set("UserID",mc.UserID)
 		c.Set("EnterpriseID",mc.EnterpriseID)
-		c.Set("UserRoleID",mc.UserRoleID)
+		c.Set("Account",mc.Account)
 		c.Next() // 后续的处理函数可以用过c.Get("username")来获取当前请求的用户信息
 	}
 }

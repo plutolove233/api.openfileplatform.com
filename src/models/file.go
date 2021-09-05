@@ -13,6 +13,7 @@ type EntFileinfo struct{
 	FileName string	`form:"name" gorm:"column:FileName"`
 	TypeID int `gorm:"column:TypeID"`
 	UpTime time.Time `gorm:"column:UpTime"`
+	UploaderID int64 `gorm:"column:UploaderID"`
 	BorrowTimes int64	`gorm:"column:BorrowTimes"`
 	Status int `gorm:"column:Status"`//0表示没有被借出，1表示已经借出
 }
