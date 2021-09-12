@@ -22,5 +22,5 @@ type EntRoleModel interface {
 }
 
 func (r *EntRole)NewRole() error{
-	return dao.DB.Create(r).Error
+	return dao.DB.Model(&EntRole{}).Create(r).Error
 }

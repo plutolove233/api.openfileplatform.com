@@ -112,7 +112,7 @@ func UserRegister(c *gin.Context){
 
 	var user models.EntUser
 	err1  := dao.DB.Model(&models.EntUser{}).Where("Account = ?",ent_user.Account).Find(&user).Error
-	if err1 != nil {
+	if err1 == nil {
 		c.JSON(200,gin.H{
 			"code":codes.DataExist,
 			"error":err,
