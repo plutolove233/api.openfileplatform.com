@@ -27,7 +27,7 @@ func (f *EntFileinfo)Add()error{
 	return dao.DB.Create(f).Error
 }
 
-func (f* EntFileinfo)Find() []EntFileinfo{
+func (f *EntFileinfo)Find() []EntFileinfo{
 	var f1 []EntFileinfo
 	dao.DB.Model(&EntFileinfo{}).Find(&f1)
 	return f1

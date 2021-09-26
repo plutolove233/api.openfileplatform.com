@@ -17,16 +17,21 @@ func InitEnterpriseApiGroup(r *gin.Engine){
 			file := user.Group("file")
 			{
 				file.POST("upload",jwt.JWTAuthMiddleware(),enterprise.Upload)
-				file.POST("borrow/:id",enterprise.BorrowFile)
+				file.POST("borrow/:id",jwt.JWTAuthMiddleware(),enterprise.BorrowFile)
 				file.POST("return/:id",enterprise.ReturnFile)
-				file.DELETE("delete/:id",enterprise.DeleteFile)
+				file.DELETE("delete/:id",jwt.JWTAuthMiddleware(),enterprise.DeleteFile)
 			}
 		}
 		role:=ent.Group("role")
 		{
-			role.POST("new",enterprise.NewRole)
-			role.GET("list",enterprise.GetRoleList)
-			role.DELETE("delete",enterprise.DeleteRole)
+			role.POST("new",jwt.JWTAuthMiddleware(),enterprise.NewRole)
+			role.GET("list",jwt.JWTAuthMiddleware(),enterprise.GetRoleList)
+			role.DELETE("delete/:id",jwt.JWTAuthMiddleware(),enterprise.DeleteRole)
+		}
+		department := ent.Group("department")
+		{
+			department.POST("new",jwt.JWTAuthMiddleware(),enterprise.NewDepartment)
+			department.DELETE("delete/:id",jwt.JWTAuthMiddleware(),enterprise.DeleteDepartment)
 		}
 	}
 }

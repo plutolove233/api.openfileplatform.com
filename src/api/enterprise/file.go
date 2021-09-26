@@ -9,9 +9,28 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
+	"path"
 	"strconv"
 	"time"
 )
+
+func getTypeID() func(string) int {
+	// innerMap is captured in the closure returned below
+	innerMap := map[string]int{
+		"txt":10,
+		"doc":11,
+		"docx":111,
+		"ppt":12,
+		"pptx":121,
+		"xls":13,
+		"xlsx":131,
+		"pdf":14,
+	}
+
+	return func(key string) int {
+		return innerMap[key]
+	}
+}
 
 func Upload(c *gin.Context){
 	//接收文件
@@ -51,9 +70,30 @@ func Upload(c *gin.Context){
 		return
 	}
 
+	typeID := getTypeID()(path.Ext(dst))
+	file_info := models.EntFileinfo{
+		FileAddress:dst,
+		FileName:file.Filename,
+		TypeID:typeID,
+		UpTime:time.Now(),
+		BorrowTimes:0,
+		Status:0,
+		UploaderID:logs.UserID,
+	}
+	err = file_info.Add()
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DBError,
+			"err":err,
+			"msg":"文件信息上传数据库失败",
+		})
+		return
+	}
+
 	c.JSON(200,gin.H{
 		"code":200,
-		"path":dst,
+		"err":"nil",
+		"msg":dst,
 	})
 
 	//日志记录
@@ -107,21 +147,11 @@ func BorrowFile(c *gin.Context){
 		return
 	}
 
-	if authority.CheckAuthority(c.MustGet("UserID").(int64), codes.BorrowPermission)==false {
+	if authority.CheckAuthority(c.MustGet("UserID").(int64), codes.BorrowFilePermission)==false {
 		c.JSON(200,gin.H{
 			"code":codes.RoleError,
 			"error":"permission error",
 			"msg":"用户没有权限访问",
-		})
-		return
-	}
-
-	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?", fileNumber).Update("BorrowTimes",file.BorrowTimes+1).Error
-	if err != nil {
-		c.JSON(200,gin.H{
-			"code":codes.DBError,
-			"error":err,
-			"msg":"借出失败",
 		})
 		return
 	}
@@ -132,6 +162,16 @@ func BorrowFile(c *gin.Context){
 			"code":codes.DBError,
 			"error":err,
 			"msg":"借出失败",
+		})
+		return
+	}
+
+	err = dao.DB.Model(&models.EntFileinfo{}).Where("AutoID = ?", fileNumber).Update("BorrowTimes",file.BorrowTimes+1).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DBError,
+			"error":err,
+			"msg":"借出次数改动失败",
 		})
 		return
 	}
@@ -205,7 +245,7 @@ func DeleteFile(c *gin.Context){
 
 	dst := aFile.FileAddress
 
-	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.DeletePermission) == false{
+	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.DeleteFilePermission) == false{
 		c.JSON(200,gin.H{
 			"code":codes.RoleError,
 			"error":"permission error",
@@ -223,6 +263,8 @@ func DeleteFile(c *gin.Context){
 		})
 		return
 	}
+	dao.DB.Unscoped().Delete(&aFile)
+
 	c.JSON(200,gin.H{
 		"code":codes.OK,
 		"error":"nil",

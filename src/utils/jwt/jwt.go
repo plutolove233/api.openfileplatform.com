@@ -22,11 +22,6 @@ const TokenExpireDuration = time.Hour * 2
 var MyKey = []byte("MyNameIsShyHao")
 
 func GetToken(user models.EntUser)(string,error){
-	/*reqIP := ctx.ClientIP()
-	if reqIP == "::1" {
-		reqIP = "127.0.0.1"
-	}*/
-
 	c := MyClaims{
 		EntUser:       models.EntUser{
 			UserID:user.UserID,
@@ -89,7 +84,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		// 将当前请求的username信息保存到请求的上下文c上
+		// 将当前请求的user信息保存到请求的上下文c上
 		c.Set("UserName", mc.UserName)
 		c.Set("UserID",mc.UserID)
 		c.Set("EnterpriseID",mc.EnterpriseID)

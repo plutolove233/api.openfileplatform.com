@@ -6,6 +6,7 @@ import "api.openfileplatform.com/dao"
 
 type EntDepartment struct {
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
+	EnterpriseID int64 `gorm:"column:EnterpriseID"`
 	DepartmentID int64 `gorm:"column:DepartmentID"`
 	DepartmentName string	`form:"name" gorm:"column:DepartmentName"`
 	DepartmentCode int `gorm:"column:DepartmentCode"`
