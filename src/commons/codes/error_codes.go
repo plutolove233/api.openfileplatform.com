@@ -15,6 +15,7 @@ const (
 	PwdError = 4005                      //密码错误
 	REQError = 4006                      //非法请求或请求次数受限
 	IPError = 4007                       //IP受限
+	UpdateError  = 4008					 //上传失败
 
 	InternetError = 5000                 //服务器内部错误
 	DBError = 5001                       //数据库错误

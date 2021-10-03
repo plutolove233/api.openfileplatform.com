@@ -21,6 +21,7 @@ func InitEnterpriseApiGroup(r *gin.Engine){
 				file.POST("return/:id",enterprise.ReturnFile)
 				file.DELETE("delete/:id",jwt.JWTAuthMiddleware(),enterprise.DeleteFile)
 			}
+			user.PUT("logo",enterprise.ChangeFace)
 		}
 		role:=ent.Group("role")
 		{

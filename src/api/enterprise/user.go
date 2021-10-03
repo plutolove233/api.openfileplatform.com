@@ -5,6 +5,7 @@ import (
 	"api.openfileplatform.com/dao"
 	"api.openfileplatform.com/models"
 	"api.openfileplatform.com/utils/jwt"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -138,6 +139,7 @@ func UserRegister(c *gin.Context){
 	}
 	ent_user.Pwd = string(cipherText)
 
+	ent_user.FacePicUrl = "pic/index.png"
 	err1  = ent_user.Register()
 	if err1 != nil {
 		c.JSON(200,gin.H{
@@ -157,7 +159,7 @@ func UserRegister(c *gin.Context){
 
 func GetUsers(c *gin.Context){
 	var ent_users []models.EntUser
-	err := dao.DB.Model(&models.EntUser{}).Find(&ent_users)
+	err := dao.DB.Model(&models.EntUser{}).Where("EnterpriseID = ?",c.MustGet("EnterpriseID")).Find(&ent_users)
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.DBError,
@@ -171,5 +173,46 @@ func GetUsers(c *gin.Context){
 		"code":codes.OK,
 		"error":"nil",
 		"msg":ent_users,
+	})
+}
+
+func ChangeFace(c *gin.Context){
+	file,err := c.FormFile("pic")
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.UpdateError,
+			"error":err,
+			"msg":"头像上传失败",
+		})
+		return
+	}
+
+	dst := fmt.Sprintf("./pic/user/%s",file.Filename)
+	err = c.SaveUploadedFile(file,dst)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.UpdateError,
+			"error":err,
+			"msg":"头像上传失败",
+		})
+		return
+	}
+
+	userId := c.MustGet("UserID")
+	var entUser models.EntUser
+	dao.DB.Model(&models.EntUser{}).Where("UserID = ?", userId).Find(&entUser)
+	err = entUser.ChangeFace(dst)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.DBError,
+			"error":err,
+			"msg":"头像信息更新失败",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"msg":dst,
 	})
 }

@@ -33,6 +33,7 @@ func NewDepartment(c *gin.Context) {
 	err = dao.DB.Model(&models.EntDepartment{}).Last(&last).Error
 	dep.DepartmentID = last.AutoID+101
 	dep.IsDeleted = false
+	dep.EnterpriseID = c.MustGet("EnterpriseID").(int64)
 
 	err = dep.AddDepart()
 	if err != nil {
