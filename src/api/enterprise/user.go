@@ -4,10 +4,12 @@ import (
 	"api.openfileplatform.com/commons/codes"
 	"api.openfileplatform.com/dao"
 	"api.openfileplatform.com/models"
+	"api.openfileplatform.com/utils/authority"
 	"api.openfileplatform.com/utils/jwt"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"strconv"
 	"time"
 )
 
@@ -60,6 +62,7 @@ func UserLogin(c *gin.Context){
 			"code":codes.DBError,
 			"error":err,
 			"msg":"用户token更新失败",
+			"token":user.Token,
 		})
 		return
 	}
@@ -71,37 +74,37 @@ func UserLogin(c *gin.Context){
 	})
 
 
-	//日志记录
-	reqIP := c.ClientIP()//获取IP
-	if reqIP == "::1" {
-		reqIP = "127.0.0.1"
-	}
-
-	ent_user_log := models.EntUserLog{
-		UserID:user.UserID,
-		UserName:user.UserName,
-		Account:user.Account,
-		OperationIP:reqIP,
-		OperationType:"1",
-		OperationContent:"员工登录",
-		OperationResult:1,
-		OperationStatus:1,
-		CreateTime:time.Now(),
-	}
-	err = dao.DB.Model(&models.EntUserLog{}).Create(ent_user_log).Error
-
-	if err != nil {
-		c.JSON(200,gin.H{
-			"code":codes.DBError,
-			"error":err,
-			"msg":"日志记录失败",
-		})
-	}
+	////日志记录
+	//reqIP := c.ClientIP()//获取IP
+	//if reqIP == "::1" {
+	//	reqIP = "127.0.0.1"
+	//}
+	//
+	//ent_user_log := models.EntUserLog{
+	//	UserID:user.UserID,
+	//	UserName:user.UserName,
+	//	Account:user.Account,
+	//	OperationIP:reqIP,
+	//	OperationType:"1",
+	//	OperationContent:"员工登录",
+	//	OperationResult:1,
+	//	OperationStatus:1,
+	//	CreateTime:time.Now(),
+	//}
+	//err = dao.DB.Model(&models.EntUserLog{}).Create(ent_user_log).Error
+	//
+	//if err != nil {
+	//	c.JSON(200,gin.H{
+	//		"code":codes.DBError,
+	//		"error":err,
+	//		"msg":"日志记录失败",
+	//	})
+	//}
 }
 
 func UserRegister(c *gin.Context){
 	var ent_user models.EntUser
-	err := c.ShouldBind(&ent_user).Error
+	err := c.ShouldBind(&ent_user)
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.ParamError,
@@ -159,7 +162,8 @@ func UserRegister(c *gin.Context){
 
 func GetUsers(c *gin.Context){
 	var ent_users []models.EntUser
-	err := dao.DB.Model(&models.EntUser{}).Where("EnterpriseID = ?",c.MustGet("EnterpriseID")).Find(&ent_users)
+	enterpriseID,_ := strconv.ParseInt(c.PostForm("EnterpriseID"),10,64)
+	err := dao.DB.Model(&models.EntUser{}).Where("EnterpriseID = ?",enterpriseID).Find(&ent_users)
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.DBError,
@@ -214,5 +218,63 @@ func ChangeFace(c *gin.Context){
 	c.JSON(200,gin.H{
 		"code":codes.OK,
 		"msg":dst,
+	})
+}
+
+func FindUserInformation(c *gin.Context){
+	enterpriseID,_ := strconv.ParseInt(c.PostForm("EnterpriseID"),10,64)
+	message := c.PostForm("message")
+	infor := "%"+message+"%"
+	var x []models.EntUser
+	err := dao.DB.Model(models.EntUser{}).
+		Where("EnterpriseID = ? AND UserName LIKE ?",enterpriseID,infor).Find(&x).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.NotData,
+			"error":err,
+			"msg":"数据信息不存在",
+		})
+		return
+	}
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"msg":x,
+	})
+}
+
+func AddUserRole(c *gin.Context){
+	userID,_ := strconv.ParseInt(c.Param("id"),10,64)
+	roleID := c.PostForm("roleID")
+
+	err := authority.VerifyPermission(c,codes.AddRolePermission)
+	if err != nil {
+		return
+	}
+
+	var user models.EntUser
+	err = dao.DB.Model(&models.EntUser{}).Where("UserID = ?",userID).Find(&user).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.NotData,
+			"error":err,
+			"msg":"该用户信息不存在",
+		})
+		return
+	}
+
+	err = dao.DB.Model(&models.EntUser{}).Where("UserID = ?",userID).Update("UserRoleID",user.UserRoleID+
+		","+roleID).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.UpdateError,
+			"error":err,
+			"msg":"添加角色信息失败",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"msg":user,
 	})
 }

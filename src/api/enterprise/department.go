@@ -10,16 +10,13 @@ import (
 )
 
 func NewDepartment(c *gin.Context) {
-	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.NewDepartmentPermission)==false{
-		c.JSON(200,gin.H{
-			"code":codes.RoleError,
-			"msg":"用户没有权限创建部门",
-		})
+	err := authority.VerifyPermission(c,codes.NewDepartmentPermission)
+	if err != nil {
 		return
 	}
 
 	var dep models.EntDepartment
-	err := c.ShouldBind(&dep)
+	err = c.ShouldBind(&dep)
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.ParamError,
@@ -53,11 +50,8 @@ func NewDepartment(c *gin.Context) {
 }
 
 func DeleteDepartment(c *gin.Context){
-	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.DeleteDepartmentPermission)==false{
-		c.JSON(200,gin.H{
-			"code":codes.RoleError,
-			"msg":"用户没有权限删除部门",
-		})
+	err := authority.VerifyPermission(c,codes.DeleteDepartmentPermission)
+	if err != nil {
 		return
 	}
 
@@ -96,5 +90,26 @@ func DeleteDepartment(c *gin.Context){
 		"code":codes.OK,
 		"error":"nil",
 		"msg":dep,
+	})
+}
+
+func FindDepartment(c *gin.Context){
+	enterpriseID,_ := strconv.ParseInt(c.PostForm("EnterpriseID"),10,64)
+	message := c.PostForm("message")
+	infor := "%"+message+"%"
+	var x []models.EntDepartment
+	err := dao.DB.Model(models.EntDepartment{}).
+		Where("EnterpriseID = ? AND EntDepartment LIKE ?",enterpriseID,infor).Find(&x).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.NotData,
+			"error":err,
+			"msg":"数据不存在",
+		})
+		return
+	}
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"msg":x,
 	})
 }

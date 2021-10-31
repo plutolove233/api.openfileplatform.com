@@ -3,9 +3,10 @@ package codes
 const (
 	//通用错误
 	OK = 2000                            //成功
-	NotData = 2001                       //无数据
-	DataExist = 2002                     //数据已存在
-	DataError = 2003                     //数据错误
+
+	NotData = 6001                       //无数据
+	DataExist = 6002                     //数据已存在
+	DataError = 6003                     //数据错误
 
 	ParamError = 4000                    //参数错误
 	SessionError = 4001                  //用户未登录

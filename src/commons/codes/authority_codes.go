@@ -8,4 +8,9 @@ const(
 	NewRolePermission			= 1005
 	GetRoleListPermission		= 1006
 	DeleteRolePermission		= 1007
+	AddRolePermission			= 1008
+
+
+	Admin						= 2000
+
 )

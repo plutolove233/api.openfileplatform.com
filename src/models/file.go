@@ -9,6 +9,7 @@ import (
 
 type EntFileinfo struct{
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
+	EnterpriseID int64 `gorm:"column:EnterpriseID"`
 	FileAddress string `gorm:"column:FileAddress"`
 	FileName string	`form:"name" gorm:"column:FileName"`
 	TypeID int `gorm:"column:TypeID"`

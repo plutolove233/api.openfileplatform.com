@@ -147,12 +147,8 @@ func BorrowFile(c *gin.Context){
 		return
 	}
 
-	if authority.CheckAuthority(c.MustGet("UserID").(int64), codes.BorrowFilePermission)==false {
-		c.JSON(200,gin.H{
-			"code":codes.RoleError,
-			"error":"permission error",
-			"msg":"用户没有权限访问",
-		})
+	err = authority.VerifyPermission(c,codes.BorrowFilePermission)
+	if err != nil {
 		return
 	}
 
@@ -223,6 +219,11 @@ func ReturnFile(c *gin.Context){
 }
 
 func DeleteFile(c *gin.Context){
+	err := authority.VerifyPermission(c,codes.DeleteFilePermission)
+	if err != nil {
+		return
+	}
+
 	fileID,err := strconv.ParseInt(c.Param("id"),10,64)
 	if err != nil {
 		c.JSON(200,gin.H{
@@ -244,15 +245,6 @@ func DeleteFile(c *gin.Context){
 	}
 
 	dst := aFile.FileAddress
-
-	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.DeleteFilePermission) == false{
-		c.JSON(200,gin.H{
-			"code":codes.RoleError,
-			"error":"permission error",
-			"msg":"用户没有权限删除文档",
-		})
-		return
-	}
 
 	err = os.Remove(dst)
 	if err != nil{
@@ -289,4 +281,36 @@ func DeleteFile(c *gin.Context){
 		CreateTime:       time.Time{},
 	}
 	dao.DB.Model(&models.EntUserLog{}).Create(&onelog)
+}
+
+func FindFile(c *gin.Context){
+	enterprise_id,err := strconv.ParseInt(c.PostForm("EnterpriseID"),10,64)
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.ParamError,
+			"error":err,
+			"msg":"企业id获取失败",
+		})
+		return
+	}
+	fileInfo := c.PostForm("fileInfo")
+	fileInfo = "%" + fileInfo + "%"
+
+	var files []models.EntFileinfo
+	err = dao.DB.Model(&models.EntFileinfo{}).Where("FileName LIKE ? AND EnterpriseID = ?",
+		fileInfo,enterprise_id).Find(&files).Error
+	if err != nil {
+		c.JSON(200,gin.H{
+			"code":codes.NotData,
+			"error":err,
+			"msg":"文件信息不存在",
+		})
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"msg":files,
+	})
+
 }

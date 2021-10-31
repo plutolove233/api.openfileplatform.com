@@ -12,6 +12,7 @@ type EntRole struct{
 	RoleID int64 `gorm:"column:RoleID"`//role的ID
 	RoleInfo string `gorm:"column:RoleInfo"`//角色信息
 	RoleName string `gorm:"column:RoleName"`
+	EnterpriseID int64 `gorm:"column:EnterpriseID"`
 	CreatTime time.Time `gorm:"column:CreatTime"`
 	UserID string `gorm:"column:UserID"`//创建人ID
 	IsDeleted bool `gorm:"column:IsDeleted"`

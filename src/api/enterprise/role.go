@@ -11,15 +11,12 @@ import (
 )
 
 func NewRole(c *gin.Context){
-	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.NewRolePermission)==false{
-		c.JSON(200,gin.H{
-			"code":codes.RoleError,
-			"msg":"用户没有权限创建新的角色",
-		})
+	err := authority.VerifyPermission(c,codes.NewRolePermission)
+	if err != nil {
 		return
 	}
 	var role,last models.EntRole
-	err := c.ShouldBind(&role)
+	err = c.ShouldBind(&role)
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.ParamError,
@@ -63,15 +60,14 @@ func NewRole(c *gin.Context){
 }
 
 func GetRoleList(c *gin.Context){
-	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.GetRoleListPermission)==false{
-		c.JSON(200,gin.H{
-			"code":codes.RoleError,
-			"msg":"用户没有权限获取角色信息表",
-		})
+	err := authority.VerifyPermission(c,codes.GetRoleListPermission)
+	if err != nil {
 		return
 	}
+
+	enterpriseID,_ := strconv.ParseInt(c.PostForm("EnterpriseID"),10,64)
 	var role []models.EntRole
-	err := dao.DB.Model(&models.EntRole{}).Find(&role).Error
+	err = dao.DB.Model(&models.EntRole{}).Where("EnterpriseID = ?",enterpriseID).Find(&role).Error
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.DBError,
@@ -89,11 +85,8 @@ func GetRoleList(c *gin.Context){
 }
 
 func DeleteRole(c *gin.Context){
-	if authority.CheckAuthority(c.MustGet("UserID").(int64),codes.DeleteRolePermission)==false{
-		c.JSON(200,gin.H{
-			"code":codes.RoleError,
-			"msg":"没有权限删除角色表",
-		})
+	err := authority.VerifyPermission(c,codes.DeleteRolePermission)
+	if err != nil {
 		return
 	}
 
@@ -102,7 +95,7 @@ func DeleteRole(c *gin.Context){
 		c.JSON(200,gin.H{
 			"code":codes.ParamError,
 			"error":err,
-			"msg":"删除文档编号获取失败",
+			"msg":"删除角色信息编号获取失败",
 		})
 		return
 	}

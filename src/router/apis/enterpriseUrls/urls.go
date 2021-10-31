@@ -2,7 +2,6 @@ package enterprise
 
 import (
 	"api.openfileplatform.com/api/enterprise"
-	"api.openfileplatform.com/utils/jwt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,23 +15,23 @@ func InitEnterpriseApiGroup(r *gin.Engine){
 			user.GET("list",enterprise.GetUsers)
 			file := user.Group("file")
 			{
-				file.POST("upload",jwt.JWTAuthMiddleware(),enterprise.Upload)
-				file.POST("borrow/:id",jwt.JWTAuthMiddleware(),enterprise.BorrowFile)
+				file.POST("upload",enterprise.Upload)
+				file.POST("borrow/:id",enterprise.BorrowFile)
 				file.POST("return/:id",enterprise.ReturnFile)
-				file.DELETE("delete/:id",jwt.JWTAuthMiddleware(),enterprise.DeleteFile)
+				file.DELETE("delete/:id",enterprise.DeleteFile)
 			}
 			user.PUT("logo",enterprise.ChangeFace)
 		}
 		role:=ent.Group("role")
 		{
-			role.POST("new",jwt.JWTAuthMiddleware(),enterprise.NewRole)
-			role.GET("list",jwt.JWTAuthMiddleware(),enterprise.GetRoleList)
-			role.DELETE("delete/:id",jwt.JWTAuthMiddleware(),enterprise.DeleteRole)
+			role.POST("new",enterprise.NewRole)
+			role.GET("list",enterprise.GetRoleList)
+			role.DELETE("delete/:id",enterprise.DeleteRole)
 		}
 		department := ent.Group("department")
 		{
-			department.POST("new",jwt.JWTAuthMiddleware(),enterprise.NewDepartment)
-			department.DELETE("delete/:id",jwt.JWTAuthMiddleware(),enterprise.DeleteDepartment)
+			department.POST("new",enterprise.NewDepartment)
+			department.DELETE("delete/:id",enterprise.DeleteDepartment)
 		}
 	}
 }

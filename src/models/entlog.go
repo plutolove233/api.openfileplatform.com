@@ -7,6 +7,7 @@ type EntUserLog struct{
 	UserID int64 `gorm:"column:UserID"`
 	UserName string `gorm:"column:UserName"`
 	Account string `gorm:"column:Account"`//登录账号
+	EnterpriseID int64 `gorm:"column:EnterpriseID"`
 	OperationIP string `gorm:"column:OperationIP"`//发出操作的IP地址
 	OperationType string `gorm:"column:OperationType"`//操作类型:1创建、2修改、3删除 4审核等操作
 	OperationContent string `gorm:"column:OperationContent"`

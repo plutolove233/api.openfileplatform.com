@@ -11,13 +11,14 @@ type EntUser struct{
 	AutoID int64 `gorm:"AUTO_INCREMENT;column:AutoID;primary_key"`
 	UserID int64 `gorm:"AUTO_INCREMENT;column:UserID"`
 	EnterpriseID int64 `gorm:"column:EnterpriseID"`
-	Account string `gorm:"column:Account"`//账号
-	Pwd string `form:"Pwd" gorm:"column:Pwd"`
-	UserName string `form:"UserName" gorm:"column:UserName"`//用户真实姓名
+	StaffID int64 `gorm:"column:StaffID"`
+	Account string `gorm:"column:Account" form:"account"`//账号
+	Pwd string `form:"pwd" gorm:"column:Pwd"`
+	UserName string `form:"username" gorm:"column:UserName"`//用户真实姓名
 	UserRoleID string `gorm:"column:UserRoleID"`
 	Token string `gorm:"column:Token"`
-	Phone string `gorm:"column:Phone"`
-	Email string `gorm:"column:Email"`
+	Phone string `gorm:"column:Phone" form:"phone"`
+	Email string `gorm:"column:Email" form:"email"`
 	FacePicUrl string `gorm:"column:FacePicUrl"`//user avatar like the address
 	IsAdmin int `gorm:"column:IsAdmin"`
 	IsDeleted bool `gorm:"column:IsDeleted"`
