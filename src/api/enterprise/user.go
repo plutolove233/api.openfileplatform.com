@@ -163,7 +163,7 @@ func UserRegister(c *gin.Context){
 func GetUsers(c *gin.Context){
 	var ent_users []models.EntUser
 	enterpriseID,_ := strconv.ParseInt(c.PostForm("EnterpriseID"),10,64)
-	err := dao.DB.Model(&models.EntUser{}).Where("EnterpriseID = ?",enterpriseID).Find(&ent_users)
+	err := dao.DB.Model(&models.EntUser{}).Where("EnterpriseID = ?",enterpriseID).Find(&ent_users).Error
 	if err != nil {
 		c.JSON(200,gin.H{
 			"code":codes.DBError,

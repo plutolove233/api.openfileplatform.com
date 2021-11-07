@@ -12,7 +12,7 @@ func InitEnterpriseApiGroup(r *gin.Engine){
 		{
 			user.POST("login",enterprise.UserLogin)
 			user.POST("register",enterprise.UserRegister)
-			user.GET("list",enterprise.GetUsers)
+			user.POST("list",enterprise.GetUsers)
 			file := user.Group("file")
 			{
 				file.POST("upload",enterprise.Upload)
