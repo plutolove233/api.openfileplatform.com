@@ -1,1 +1,4 @@
 deployment/main
+.idea/
+go_build_api_openfileplatform_com_src.exe
+*.log
