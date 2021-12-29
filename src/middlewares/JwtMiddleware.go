@@ -7,16 +7,12 @@ package middlewares
 
 import (
 	"api.openfileplatform.com/src/globals/codes"
-	"api.openfileplatform.com/src/globals/database"
 	"api.openfileplatform.com/src/models/ginModels"
 	"api.openfileplatform.com/src/utils/jwt"
 	"api.openfileplatform.com/src/utils/logs"
 	"encoding/json"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"net/http"
-	"time"
 )
 
 var log = logs.GetLogger()
@@ -51,56 +47,58 @@ func TokenRequire() gin.HandlerFunc {
 			return
 		}
 
-		tokenID := jwtChaim.TokenID
+		//tokenID := jwtChaim.TokenID
 		//验证是否与session中tokenID相同
-		session := sessions.Default(c)
-		temp := session.Get("tokenID")
-		if temp == nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.AccessDenied,
-				"message": "您的Token非法！",
-			})
-			c.Abort()
-			return
-		}
-		tempTokenID := temp.(string)
-		if tempTokenID != tokenID {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.AccessDenied,
-				"message": "您的Token非法！",
-			})
-			c.Abort()
-			return
-		}
+		//session := sessions.Default(c)
+		//temp := session.Get("tokenID")
+		//if temp == nil {
+		//	c.JSON(http.StatusOK, gin.H{
+		//		"code":    codes.AccessDenied,
+		//		"message": "您的Token非法！",
+		//	})
+		//	c.Abort()
+		//	return
+		//}
+		//tempTokenID := temp.(string)
+		//if tempTokenID != tokenID {
+		//	c.JSON(http.StatusOK, gin.H{
+		//		"code":    codes.AccessDenied,
+		//		"message": "您的Token非法！",
+		//	})
+		//	c.Abort()
+		//	return
+		//}
 
 		//从数据库读取token信息
-		redisManager, ctx := database.GetRedisManager()
-		result, err := redisManager.Get(ctx, "Token_"+tokenID).Result()
-		if err != nil {
-			log.Errorln(err)
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.AccessDenied,
-				"message": "您的Token已失效！",
-			})
-			c.Abort()
-			return
-		}
+		//redisManager, ctx := database.GetRedisManager()
+		//result, err := redisManager.Get(ctx, "Token_"+tokenID).Result()
+		//if err != nil {
+		//	log.Errorln(err)
+		//	c.JSON(http.StatusOK, gin.H{
+		//		"code":    codes.AccessDenied,
+		//		"message": "您的Token已失效！",
+		//	})
+		//	c.Abort()
+		//	return
+		//}
 
 		//刷新token有效期
-		err = redisManager.Expire(ctx, "Token_"+tokenID, time.Duration(viper.GetInt("system.RedisExpireTime"))*time.Second).Err()
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.InternalError,
-				"message": "刷新token错误！",
-				"err":     err,
-			})
-			c.Abort()
-			return
-		}
-		c.Set("TokenID", tokenID)
+		//err = redisManager.Expire(ctx, "Token_"+tokenID, time.Duration(viper.GetInt("system.RedisExpireTime"))*time.Second).Err()
+		//if err != nil {
+		//	c.JSON(http.StatusOK, gin.H{
+		//		"code":    codes.InternalError,
+		//		"message": "刷新token错误！",
+		//		"err":     err,
+		//	})
+		//	c.Abort()
+		//	return
+		//}
+		//c.Set("TokenID", tokenID)
 		//加载用户信息到上下文
+		temp, err := json.Marshal(jwtChaim)
+
 		var User ginModels.UserModel
-		err = json.Unmarshal([]byte(result), &User)
+		err = json.Unmarshal(temp, &User)
 		if err != nil {
 			log.Errorln(err)
 			c.JSON(http.StatusOK, gin.H{

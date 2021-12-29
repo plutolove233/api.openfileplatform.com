@@ -7,18 +7,12 @@ package platform
 
 import (
 	"api.openfileplatform.com/src/globals/codes"
-	"api.openfileplatform.com/src/globals/database"
-	"api.openfileplatform.com/src/globals/snowflake"
 	"api.openfileplatform.com/src/models/ginModels"
 	"api.openfileplatform.com/src/services"
 	"api.openfileplatform.com/src/utils/jwt"
-	"encoding/json"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"time"
 )
 
 type LoginApiImpl struct{}
@@ -41,7 +35,7 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 		})
 		return
 	}
-	session := sessions.Default(c)
+	//session := sessions.Default(c)
 
 	user := ginModels.UserModel{}
 	token := ""
@@ -110,24 +104,21 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	}
 
 	//获取登录的用户信息
-	var tokenContest string
 	user.UserID = platUser.UserID
 	user.Account = platUser.Account
 	user.IsPlatUser = true
 
-	temp, err := json.Marshal(user)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.InternalError,
-			"message": "系统错误！",
-			"err":     err,
-		})
-		return
-	}
-	tokenContest = string(temp)
+	//temp, err := json.Marshal(user)
+	//if err != nil {
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code":    codes.InternalError,
+	//		"message": "系统错误！",
+	//		"err":     err,
+	//	})
+	//	return
+	//}
 	//生成token
-	tokenID := snowflake.GetSnowflakeID()
-	token, err = jwt.MakeToken(tokenID)
+	token, err = jwt.MakeToken(user.UserID, user.IsPlatUser, user.IsAdmin)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    codes.InternalError,
@@ -136,28 +127,17 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 		})
 		return
 	}
-	//存入redis
-	redisManager, ctx := database.GetRedisManager()
-	err = redisManager.Set(ctx, "Token_"+tokenID, tokenContest, time.Duration(viper.GetInt("system.RedisExpireTime"))*time.Second).Err()
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "redis存储错误！",
-			"err":     err,
-		})
-		return
-	}
 	//存入session
-	session.Set("tokenID", tokenID)
-	err = session.Save()
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.InternalError,
-			"message": "session存储错误！",
-			"err":     err,
-		})
-		return
-	}
+	//session.Set("tokenID", tokenID)
+	//err = session.Save()
+	//if err != nil {
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code":    codes.InternalError,
+	//		"message": "session存储错误！",
+	//		"err":     err,
+	//	})
+	//	return
+	//}
 
 	//返回
 	c.JSON(http.StatusOK, gin.H{
@@ -317,43 +297,43 @@ func (*LoginApiImpl) RefreshToken(c *gin.Context) {
 	return
 }
 
-func (*LoginApiImpl) Logout(c *gin.Context) {
-	temp, ok := c.Get("TokenID")
-	if ok == false {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.AccessDenied,
-			"message": "Token错误！",
-		})
-		return
-	}
-	tokenID := temp.(string)
-
-	//删除session中的token
-	session := sessions.Default(c)
-	session.Delete("tokenID")
-	err := session.Save()
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.InternalError,
-			"message": "session连接错误！",
-			"err":     err,
-		})
-		return
-	}
-
-	//删除redis中的token
-	redisManager, ctx := database.GetRedisManager()
-	err = redisManager.Del(ctx, "Token_"+tokenID).Err()
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.AccessDenied,
-			"message": "登出失败！",
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"code":    codes.OK,
-		"message": "登出成功！",
-	})
-	return
-}
+//func (*LoginApiImpl) Logout(c *gin.Context) {
+//	temp, ok := c.Get("TokenID")
+//	if ok == false {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code":    codes.AccessDenied,
+//			"message": "Token错误！",
+//		})
+//		return
+//	}
+//	tokenID := temp.(string)
+//
+//	//删除session中的token
+//	session := sessions.Default(c)
+//	session.Delete("tokenID")
+//	err := session.Save()
+//	if err != nil {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code":    codes.InternalError,
+//			"message": "session连接错误！",
+//			"err":     err,
+//		})
+//		return
+//	}
+//
+//	//删除redis中的token
+//	redisManager := database.GetRedisManager()
+//	err = redisManager.Del("Token_"+tokenID).Err()
+//	if err != nil {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code":    codes.AccessDenied,
+//			"message": "登出失败！",
+//		})
+//		return
+//	}
+//	c.JSON(http.StatusOK, gin.H{
+//		"code":    codes.OK,
+//		"message": "登出成功！",
+//	})
+//	return
+//}

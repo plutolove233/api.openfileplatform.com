@@ -13,7 +13,9 @@ import (
 
 type JWTClaims struct {
 	jwt.StandardClaims
-	TokenID string `json:"token_id"`
+	UserID     string `json:"user_id"`
+	IsPlatUser bool   `json:"is_plat_user"`
+	IsAdmin    bool   `json:"is_admin"`
 }
 
 func genToken(claims *JWTClaims) (string, error) {
@@ -25,9 +27,11 @@ func genToken(claims *JWTClaims) (string, error) {
 	return signedToken, nil
 }
 
-func MakeToken(tokenID string)(string, error){
+func MakeToken(userID string, isPlatUser bool, isAdmin bool) (string, error) {
 	claims := &JWTClaims{
-		TokenID: tokenID,
+		UserID:     userID,
+		IsPlatUser: isPlatUser,
+		IsAdmin:    isAdmin,
 	}
 	claims.IssuedAt = time.Now().Unix()
 	claims.ExpiresAt = time.Now().Add(time.Second * time.Duration(viper.GetInt("system.TokenExpireTime"))).Unix()
@@ -51,15 +55,15 @@ func VerifyToken(strToken string) (*JWTClaims, error) {
 	return claims, nil
 }
 
-func RefreshToken(strToken string) (string,error) {
+func RefreshToken(strToken string) (string, error) {
 	claims, err := VerifyToken(strToken)
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	claims.ExpiresAt = time.Now().Unix() + (claims.ExpiresAt - claims.IssuedAt)
 	signedToken, err := genToken(claims)
 	if err != nil {
-		return "",err
+		return "", err
 	}
-	return signedToken,err
+	return signedToken, err
 }

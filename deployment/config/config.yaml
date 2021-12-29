@@ -24,3 +24,7 @@ system:
   SysIP: 127.0.0.1
 #  部署服务器端口
   SysPort: 9000
+#  使用mysql
+  UseMysql: true
+#  使用redis
+  UseRedis: false

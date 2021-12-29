@@ -7,13 +7,11 @@ package database
 
 import (
 	"api.openfileplatform.com/src/globals/vipers"
-	"context"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis"
 )
 
 var (
 	redisClient *redis.Client
-	ctx         = context.Background()
 )
 
 func InitRedisClient() (err error) {
@@ -23,11 +21,11 @@ func InitRedisClient() (err error) {
 		Password: v.GetString("redis.password"),
 		DB:       v.GetInt("redis.DB"),
 	})
-	_, err = redisClient.Ping(ctx).Result()
+	_, err = redisClient.Ping().Result()
 	return
 	// Output: PONG <nil>
 }
 
-func GetRedisManager() (*redis.Client, context.Context) {
-	return redisClient, ctx
+func GetRedisManager() *redis.Client {
+	return redisClient
 }

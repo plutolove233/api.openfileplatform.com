@@ -6,11 +6,10 @@
 package setting
 
 import (
-	"api.openfileplatform.com/src/globals/vipers"
 	"api.openfileplatform.com/src/middlewares"
 	"api.openfileplatform.com/src/routers"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
@@ -25,13 +24,13 @@ func InitGinEngine() (*gin.Engine, error) {
 
 	// 初始化Session
 	// 将session存在redis
-	v := vipers.GetDatabaseViper()
-	store, err := redis.NewStore(10, "tcp", v.GetString("redis.addr"), v.GetString("redis.password"), []byte(viper.GetString("system.Secret")))
-	if err != nil {
-		return nil, err
-	}
+	//v := vipers.GetDatabaseViper()
+	//store, err := redis.NewStore(10, "tcp", v.GetString("redis.addr"), v.GetString("redis.password"), []byte(viper.GetString("system.Secret")))
+	//if err != nil {
+	//	return nil, err
+	//}
 	// 将session存在cookie
-	//store := cookie.NewStore([]byte(viper.GetString("system.Secret")))
+	store := cookie.NewStore([]byte(viper.GetString("system.Secret")))
 
 	store.Options(sessions.Options{
 		MaxAge: viper.GetInt("system.SessionExpireTime"),

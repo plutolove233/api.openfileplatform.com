@@ -5,13 +5,25 @@
 
 package setting
 
-import "api.openfileplatform.com/src/globals/database"
+import (
+	"api.openfileplatform.com/src/globals/database"
+	"github.com/spf13/viper"
+)
 
 func InitDatabase() (err error) {
-	err = database.InitMysqlClient()
-	if err != nil {
-		return
+	if viper.GetBool("system.UseMysql") {
+		err = database.InitMysqlClient()
+		if err != nil {
+			log.Errorln("mysql初始化出错:", err)
+			return
+		}
 	}
-	err = database.InitRedisClient()
+	if viper.GetBool("system.UseRedis") {
+		err = database.InitRedisClient()
+		if err != nil {
+			log.Errorln("redis初始化出错:", err)
+			return
+		}
+	}
 	return
 }

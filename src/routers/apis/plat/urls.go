@@ -16,7 +16,7 @@ func InitPlatRouterGroup(engine *gin.RouterGroup) {
 	var loginApi platform.LoginApiImpl
 	Api.POST("/login", loginApi.LoginByPassword)
 	Api.POST("/changePassword", loginApi.ChangePassword)
-	Api.POST("/logout", loginApi.Logout)
+	//Api.POST("/logout", loginApi.Logout)
 	Api.POST("/refreshToken", loginApi.RefreshToken)
 
 	users.InitUsersRouterGroup(Api)
