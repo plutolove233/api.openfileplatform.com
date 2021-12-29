@@ -8,12 +8,10 @@ package platform
 import (
 	"api.openfileplatform.com/src/globals/codes"
 	"api.openfileplatform.com/src/globals/database"
-	"api.openfileplatform.com/src/globals/rsa"
 	"api.openfileplatform.com/src/globals/snowflake"
 	"api.openfileplatform.com/src/models/ginModels"
 	"api.openfileplatform.com/src/services"
 	"api.openfileplatform.com/src/utils/jwt"
-	"encoding/base64"
 	"encoding/json"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -71,25 +69,27 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 
 	//验证密码
 	var password []byte
-	password, err = base64.StdEncoding.DecodeString(Parser.Password)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.InternalError,
-			"message": "解码失败！",
-			"err":     err,
-		})
-		return
-	}
-	RSA := rsa.GetRSAHelper()
-	password, err = RSA.Decrypt(password)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.InternalError,
-			"message": "解密失败！",
-			"err":     err,
-		})
-		return
-	}
+
+	//password, err = base64.StdEncoding.DecodeString(Parser.Password)
+	//if err != nil {
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code":    codes.InternalError,
+	//		"message": "解码失败！",
+	//		"err":     err,
+	//	})
+	//	return
+	//}
+	//RSA := rsa.GetRSAHelper()
+	//password, err = RSA.Decrypt(password)
+	//if err != nil {
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code":    codes.InternalError,
+	//		"message": "解密失败！",
+	//		"err":     err,
+	//	})
+	//	return
+	//}
+
 	password = []byte(Parser.Password)
 	err = bcrypt.CompareHashAndPassword([]byte(platUser.Password), password)
 

@@ -7,9 +7,9 @@ system:
 #  秘钥
   Secret: d3a5c5c29c1130bddf55b8cda7ac770b9c085f0fe0b1c1ce3c566b90c78769d4
 #  rsa私钥
-  RSAPrivate: static/sys/rsa/private.pem
+  RSAPrivate: config/rsa/private.pem
 #  rsa公钥
-  RSAPublic: static/sys/rsa/public.pem
+  RSAPublic: config/rsa/public.pem
 #  过期时间（秒）
   TokenExpireTime: 86400
   RedisExpireTime: 3600

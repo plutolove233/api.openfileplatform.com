@@ -50,7 +50,7 @@ func TokenRequire() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		//从数据库读取token信息
+
 		tokenID := jwtChaim.TokenID
 		//验证是否与session中tokenID相同
 		session := sessions.Default(c)

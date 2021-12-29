@@ -15,7 +15,7 @@ var log = globals.GetLogger()
 
 func InitViper() (err error) {
 	viper.SetConfigName("config")
-	viper.AddConfigPath("./sys/configs") // 添加搜索路径
+	viper.AddConfigPath("./config") // 添加搜索路径
 	viper.SetConfigType("yaml")
 
 	err = viper.ReadInConfig()

@@ -23,7 +23,7 @@ func GetDatabaseViper() *viper.Viper {
 	databaseViperOnce.Do(func() {
 		databaseViper = viper.New()
 		databaseViper.SetConfigName("database")
-		databaseViper.AddConfigPath("./sys/configs") // 添加搜索路径
+		databaseViper.AddConfigPath("./config") // 添加搜索路径
 		databaseViper.SetConfigType("yaml")
 
 		err := databaseViper.ReadInConfig()
