@@ -2,48 +2,39 @@ package main
 
 import (
 	"api.openfileplatform.com/internal/globals"
-	"api.openfileplatform.com/internal/models/ginModels"
-	"api.openfileplatform.com/internal/setting"
+	"api.openfileplatform.com/internal/settings"
 	"encoding/gob"
+	"fmt"
 	"github.com/spf13/viper"
 	"time"
 )
 
 func main() {
-	//fmt.Println("program start")
-	var log = globals.GetLogger()
-	//fmt.Println("日志加载完成")
-	gob.Register(ginModels.UserModel{})
 	gob.Register(time.Time{})
 	var err error
 	//初始化viper
-	err = setting.InitViper()
-	//fmt.Println("viper加载完成")
+	err = settings.InitViper()
 	if err != nil {
-		log.Errorln(err)
+		fmt.Println("配置文件加载出错！", err)
 		return
 	}
-	//初始化RSA秘钥
-	//setting.InitRSAKey()
+	var log = globals.GetLogger()
 
 	//初始化数据库（mysql、redis）
-	err = setting.InitDatabase()
-	//fmt.Println("数据库加载完成")
+	err = settings.InitDatabase()
 	if err != nil {
 		log.Errorln(err)
 		return
 	}
+
 	//初始化gin引擎
-	engine, err := setting.InitGinEngine()
-	//fmt.Println("gin引擎加载完成")
+	engine, err := settings.InitGinEngine()
 	if err != nil {
 		log.Errorln(err)
 		return
 	}
-	//监听端口
-	port := viper.GetString("system.SysPort")
-	err = engine.Run(":" + port)
-	//fmt.Println("监听已开启加载完成")
+	//开始运行
+	err = engine.Run(fmt.Sprintf("%s:%s", viper.GetString("system.SysIP"), viper.GetString("system.SysPort")))
 	if err != nil {
 		log.Errorln(err)
 		return

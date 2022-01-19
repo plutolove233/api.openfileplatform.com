@@ -3,15 +3,13 @@
 // @Date : 2021/4/6 18:44
 // @Software: GoLand
 
-package setting
+package settings
 
 import (
-	"api.openfileplatform.com/internal/globals"
+	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
-
-var log = globals.GetLogger()
 
 func InitViper() (err error) {
 	viper.SetConfigName("config")
@@ -20,13 +18,13 @@ func InitViper() (err error) {
 
 	err = viper.ReadInConfig()
 	if err != nil {
-		log.Errorf("Fatal error config file: %s\n", err)
+		fmt.Println("Fatal error config file: ", err)
 		return
 	}
 	viper.WatchConfig()
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.Warnf("Config file:%s Op:%s\n", e.Name, e.Op)
+		fmt.Println("Config file:", e.Name, "Op: ", e.Op)
 	})
 	return
 }

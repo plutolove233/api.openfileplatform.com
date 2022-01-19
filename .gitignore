@@ -1,2 +1,3 @@
 .idea/
 cmd/gormt/err/
+go_build_api_openfileplatform_com.exe
