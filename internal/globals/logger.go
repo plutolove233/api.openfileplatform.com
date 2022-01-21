@@ -24,8 +24,14 @@ var (
 
 func GetLogger() *logrus.Logger {
 	logOnce.Do(func() {
-		log = loggerToCmd()
-		//log = loggerToFile()
+		t := viper.GetString("log.type")
+		if t == "File" {
+			log = loggerToFile()
+		} else if t == "CMD" {
+			log = loggerToCmd()
+		} else if t == "ES" {
+			log = loggerToES()
+		}
 		log.Infoln("日志初始化服务完成!")
 	})
 	return log

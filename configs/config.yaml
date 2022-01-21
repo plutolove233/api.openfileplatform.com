@@ -1,4 +1,6 @@
 log:
+  #  日志输出类型 File,CMD,ES
+  type: File
   filepath: logs
   filename: system.log
 system:
