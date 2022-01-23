@@ -1,0 +1,16 @@
+version: "3"
+services:
+  register_center:
+    privileged: true
+    stdin_open: true
+    tty: true
+    build: .
+    image: api.openfileplatform.com
+#    container_name: registry_center
+    restart: always
+    volumes:
+      - /docker/api.openfileplatform.com/configs:/apps/configs
+    ports:
+      - "9001:9001"
+    command:
+      - /apps/golang_app

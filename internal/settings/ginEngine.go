@@ -3,7 +3,7 @@
 // @Date : 2021/4/6 21:18
 // @Software: GoLand
 
-package setting
+package settings
 
 import (
 	"api.openfileplatform.com/internal/middlewares"

@@ -15,9 +15,10 @@ type PlatUsers struct {
 }
 
 func (m *PlatUsers) Get() error {
-	m.IsDeleted = false
 	mysqlManager := database.GetMysqlClient()
-	return mysqlManager.Where(m).Take(m).Error
+	return mysqlManager.Where(map[string]interface{}{
+		"IsDeleted": 0,
+	}).Where(m).Take(m).Error
 }
 
 func (m *PlatUsers) Add() error {

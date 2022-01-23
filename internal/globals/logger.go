@@ -10,6 +10,7 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"os"
 	"path"
 	"sync"
@@ -23,8 +24,14 @@ var (
 
 func GetLogger() *logrus.Logger {
 	logOnce.Do(func() {
-		log = loggerToCmd()
-		//log = loggerToFile()
+		t := viper.GetString("log.type")
+		if t == "File" {
+			log = loggerToFile()
+		} else if t == "CMD" {
+			log = loggerToCmd()
+		} else if t == "ES" {
+			log = loggerToES()
+		}
 		log.Infoln("日志初始化服务完成!")
 	})
 	return log
@@ -33,10 +40,10 @@ func GetLogger() *logrus.Logger {
 // 日志记录到文件
 func loggerToFile() *logrus.Logger {
 	basePath, _ := os.Getwd()
-	//logFilePath := basePath + viper.GetString("log.filepath")
-	//logFileName := viper.GetString("log.filename")
-	logFilePath := path.Join(basePath, "logs")
-	logFileName := "system.log"
+	logFilePath := basePath + viper.GetString("log.filepath")
+	logFileName := viper.GetString("log.filename")
+	//logFilePath := path.Join(basePath, "logs")
+	//logFileName := "system.log"
 
 	// 日志文件
 	fileName := path.Join(logFilePath, logFileName)

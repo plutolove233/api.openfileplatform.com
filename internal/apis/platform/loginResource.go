@@ -6,13 +6,15 @@
 package platform
 
 import (
+	"net/http"
+
 	"api.openfileplatform.com/internal/globals/codes"
+	"api.openfileplatform.com/internal/globals/responseParser"
 	"api.openfileplatform.com/internal/models/ginModels"
 	"api.openfileplatform.com/internal/services"
 	"api.openfileplatform.com/internal/utils/jwt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 type LoginApiImpl struct{}
@@ -28,11 +30,7 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	//解析参数
 	err = c.ShouldBindJSON(&Parser)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.ParameterIllegal,
-			"message": "参数错误！",
-			"err":     err,
-		})
+		responseParser.JsonParameterIllegal(c, err)
 		return
 	}
 	//session := sessions.Default(c)
@@ -45,19 +43,7 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	err = platUser.Get()
 
 	if err != nil {
-		if err.Error() == "record not found" {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.NotData,
-				"message": "无数据！",
-				"err":     err,
-			})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "数据库错误！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c, err)
 		return
 	}
 
@@ -95,11 +81,7 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.InternalError,
-			"message": "系统错误！",
-			"err":     err,
-		})
+		responseParser.JsonInternalError(c, err)
 		return
 	}
 
@@ -123,7 +105,7 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    codes.InternalError,
 			"message": "Token生成错误！",
-			"err":     err,
+			"err":     err.Error(),
 		})
 		return
 	}
@@ -140,14 +122,9 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	//}
 
 	//返回
-	c.JSON(http.StatusOK, gin.H{
-		"code":    codes.OK,
-		"message": "成功",
-		"err":     err,
-		"data": gin.H{
-			"user":  user,
-			"token": token,
-		},
+	responseParser.JsonOK(c, gin.H{
+		"user":  user,
+		"token": token,
 	})
 	return
 }
@@ -164,11 +141,7 @@ func (*LoginApiImpl) ChangePassword(c *gin.Context) {
 	//解析参数
 	err = c.ShouldBindJSON(&Parser)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.ParameterIllegal,
-			"message": "参数错误！",
-			"err":     err,
-		})
+		responseParser.JsonParameterIllegal(c, err)
 		return
 	}
 
