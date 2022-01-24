@@ -10,6 +10,7 @@ services:
     restart: always
     volumes:
       - /docker/api.openfileplatform.com/configs:/apps/configs
+      - /docker/api.openfileplatform.com/logs:/apps/logs
     ports:
       - "9001:9001"
     command:
