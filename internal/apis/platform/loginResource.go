@@ -19,15 +19,15 @@ import (
 type LoginApiImpl struct{}
 
 type loginByPasswordParser struct {
-	Account  string `json:"Account" binding:"required"`
-	Password string `json:"Password" binding:"required"`
+	Account  string `form:"Account" json:"Account" binding:"required"`
+	Password string `form:"Password" json:"Password" binding:"required"`
 }
 
 func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	var Parser loginByPasswordParser
 	var err error
 	//解析参数
-	err = c.ShouldBindJSON(&Parser)
+	err = c.ShouldBind(&Parser)
 	if err != nil {
 		responseParser.JsonParameterIllegal(c, err)
 		return

@@ -17,18 +17,18 @@ import (
 type UserApiImpl struct{}
 
 type RegisterParser struct {
-	UserName string `json:"UserName" binding:""`
-	Account  string `json:"Account" binding:"required"`
-	Password string `json:"Password" binding:"required"`
-	Phone    string `json:"Phone" binding:""`
-	Email    string `json:"Email" binding:""`
+	UserName string `form:"UserName" json:"UserName" binding:""`
+	Account  string `form:"Account" json:"Account" binding:"required"`
+	Password string `form:"Password" json:"Password" binding:"required"`
+	Phone    string `form:"Phone" json:"Phone" binding:""`
+	Email    string `form:"Email" json:"Email" binding:""`
 }
 
 func (*UserApiImpl) Register(c *gin.Context) {
 	var Parser RegisterParser
 	var err error
 	//解析参数
-	err = c.ShouldBindJSON(&Parser)
+	err = c.ShouldBind(&Parser)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    codes.OK,

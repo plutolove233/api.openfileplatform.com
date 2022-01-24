@@ -1,16 +1,13 @@
-// coding: utf-8
-// @Author : lryself
-// @Date : 2021/3/23 23:00
-// @Software: GoLand
-
 package globals
 
 import (
 	"fmt"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
+	"github.com/olivere/elastic/v7"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gopkg.in/sohlich/elogrus.v7"
 	"os"
 	"path"
 	"sync"
@@ -40,7 +37,7 @@ func GetLogger() *logrus.Logger {
 // 日志记录到文件
 func loggerToFile() *logrus.Logger {
 	basePath, _ := os.Getwd()
-	logFilePath := basePath + viper.GetString("log.filepath")
+	logFilePath := path.Join(basePath, viper.GetString("log.filepath"))
 	logFileName := viper.GetString("log.filename")
 	//logFilePath := path.Join(basePath, "logs")
 	//logFileName := "system.log"
@@ -97,14 +94,35 @@ func loggerToFile() *logrus.Logger {
 	return logger
 }
 
-//todo 日志记录到 MongoDB
-func loggerToMongo() *logrus.Logger {
-	return nil
-}
-
 //todo 日志记录到 ES
 func loggerToES() *logrus.Logger {
-	return nil
+	// 实例化
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+
+	// 设置输出
+	logger.Out = os.Stdout
+
+	// 设置日志级别
+	logger.SetLevel(logrus.DebugLevel)
+
+	// 创建elasticsearch客户端
+	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(viper.GetString("remote.ESUrl")))
+	if err != nil {
+		logger.Panic(err)
+	}
+	// 将logrus和elastic绑定，host 是指定该程序执行时的ip
+	hook, err := elogrus.NewElasticHook(client,
+		viper.GetString("system.SysIP")+":"+viper.GetString("system.SysPort"),
+		logger.Level,
+		viper.GetString("system.Name"),
+	)
+	if err != nil {
+		logger.Panic(err)
+	}
+	logger.AddHook(hook)
+
+	return logger
 }
 
 //todo 日志记录到 MQ
