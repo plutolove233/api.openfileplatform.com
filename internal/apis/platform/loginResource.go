@@ -6,6 +6,8 @@
 package platform
 
 import (
+	"net/http"
+
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
 	"api.openfileplatform.com/internal/models/ginModels"
@@ -13,7 +15,6 @@ import (
 	"api.openfileplatform.com/internal/utils/jwt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 type LoginApiImpl struct{}
