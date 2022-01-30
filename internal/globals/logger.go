@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	log     *logrus.Logger
+	log     *logrus.Logger = logrus.New()
 	logOnce sync.Once
 )
 
