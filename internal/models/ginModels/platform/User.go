@@ -3,7 +3,7 @@
 // @Date : 2021/4/8 23:36
 // @Software: GoLand
 
-package ginModels
+package platform
 
 type UserModel struct {
 	UserID     string `json:"user_id"`

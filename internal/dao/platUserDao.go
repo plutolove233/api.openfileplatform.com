@@ -38,3 +38,9 @@ func (m *PlatUsers) Delete(updateUser int64) error {
 		"IsDeleted": 1,
 	}).Error
 }
+
+func (*PlatUsers)GetAll() (error,[]PlatUsers){
+	mysqlManager := database.GetMysqlClient()
+	users := []PlatUsers{}
+	return mysqlManager.Model(&PlatUsers{}).Find(&users).Error,users
+}

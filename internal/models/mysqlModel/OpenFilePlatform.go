@@ -235,7 +235,7 @@ var EntProjectColumns = struct {
 // EntUsers [...]
 type EntUsers struct {
 	AutoID       int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	UserID       int       `gorm:"column:UserID;type:int(11)" json:"userId"`
+	UserID       string    `gorm:"column:UserID;type:varchar(255)" json:"userId"`
 	EnterpriseID int64     `gorm:"column:EnterpriseID;type:bigint(22)" json:"enterpriseId"` // 用户所属企业ID
 	Account      string    `gorm:"column:Account;type:varchar(255)" json:"account"`         //  账号（默认手机号）
 	Pwd          string    `gorm:"column:Pwd;type:varchar(255)" json:"pwd"`

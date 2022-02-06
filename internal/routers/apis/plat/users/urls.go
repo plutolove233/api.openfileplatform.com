@@ -22,8 +22,9 @@ func InitUsersRouterGroup(engine *gin.RouterGroup) {
 	var userApi userResource.UserApiImpl
 	Api.POST("register", userApi.Register)
 
-	Api.Use(middlewares.TokenRequire())
+	Api.Use(middlewares.PlatformTokenRequire())
 	Api.GET("ping", func(context *gin.Context) {
 		context.JSON(http.StatusOK, "pong")
 	})
+	Api.GET("list",userApi.Get)
 }

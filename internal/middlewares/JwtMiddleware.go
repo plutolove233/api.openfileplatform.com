@@ -7,7 +7,8 @@ package middlewares
 
 import (
 	"api.openfileplatform.com/internal/globals/codes"
-	"api.openfileplatform.com/internal/models/ginModels"
+	"api.openfileplatform.com/internal/models/ginModels/enterprise"
+	"api.openfileplatform.com/internal/models/ginModels/platform"
 	"api.openfileplatform.com/internal/utils/jwt"
 	"api.openfileplatform.com/internal/utils/logs"
 	"encoding/json"
@@ -17,7 +18,7 @@ import (
 
 var log = logs.GetLogger()
 
-func TokenRequire() gin.HandlerFunc {
+func PlatformTokenRequire() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//fullPath := c.FullPath()
 		//r,err := regexp.MatchString("/api([a-z/]*/ping|/login|[a-z/]*/register)$", fullPath)
@@ -97,7 +98,41 @@ func TokenRequire() gin.HandlerFunc {
 		//加载用户信息到上下文
 		temp, err := json.Marshal(jwtChaim)
 
-		var User ginModels.UserModel
+		var User platform.UserModel
+		err = json.Unmarshal(temp, &User)
+		if err != nil {
+			log.Errorln(err)
+			c.JSON(http.StatusOK, gin.H{
+				"code":    codes.InternalError,
+				"message": "用户信息读取错误！",
+			})
+			c.Abort()
+			return
+		}
+		c.Set("user", User)
+		c.Next()
+	}
+}
+
+func EnterpriseTokenRequire() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		token := c.Request.Header.Get("Token")
+		jwtChaim, err := jwt.VerifyToken(token)
+		if err != nil {
+			log.Errorln(err)
+			c.JSON(http.StatusOK, gin.H{
+				"code":    codes.AccessDenied,
+				"message": "您的Token已过期！",
+			})
+			c.Abort()
+			return
+		}
+
+
+		temp, err := json.Marshal(jwtChaim)
+
+		var User enterprise.UserModel
 		err = json.Unmarshal(temp, &User)
 		if err != nil {
 			log.Errorln(err)

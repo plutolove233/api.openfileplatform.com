@@ -6,8 +6,10 @@
 package userResource
 
 import (
+	"api.openfileplatform.com/internal/dao"
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/snowflake"
+	"api.openfileplatform.com/internal/models/ginModels/platform"
 	"api.openfileplatform.com/internal/services"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -87,5 +89,34 @@ func (*UserApiImpl) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.OK,
 		"message": "注册成功！",
+	})
+}
+
+func (*UserApiImpl) Get (c *gin.Context) {
+	var usersInfo []dao.PlatUsers
+	var platusers dao.PlatUsers
+	var err error
+	err,usersInfo = platusers.GetAll()
+	if err != nil {
+		c.JSON(http.StatusOK,gin.H{
+			"code":codes.DBError,
+			"message":"数据库错误",
+			"error":err,
+		})
+		return
+	}
+	userList := []platform.UserList{}
+	list := platform.UserList{}
+	for i := 0; i< len(usersInfo); i++{
+		list.UserID = usersInfo[i].UserID
+		list.UserName = usersInfo[i].UserName
+		list.Phone = usersInfo[i].Phone
+		list.Email = usersInfo[i].Email
+		userList = append(userList,list)
+	}
+
+	c.JSON(http.StatusOK,gin.H{
+		"code":codes.OK,
+		"message":userList,
 	})
 }

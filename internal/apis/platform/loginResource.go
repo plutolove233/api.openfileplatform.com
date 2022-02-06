@@ -6,11 +6,11 @@
 package platform
 
 import (
+	"api.openfileplatform.com/internal/models/ginModels/platform"
 	"net/http"
 
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
-	"api.openfileplatform.com/internal/models/ginModels"
 	"api.openfileplatform.com/internal/services"
 	"api.openfileplatform.com/internal/utils/jwt"
 	"github.com/gin-gonic/gin"
@@ -35,7 +35,7 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	}
 	//session := sessions.Default(c)
 
-	user := ginModels.UserModel{}
+	user := platform.UserModel{}
 	token := ""
 	//查询账号信息
 	var platUser services.PlatUsersService
@@ -155,7 +155,7 @@ func (*LoginApiImpl) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	user, _ := temp.(ginModels.UserModel)
+	user, _ := temp.(platform.UserModel)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    codes.ParameterIllegal,
