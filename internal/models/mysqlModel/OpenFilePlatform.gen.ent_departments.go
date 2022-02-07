@@ -59,12 +59,12 @@ func (obj *_EntDepartmentsMgr) WithAutoID(autoID int64) Option {
 }
 
 // WithEnterpriseID EnterpriseID获取
-func (obj *_EntDepartmentsMgr) WithEnterpriseID(enterpriseID int64) Option {
+func (obj *_EntDepartmentsMgr) WithEnterpriseID(enterpriseID string) Option {
 	return optionFunc(func(o *options) { o.query["EnterpriseID"] = enterpriseID })
 }
 
 // WithDepartmentID DepartmentID获取
-func (obj *_EntDepartmentsMgr) WithDepartmentID(departmentID int64) Option {
+func (obj *_EntDepartmentsMgr) WithDepartmentID(departmentID string) Option {
 	return optionFunc(func(o *options) { o.query["DepartmentID"] = departmentID })
 }
 
@@ -79,7 +79,7 @@ func (obj *_EntDepartmentsMgr) WithDepartmentCode(departmentCode int) Option {
 }
 
 // WithHeadID HeadID获取 部门领导人ID
-func (obj *_EntDepartmentsMgr) WithHeadID(headID int) Option {
+func (obj *_EntDepartmentsMgr) WithHeadID(headID string) Option {
 	return optionFunc(func(o *options) { o.query["HeadID"] = headID })
 }
 
@@ -133,28 +133,28 @@ func (obj *_EntDepartmentsMgr) GetBatchFromAutoID(autoIDs []int64) (results []*E
 }
 
 // GetFromEnterpriseID 通过EnterpriseID获取内容
-func (obj *_EntDepartmentsMgr) GetFromEnterpriseID(enterpriseID int64) (results []*EntDepartments, err error) {
+func (obj *_EntDepartmentsMgr) GetFromEnterpriseID(enterpriseID string) (results []*EntDepartments, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntDepartments{}).Where("`EnterpriseID` = ?", enterpriseID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromEnterpriseID 批量查找
-func (obj *_EntDepartmentsMgr) GetBatchFromEnterpriseID(enterpriseIDs []int64) (results []*EntDepartments, err error) {
+func (obj *_EntDepartmentsMgr) GetBatchFromEnterpriseID(enterpriseIDs []string) (results []*EntDepartments, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntDepartments{}).Where("`EnterpriseID` IN (?)", enterpriseIDs).Find(&results).Error
 
 	return
 }
 
 // GetFromDepartmentID 通过DepartmentID获取内容
-func (obj *_EntDepartmentsMgr) GetFromDepartmentID(departmentID int64) (results []*EntDepartments, err error) {
+func (obj *_EntDepartmentsMgr) GetFromDepartmentID(departmentID string) (results []*EntDepartments, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntDepartments{}).Where("`DepartmentID` = ?", departmentID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromDepartmentID 批量查找
-func (obj *_EntDepartmentsMgr) GetBatchFromDepartmentID(departmentIDs []int64) (results []*EntDepartments, err error) {
+func (obj *_EntDepartmentsMgr) GetBatchFromDepartmentID(departmentIDs []string) (results []*EntDepartments, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntDepartments{}).Where("`DepartmentID` IN (?)", departmentIDs).Find(&results).Error
 
 	return
@@ -189,14 +189,14 @@ func (obj *_EntDepartmentsMgr) GetBatchFromDepartmentCode(departmentCodes []int)
 }
 
 // GetFromHeadID 通过HeadID获取内容 部门领导人ID
-func (obj *_EntDepartmentsMgr) GetFromHeadID(headID int) (results []*EntDepartments, err error) {
+func (obj *_EntDepartmentsMgr) GetFromHeadID(headID string) (results []*EntDepartments, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntDepartments{}).Where("`HeadID` = ?", headID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromHeadID 批量查找 部门领导人ID
-func (obj *_EntDepartmentsMgr) GetBatchFromHeadID(headIDs []int) (results []*EntDepartments, err error) {
+func (obj *_EntDepartmentsMgr) GetBatchFromHeadID(headIDs []string) (results []*EntDepartments, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntDepartments{}).Where("`HeadID` IN (?)", headIDs).Find(&results).Error
 
 	return

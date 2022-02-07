@@ -13,13 +13,13 @@ import (
 
 type LoginApiImpl struct {}
 
-type LoginByPasswordParser struct {
+type loginByPasswordParser struct {
 	Account string	`form:"Account" json:"Account" binding:"required"`
 	Password string `form:"Password" json:"Password" binding:"required"`
 }
 
 func (*LoginApiImpl) LoginByPassword(c *gin.Context)  {
-	var parser LoginByPasswordParser
+	var parser loginByPasswordParser
 	err := c.ShouldBindJSON(&parser)
 	if err != nil {
 		responseParser.JsonParameterIllegal(c,err)
@@ -85,20 +85,29 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context)  {
 	responseParser.JsonOK(c,user)
 }
 
-type ChangePwdParser struct {
-	UserID 		string	`form:"UserID" json:"UserID" binding:"required"`
-	Password 	string	`form:"Password" json:"Password" binding:"required"`
-	NewPassword string	`form:"NewPassword" json:"NewPassword" binding:"required"`
+type refushTokenParser struct {
+	Token string `form:"Token" json:"Token" binding:"required"`
 }
 
-func (*LoginApiImpl)ChangePwd(c *gin.Context){
-	var parser ChangePwdParser
+func (*LoginApiImpl) RefushToken(c *gin.Context) {
+	var parser refushTokenParser
 	err := c.ShouldBindJSON(&parser)
 	if err != nil {
 		responseParser.JsonParameterIllegal(c,err)
 		return
 	}
 
-	//temp,ok := c.Get("user")
+	token := parser.Token
+	token,err = jwt.RefreshToken(token)
 
+	if err != nil {
+		c.JSON(http.StatusOK,gin.H{
+			"code":codes.AccessDenied,
+			"message":"token已过期",
+			"error":err.Error(),
+		})
+		return
+	}
+
+	responseParser.JsonOK(c,token)
 }

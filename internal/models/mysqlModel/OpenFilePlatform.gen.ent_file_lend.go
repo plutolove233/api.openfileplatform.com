@@ -70,7 +70,7 @@ func (obj *_EntFileLendMgr) WithEnterpriseID(enterpriseID string) Option {
 }
 
 // WithBorrowerID BorrowerID获取 文件借阅人
-func (obj *_EntFileLendMgr) WithBorrowerID(borrowerID int) Option {
+func (obj *_EntFileLendMgr) WithBorrowerID(borrowerID string) Option {
 	return optionFunc(func(o *options) { o.query["BorrowerID"] = borrowerID })
 }
 
@@ -172,14 +172,14 @@ func (obj *_EntFileLendMgr) GetBatchFromEnterpriseID(enterpriseIDs []string) (re
 }
 
 // GetFromBorrowerID 通过BorrowerID获取内容 文件借阅人
-func (obj *_EntFileLendMgr) GetFromBorrowerID(borrowerID int) (results []*EntFileLend, err error) {
+func (obj *_EntFileLendMgr) GetFromBorrowerID(borrowerID string) (results []*EntFileLend, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntFileLend{}).Where("`BorrowerID` = ?", borrowerID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromBorrowerID 批量查找 文件借阅人
-func (obj *_EntFileLendMgr) GetBatchFromBorrowerID(borrowerIDs []int) (results []*EntFileLend, err error) {
+func (obj *_EntFileLendMgr) GetBatchFromBorrowerID(borrowerIDs []string) (results []*EntFileLend, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntFileLend{}).Where("`BorrowerID` IN (?)", borrowerIDs).Find(&results).Error
 
 	return

@@ -23,6 +23,7 @@ func InitUsersRouterGroup(engine *gin.RouterGroup) {
 	Api.POST("register", userApi.Register)
 
 	Api.Use(middlewares.PlatformTokenRequire())
+	Api.POST("/changePassword", userApi.ChangePassword)
 	Api.GET("ping", func(context *gin.Context) {
 		context.JSON(http.StatusOK, "pong")
 	})

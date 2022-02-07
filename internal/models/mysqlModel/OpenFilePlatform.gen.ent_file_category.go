@@ -75,7 +75,7 @@ func (obj *_EntFileCategoryMgr) WithProjectID(projectID string) Option {
 }
 
 // WithEnterpriseID EnterpriseID获取 用户所属企业ID
-func (obj *_EntFileCategoryMgr) WithEnterpriseID(enterpriseID int64) Option {
+func (obj *_EntFileCategoryMgr) WithEnterpriseID(enterpriseID string) Option {
 	return optionFunc(func(o *options) { o.query["EnterpriseID"] = enterpriseID })
 }
 
@@ -181,14 +181,14 @@ func (obj *_EntFileCategoryMgr) GetBatchFromProjectID(projectIDs []string) (resu
 }
 
 // GetFromEnterpriseID 通过EnterpriseID获取内容 用户所属企业ID
-func (obj *_EntFileCategoryMgr) GetFromEnterpriseID(enterpriseID int64) (results []*EntFileCategory, err error) {
+func (obj *_EntFileCategoryMgr) GetFromEnterpriseID(enterpriseID string) (results []*EntFileCategory, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntFileCategory{}).Where("`EnterpriseID` = ?", enterpriseID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromEnterpriseID 批量查找 用户所属企业ID
-func (obj *_EntFileCategoryMgr) GetBatchFromEnterpriseID(enterpriseIDs []int64) (results []*EntFileCategory, err error) {
+func (obj *_EntFileCategoryMgr) GetBatchFromEnterpriseID(enterpriseIDs []string) (results []*EntFileCategory, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntFileCategory{}).Where("`EnterpriseID` IN (?)", enterpriseIDs).Find(&results).Error
 
 	return

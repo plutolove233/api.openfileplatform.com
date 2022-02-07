@@ -7,11 +7,11 @@ import (
 // EntDepartments [...]
 type EntDepartments struct {
 	AutoID         int64  `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	EnterpriseID   int64  `gorm:"column:EnterpriseID;type:bigint(22)" json:"enterpriseId"`
-	DepartmentID   int64  `gorm:"column:DepartmentID;type:bigint(22)" json:"departmentId"`
+	EnterpriseID   string `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"`
+	DepartmentID   string `gorm:"column:DepartmentID;type:varchar(20)" json:"departmentId"`
 	DepartmentName string `gorm:"column:DepartmentName;type:varchar(255)" json:"departmentName"`
 	DepartmentCode int    `gorm:"column:DepartmentCode;type:int(11)" json:"departmentCode"`
-	HeadID         int    `gorm:"column:HeadID;type:int(11)" json:"headId"` // 部门领导人ID
+	HeadID         string `gorm:"column:HeadID;type:varchar(20)" json:"headId"` // 部门领导人ID
 	IsDeleted      uint8  `gorm:"column:IsDeleted;type:tinyint(1) unsigned zerofill" json:"isDeleted"`
 }
 
@@ -50,7 +50,7 @@ type EntFile struct {
 	FileURL      string    `gorm:"column:FileURL;type:varchar(255)" json:"fileUrl"`          // 文件存放地址
 	FileTypeID   int       `gorm:"column:FileTypeID;type:int(11)" json:"fileTypeId"`         // 文件类型
 	Status       int8      `gorm:"column:Status;type:tinyint(11)" json:"status"`             // 0表示没有被借出，1表示已经借出
-	UserID       int       `gorm:"column:UserID;type:int(11)" json:"userId"`                 // 文件上传人
+	UserID       string    `gorm:"column:UserID;type:varchar(20)" json:"userId"`             // 文件上传人
 	FileCabinet  string    `gorm:"column:FileCabinet;type:varchar(30)" json:"fileCabinet"`   //  存放档案柜编号
 	IsDelete     bool      `gorm:"column:IsDelete;type:tinyint(1)" json:"isDelete"`          // 是否删除
 	UpdateTime   time.Time `gorm:"column:UpdateTime;type:timestamp" json:"updateTime"`       // 文件上传时间
@@ -101,7 +101,7 @@ type EntFileCategory struct {
 	CategoryID       int       `gorm:"column:CategoryID;type:int(11)" json:"categoryId"`             // 文件种类ID
 	CategoryParentID int       `gorm:"column:CategoryParentID;type:int(11)" json:"categoryParentId"` //  父级ID
 	ProjectID        string    `gorm:"column:ProjectID;type:varchar(20)" json:"projectId"`           // 所属项目ID
-	EnterpriseID     int64     `gorm:"column:EnterpriseID;type:bigint(22)" json:"enterpriseId"`      // 用户所属企业ID
+	EnterpriseID     string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"`     // 用户所属企业ID
 	CategoryName     string    `gorm:"column:CategoryName;type:varchar(50)" json:"categoryName"`     // 类别名称:  基建施工图纸，地建施工图纸
 	IsDelete         bool      `gorm:"column:IsDelete;type:tinyint(1)" json:"isDelete"`              // 是否删除
 	CreatTime        time.Time `gorm:"column:CreatTime;type:timestamp" json:"creatTime"`             // 记录创建时间
@@ -138,7 +138,7 @@ type EntFileLend struct {
 	AutoID       int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
 	FileID       string    `gorm:"column:FileID;type:varchar(20)" json:"fileId"`             //  文件（档案）ID
 	EnterpriseID string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"` // 文件所属公司ID
-	BorrowerID   int       `gorm:"column:BorrowerID;type:int(11)" json:"borrowerId"`         // 文件借阅人
+	BorrowerID   string    `gorm:"column:BorrowerID;type:varchar(20)" json:"borrowerId"`     // 文件借阅人
 	BorrowTime   time.Time `gorm:"column:BorrowTime;type:timestamp" json:"borrowTime"`       // 借出时间
 	BorrowTerm   int8      `gorm:"column:BorrowTerm;type:tinyint(2)" json:"borrowTerm"`      //  借阅周期
 	ReturnTime   time.Time `gorm:"column:ReturnTime;type:timestamp" json:"returnTime"`       // 归还时间
@@ -235,9 +235,9 @@ var EntProjectColumns = struct {
 // EntUsers [...]
 type EntUsers struct {
 	AutoID       int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	UserID       string    `gorm:"column:UserID;type:varchar(255)" json:"userId"`
-	EnterpriseID int64     `gorm:"column:EnterpriseID;type:bigint(22)" json:"enterpriseId"` // 用户所属企业ID
-	Account      string    `gorm:"column:Account;type:varchar(255)" json:"account"`         //  账号（默认手机号）
+	UserID       string    `gorm:"column:UserID;type:varchar(20)" json:"userId"`
+	EnterpriseID string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"` // 用户所属企业ID
+	Account      string    `gorm:"column:Account;type:varchar(255)" json:"account"`          //  账号（默认手机号）
 	Pwd          string    `gorm:"column:Pwd;type:varchar(255)" json:"pwd"`
 	UserName     string    `gorm:"column:UserName;type:varchar(255)" json:"userName"` // 用户姓名
 	Phone        string    `gorm:"column:Phone;type:varchar(255)" json:"phone"`
@@ -245,7 +245,7 @@ type EntUsers struct {
 	FacePicURL   string    `gorm:"column:FacePicUrl;type:varchar(255)" json:"facePicUrl"` // 头像
 	IsAdmin      int       `gorm:"column:IsAdmin;type:int(11)" json:"isAdmin"`
 	IsDeleted    bool      `gorm:"column:IsDeleted;type:tinyint(1);default:0" json:"isDeleted"` // 是否已删除：0--未删除；1--已经删除
-	CreateTime   time.Time `gorm:"column:CreateTime;type:timestamp;default:0000-00-00 00:00:00" json:"createTime"`
+	CreateTime   time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime"`
 	Token        string    `gorm:"column:Token;type:varchar(255)" json:"token"`
 }
 
@@ -288,10 +288,10 @@ var EntUsersColumns = struct {
 // PlatEnterprises [...]
 type PlatEnterprises struct {
 	AutoID          int64  `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	EnterpriseID    int64  `gorm:"column:EnterpriseID;type:bigint(22);not null" json:"enterpriseId"`
+	EnterpriseID    string `gorm:"column:EnterpriseID;type:varchar(20);not null" json:"enterpriseId"`
 	EnterpriseName  string `gorm:"column:EnterpriseName;type:varchar(255)" json:"enterpriseName"`
 	EnterprisePwd   string `gorm:"column:EnterprisePwd;type:varchar(255)" json:"enterprisePwd"`     // 企业登录密码
-	AdminID         int    `gorm:"column:AdminID;type:int(11)" json:"adminId"`                      // 企业管理员ID
+	AdminID         string `gorm:"column:AdminID;type:varchar(20)" json:"adminId"`                  // 企业管理员ID
 	Location        string `gorm:"column:Location;type:varchar(255)" json:"location"`               // 企业地址
 	EnterprisePhone string `gorm:"column:EnterprisePhone;type:varchar(255)" json:"enterprisePhone"` // 企业电话
 	EnterpriseURL   string `gorm:"column:EnterpriseUrl;type:varchar(255)" json:"enterpriseUrl"`     // 企业URL

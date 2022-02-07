@@ -100,7 +100,7 @@ func (obj *_EntFileMgr) WithStatus(status int8) Option {
 }
 
 // WithUserID UserID获取 文件上传人
-func (obj *_EntFileMgr) WithUserID(userID int) Option {
+func (obj *_EntFileMgr) WithUserID(userID string) Option {
 	return optionFunc(func(o *options) { o.query["UserID"] = userID })
 }
 
@@ -281,14 +281,14 @@ func (obj *_EntFileMgr) GetBatchFromStatus(statuss []int8) (results []*EntFile, 
 }
 
 // GetFromUserID 通过UserID获取内容 文件上传人
-func (obj *_EntFileMgr) GetFromUserID(userID int) (results []*EntFile, err error) {
+func (obj *_EntFileMgr) GetFromUserID(userID string) (results []*EntFile, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntFile{}).Where("`UserID` = ?", userID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromUserID 批量查找 文件上传人
-func (obj *_EntFileMgr) GetBatchFromUserID(userIDs []int) (results []*EntFile, err error) {
+func (obj *_EntFileMgr) GetBatchFromUserID(userIDs []string) (results []*EntFile, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntFile{}).Where("`UserID` IN (?)", userIDs).Find(&results).Error
 
 	return

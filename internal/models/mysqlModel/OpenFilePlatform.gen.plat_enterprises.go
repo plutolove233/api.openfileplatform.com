@@ -59,7 +59,7 @@ func (obj *_PlatEnterprisesMgr) WithAutoID(autoID int64) Option {
 }
 
 // WithEnterpriseID EnterpriseID获取
-func (obj *_PlatEnterprisesMgr) WithEnterpriseID(enterpriseID int64) Option {
+func (obj *_PlatEnterprisesMgr) WithEnterpriseID(enterpriseID string) Option {
 	return optionFunc(func(o *options) { o.query["EnterpriseID"] = enterpriseID })
 }
 
@@ -74,7 +74,7 @@ func (obj *_PlatEnterprisesMgr) WithEnterprisePwd(enterprisePwd string) Option {
 }
 
 // WithAdminID AdminID获取 企业管理员ID
-func (obj *_PlatEnterprisesMgr) WithAdminID(adminID int) Option {
+func (obj *_PlatEnterprisesMgr) WithAdminID(adminID string) Option {
 	return optionFunc(func(o *options) { o.query["AdminID"] = adminID })
 }
 
@@ -143,14 +143,14 @@ func (obj *_PlatEnterprisesMgr) GetBatchFromAutoID(autoIDs []int64) (results []*
 }
 
 // GetFromEnterpriseID 通过EnterpriseID获取内容
-func (obj *_PlatEnterprisesMgr) GetFromEnterpriseID(enterpriseID int64) (results []*PlatEnterprises, err error) {
+func (obj *_PlatEnterprisesMgr) GetFromEnterpriseID(enterpriseID string) (results []*PlatEnterprises, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`EnterpriseID` = ?", enterpriseID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromEnterpriseID 批量查找
-func (obj *_PlatEnterprisesMgr) GetBatchFromEnterpriseID(enterpriseIDs []int64) (results []*PlatEnterprises, err error) {
+func (obj *_PlatEnterprisesMgr) GetBatchFromEnterpriseID(enterpriseIDs []string) (results []*PlatEnterprises, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`EnterpriseID` IN (?)", enterpriseIDs).Find(&results).Error
 
 	return
@@ -185,14 +185,14 @@ func (obj *_PlatEnterprisesMgr) GetBatchFromEnterprisePwd(enterprisePwds []strin
 }
 
 // GetFromAdminID 通过AdminID获取内容 企业管理员ID
-func (obj *_PlatEnterprisesMgr) GetFromAdminID(adminID int) (results []*PlatEnterprises, err error) {
+func (obj *_PlatEnterprisesMgr) GetFromAdminID(adminID string) (results []*PlatEnterprises, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`AdminID` = ?", adminID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromAdminID 批量查找 企业管理员ID
-func (obj *_PlatEnterprisesMgr) GetBatchFromAdminID(adminIDs []int) (results []*PlatEnterprises, err error) {
+func (obj *_PlatEnterprisesMgr) GetBatchFromAdminID(adminIDs []string) (results []*PlatEnterprises, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`AdminID` IN (?)", adminIDs).Find(&results).Error
 
 	return

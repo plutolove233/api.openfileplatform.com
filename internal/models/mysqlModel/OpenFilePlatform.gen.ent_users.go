@@ -60,12 +60,12 @@ func (obj *_EntUsersMgr) WithAutoID(autoID int64) Option {
 }
 
 // WithUserID UserID获取
-func (obj *_EntUsersMgr) WithUserID(userID int) Option {
+func (obj *_EntUsersMgr) WithUserID(userID string) Option {
 	return optionFunc(func(o *options) { o.query["UserID"] = userID })
 }
 
 // WithEnterpriseID EnterpriseID获取 用户所属企业ID
-func (obj *_EntUsersMgr) WithEnterpriseID(enterpriseID int64) Option {
+func (obj *_EntUsersMgr) WithEnterpriseID(enterpriseID string) Option {
 	return optionFunc(func(o *options) { o.query["EnterpriseID"] = enterpriseID })
 }
 
@@ -164,28 +164,28 @@ func (obj *_EntUsersMgr) GetBatchFromAutoID(autoIDs []int64) (results []*EntUser
 }
 
 // GetFromUserID 通过UserID获取内容
-func (obj *_EntUsersMgr) GetFromUserID(userID int) (results []*EntUsers, err error) {
+func (obj *_EntUsersMgr) GetFromUserID(userID string) (results []*EntUsers, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`UserID` = ?", userID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromUserID 批量查找
-func (obj *_EntUsersMgr) GetBatchFromUserID(userIDs []int) (results []*EntUsers, err error) {
+func (obj *_EntUsersMgr) GetBatchFromUserID(userIDs []string) (results []*EntUsers, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`UserID` IN (?)", userIDs).Find(&results).Error
 
 	return
 }
 
 // GetFromEnterpriseID 通过EnterpriseID获取内容 用户所属企业ID
-func (obj *_EntUsersMgr) GetFromEnterpriseID(enterpriseID int64) (results []*EntUsers, err error) {
+func (obj *_EntUsersMgr) GetFromEnterpriseID(enterpriseID string) (results []*EntUsers, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`EnterpriseID` = ?", enterpriseID).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromEnterpriseID 批量查找 用户所属企业ID
-func (obj *_EntUsersMgr) GetBatchFromEnterpriseID(enterpriseIDs []int64) (results []*EntUsers, err error) {
+func (obj *_EntUsersMgr) GetBatchFromEnterpriseID(enterpriseIDs []string) (results []*EntUsers, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`EnterpriseID` IN (?)", enterpriseIDs).Find(&results).Error
 
 	return
