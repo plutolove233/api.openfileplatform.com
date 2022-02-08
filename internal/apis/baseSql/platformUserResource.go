@@ -22,13 +22,13 @@ func (*PlatformUserImpl) PlatformUserApi(c *gin.Context) {
 	if c.Request.Method == "GET" {
 		err = platUsersService.Get()
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "POST" {
 		err = platUsersService.Add()
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c,"", err)
 			return
 		}
 	} else if c.Request.Method == "PUT" {
@@ -41,13 +41,13 @@ func (*PlatformUserImpl) PlatformUserApi(c *gin.Context) {
 		temp.UserID = platUsersService.UserID
 		err = temp.Update(args)
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c,"", err)
 			return
 		}
 	} else if c.Request.Method == "DELETE" {
 		err = platUsersService.Delete()
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c,"", err)
 			return
 		}
 	}
