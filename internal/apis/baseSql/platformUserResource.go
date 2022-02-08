@@ -39,7 +39,7 @@ func (*PlatformUserImpl) PlatformUserApi(c *gin.Context) {
 		delete(args, "userId")
 		temp := services.PlatUsersService{}
 		temp.UserID = platUsersService.UserID
-		err = temp.Update(platUsersService)
+		err = temp.Update(args)
 		if err != nil {
 			responseParser.JsonDBError(c, err)
 			return

@@ -26,7 +26,7 @@ func (m *PlatUsers) Add() error {
 	return mysqlManager.Create(&m).Error
 }
 
-func (m *PlatUsers) Update(args interface{}) error {
+func (m *PlatUsers) Update(args map[string]interface{}) error {
 	mysqlManager := database.GetMysqlClient()
 	err := m.Get()
 	if err != nil {
