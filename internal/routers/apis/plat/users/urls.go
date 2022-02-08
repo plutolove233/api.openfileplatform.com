@@ -6,6 +6,7 @@
 package users
 
 import (
+	"api.openfileplatform.com/internal/apis/baseSql"
 	"api.openfileplatform.com/internal/apis/platform/userResource"
 	"api.openfileplatform.com/internal/middlewares"
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,9 @@ var (
 func InitUsersRouterGroup(engine *gin.RouterGroup) {
 	Api = engine.Group("user")
 
+	var impl baseSql.PlatformUserImpl
+	Api.Any("", impl.PlatformUserApi)
+
 	var userApi userResource.UserApiImpl
 	Api.POST("register", userApi.Register)
 
@@ -27,5 +31,5 @@ func InitUsersRouterGroup(engine *gin.RouterGroup) {
 	Api.GET("ping", func(context *gin.Context) {
 		context.JSON(http.StatusOK, "pong")
 	})
-	Api.GET("list",userApi.Get)
+	Api.GET("list", userApi.Get)
 }
