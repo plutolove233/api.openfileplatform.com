@@ -329,14 +329,14 @@ var PlatEnterprisesColumns = struct {
 // PlatUsers [...]
 type PlatUsers struct {
 	AutoID     int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	UserID     string    `gorm:"column:UserID;type:varchar(20)" json:"userId"`
-	UserName   string    `gorm:"column:UserName;type:varchar(255)" json:"userName"`
-	Account    string    `gorm:"column:Account;type:varchar(255)" json:"account"`
-	Password   string    `gorm:"column:Password;type:varchar(255)" json:"password"`
-	Phone      string    `gorm:"column:Phone;type:varchar(255)" json:"phone"`
-	Email      string    `gorm:"column:Email;type:varchar(255)" json:"email"`
-	IsDeleted  bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted"`
-	CreateTime time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime"`
+	UserID     string    `gorm:"column:UserID;type:varchar(20)" json:"userId" form:"userId"`
+	UserName   string    `gorm:"column:UserName;type:varchar(255)" json:"userName" form:"userName"`
+	Account    string    `gorm:"column:Account;type:varchar(255)" json:"account" form:"account"`
+	Password   string    `gorm:"column:Password;type:varchar(255)" json:"password" form:"password"`
+	Phone      string    `gorm:"column:Phone;type:varchar(255)" json:"phone" form:"phone"`
+	Email      string    `gorm:"column:Email;type:varchar(255)" json:"email" form:"email"`
+	IsDeleted  bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted" form:"isDeleted"`
+	CreateTime time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime" form:"createTime"`
 }
 
 // TableName get sql table name.获取数据库表名

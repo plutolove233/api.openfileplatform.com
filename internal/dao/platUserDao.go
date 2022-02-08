@@ -44,12 +44,19 @@ func (m *PlatUsers) Add() error {
 
 func (m *PlatUsers) Update(args map[string]interface{}) error {
 	mysqlManager := database.GetMysqlClient()
+	err := m.Get()
+	if err != nil {
+		return err
+	}
 	return mysqlManager.Model(&m).Updates(args).Error
 }
 
-func (m *PlatUsers) Delete(updateUser int64) error {
+func (m *PlatUsers) Delete() error {
 	mysqlManager := database.GetMysqlClient()
-
+	err := m.Get()
+	if err != nil {
+		return err
+	}
 	return mysqlManager.Model(&m).Updates(map[string]interface{}{
 		"IsDeleted": 1,
 	}).Error
