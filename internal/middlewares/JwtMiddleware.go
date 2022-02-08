@@ -51,7 +51,7 @@ func PlatformTokenRequire() gin.HandlerFunc {
 		//tokenID := jwtChaim.TokenID
 		//验证是否与session中tokenID相同
 		//session := sessions.Default(c)
-		//temp := session.Get("tokenID")
+		//temp := session.GetUserList("tokenID")
 		//if temp == nil {
 		//	c.JSON(http.StatusOK, gin.H{
 		//		"code":    codes.AccessDenied,
@@ -72,7 +72,7 @@ func PlatformTokenRequire() gin.HandlerFunc {
 
 		//从数据库读取token信息
 		//redisManager, ctx := database.GetRedisManager()
-		//result, err := redisManager.Get(ctx, "Token_"+tokenID).Result()
+		//result, err := redisManager.GetUserList(ctx, "Token_"+tokenID).Result()
 		//if err != nil {
 		//	log.Errorln(err)
 		//	c.JSON(http.StatusOK, gin.H{

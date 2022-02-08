@@ -12,16 +12,16 @@ import (
 type PlatEntApiImpl struct {}
 
 type EntRegisterParser struct {
-	EnterpriseName 	string	`form:"EnterpriseName" json:"EnterpriseName" binding:"required"`
-	EnterprisePwd 	string	`form:"EnterprisePwd" json:"EnterprisePwd" binding:"required"`
-	Location 		string	`form:"Location" json:"Location" binding:"required"`
-	EnterprisePhone string	`form:"EnterprisePhone" json:"EnterprisePhone" binding:"required"`
+	EnterpriseName     string `form:"EnterpriseName" json:"EnterpriseName" binding:"required"`
+	EnterprisePassword string `form:"EnterprisePassword" json:"EnterprisePassword" binding:"required"`
+	Location           string `form:"Location" json:"Location" binding:"required"`
+	EnterprisePhone    string `form:"EnterprisePhone" json:"EnterprisePhone" binding:"required"`
 }
 
 //用于在平台注册企业
 func ( *EntRegisterParser) Register(c *gin.Context)  {
 	var parser EntRegisterParser
-	err := c.ShouldBindJSON(&parser)
+	err := c.ShouldBind(&parser)
 	if err != nil {
 		responseParser.JsonParameterIllegal(c,err)
 		return
@@ -31,37 +31,45 @@ func ( *EntRegisterParser) Register(c *gin.Context)  {
 	platEnt.EnterpriseName = parser.EnterpriseName
 	err = platEnt.Get()
 	if err == nil {
-		c.JSON(200,gin.H{
-			"code":codes.DataExist,
-			"message":"企业名称已存在",
-		})
+		responseParser.JsonDataExist(c,"企业名称已存在")
 		return
 	}else if err.Error() == "record not found" {
-		hash, err1 := bcrypt.GenerateFromPassword([]byte(parser.EnterprisePwd),bcrypt.DefaultCost)
+		hash, err1 := bcrypt.GenerateFromPassword([]byte(parser.EnterprisePassword),bcrypt.DefaultCost)
 		if err1 != nil {
-			c.JSON(200,gin.H{
-				"code":codes.InternalError,
-				"message":"密码加密失败",
-				"error":err.Error(),
-			})
+			responseParser.JsonInternalError(c,"密码加密失败",err1)
 			return
 		}
-		platEnt.EnterprisePwd = string(hash)
+		platEnt.EnterprisePassword = string(hash)
 		platEnt.EnterpriseID = snowflake.GetSnowflakeID()
 		platEnt.EnterprisePhone = parser.EnterprisePhone
 		platEnt.Location = parser.Location
 
 		err1 = platEnt.Add()
 		if err1 != nil {
-			responseParser.JsonDBError(c,err1)
+			responseParser.JsonDBError(c,"",err1)
 			return
 		}
 	}else {
-		responseParser.JsonDBError(c,err)
+		responseParser.JsonDBError(c,"",err)
 		return
 	}
 	c.JSON(200,gin.H{
 		"code":codes.OK,
 		"message":"注册成功",
 	})
+}
+
+type changePwdParser struct {
+	EnterpriseID 	string	`form:"EnterpriseID" json:"EnterpriseID" binding:"required"`
+	Password 		string	`form:"Password" json:"Password" binding:"required"`
+	NewPassword 	string	`form:"NewPassword" json:"NewPassword" binding:"required"`
+}
+
+func (*PlatEntApiImpl) ChangePwd(c *gin.Context) {
+	var parser changePwdParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,err)
+		return
+	}
 }

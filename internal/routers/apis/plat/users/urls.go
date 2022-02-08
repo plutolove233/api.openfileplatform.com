@@ -27,5 +27,5 @@ func InitUsersRouterGroup(engine *gin.RouterGroup) {
 	Api.GET("ping", func(context *gin.Context) {
 		context.JSON(http.StatusOK, "pong")
 	})
-	Api.GET("list",userApi.Get)
+	Api.GET("list",userApi.GetUserList)
 }

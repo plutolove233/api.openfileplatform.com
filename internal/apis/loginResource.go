@@ -1,15 +1,7 @@
-// coding: utf-8
-// @Author : lryself
-// @Date : 2021/4/10 2:43
-// @Software: GoLand
-
-package platform
+package apis
 
 import (
-	"api.openfileplatform.com/internal/models/ginModels/platform"
-	"net/http"
-
-	"api.openfileplatform.com/internal/globals/codes"
+	"api.openfileplatform.com/internal/dao"
 	"api.openfileplatform.com/internal/globals/responseParser"
 	"api.openfileplatform.com/internal/services"
 	"api.openfileplatform.com/internal/utils/jwt"
@@ -22,35 +14,40 @@ type LoginApiImpl struct{}
 type loginByPasswordParser struct {
 	Account  string `form:"Account" json:"Account" binding:"required"`
 	Password string `form:"Password" json:"Password" binding:"required"`
+	UserType string	`form:"UserType" json:"UserType" binding:"required"`
 }
 
 func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
-	var Parser loginByPasswordParser
+	var parser loginByPasswordParser
 	var err error
 	//解析参数
-	err = c.ShouldBind(&Parser)
+	err = c.ShouldBind(&parser)
 	if err != nil {
 		responseParser.JsonParameterIllegal(c, err)
 		return
 	}
 	//session := sessions.Default(c)
 
-	user := platform.UserModel{}
+	var user dao.UserInterface
 	token := ""
+	if parser.UserType == "platform" {
+		user = &services.PlatUsersService{}
+	}else{
+		user = &services.EntUserService{}
+	}
 	//查询账号信息
-	var platUser services.PlatUsersService
-	platUser.Account = Parser.Account
-	err = platUser.Get()
+	user.SetAccount(parser.Account)
+	err = user.Get()
 
 	if err != nil {
-		responseParser.JsonDBError(c, err)
+		responseParser.JsonDBError(c, "", err)
 		return
 	}
 
 	//验证密码
 	var password []byte
 
-	//password, err = base64.StdEncoding.DecodeString(Parser.Password)
+	//password, err = base64.StdEncoding.DecodeString(parser.Password)
 	//if err != nil {
 	//	c.JSON(http.StatusOK, gin.H{
 	//		"code":    codes.InternalError,
@@ -70,25 +67,22 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	//	return
 	//}
 
-	password = []byte(Parser.Password)
-	err = bcrypt.CompareHashAndPassword([]byte(platUser.Password), password)
+	password = []byte(parser.Password)
+	err = bcrypt.CompareHashAndPassword([]byte(user.GetPassword()), password)
 
 	if err != nil {
 		if err.Error() == "crypto/bcrypt: hashedPassword is not the hash of the given password" {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.AccessDenied,
-				"message": "密码错误！",
-			})
+			responseParser.JsonAccessDenied(c,"密码错误！")
 			return
 		}
-		responseParser.JsonInternalError(c, err)
+		responseParser.JsonInternalError(c, "密码加密失败", err)
 		return
 	}
 
 	//获取登录的用户信息
-	user.UserID = platUser.UserID
-	user.Account = platUser.Account
-	user.IsPlatUser = true
+	//user.UserID = platUser.UserID
+	//user.Account = platUser.Account
+	//user.IsPlatUser = true
 
 	//temp, err := json.Marshal(user)
 	//if err != nil {
@@ -100,13 +94,9 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 	//	return
 	//}
 	//生成token
-	token, err = jwt.MakeToken(user.UserID, user.IsPlatUser, user.IsAdmin)
+	token, err = jwt.MakeToken(user.GetUserID(), true, user.GetIsAdmin())
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.InternalError,
-			"message": "Token生成错误！",
-			"err":     err.Error(),
-		})
+		responseParser.JsonInternalError(c,"Token生成错误！",err)
 		return
 	}
 	//存入session
@@ -138,11 +128,7 @@ func (*LoginApiImpl) RefreshToken(c *gin.Context) {
 	var err error
 	err = c.ShouldBindJSON(&parser)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.ParameterIllegal,
-			"message": "参数错误！",
-			"err":     err,
-		})
+		responseParser.JsonParameterIllegal(c,err)
 		return
 	}
 
@@ -151,23 +137,15 @@ func (*LoginApiImpl) RefreshToken(c *gin.Context) {
 	token, err = jwt.RefreshToken(token)
 
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.AccessDenied,
-			"message": "token已过期！",
-			"err":     err,
-		})
+		responseParser.JsonLoginError(c,"token已过期！",err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"code":    codes.OK,
-		"message": "成功！",
-		"data":    token,
-	})
+	responseParser.JsonOK(c,token)
 	return
 }
 
 //func (*LoginApiImpl) Logout(c *gin.Context) {
-//	temp, ok := c.Get("TokenID")
+//	temp, ok := c.GetUserList("TokenID")
 //	if ok == false {
 //		c.JSON(http.StatusOK, gin.H{
 //			"code":    codes.AccessDenied,

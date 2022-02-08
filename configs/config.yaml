@@ -25,7 +25,7 @@ system:
   #  fs本地文件系统路径
   FsPath: fs
   #  部署服务器ip
-  SysIP: 127.0.0.1
+  SysIP: 0.0.0.0
   #  部署服务器端口
   SysPort: 8000
   #  使用mysql

@@ -74,9 +74,9 @@ func (obj *_EntUsersMgr) WithAccount(account string) Option {
 	return optionFunc(func(o *options) { o.query["Account"] = account })
 }
 
-// WithPwd Pwd获取
-func (obj *_EntUsersMgr) WithPwd(pwd string) Option {
-	return optionFunc(func(o *options) { o.query["Pwd"] = pwd })
+// WithPassword Password获取
+func (obj *_EntUsersMgr) WithPassword(password string) Option {
+	return optionFunc(func(o *options) { o.query["Password"] = password })
 }
 
 // WithUserName UserName获取 用户姓名
@@ -205,16 +205,16 @@ func (obj *_EntUsersMgr) GetBatchFromAccount(accounts []string) (results []*EntU
 	return
 }
 
-// GetFromPwd 通过Pwd获取内容
-func (obj *_EntUsersMgr) GetFromPwd(pwd string) (results []*EntUsers, err error) {
-	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`Pwd` = ?", pwd).Find(&results).Error
+// GetFromPassword 通过Password获取内容
+func (obj *_EntUsersMgr) GetFromPassword(password string) (results []*EntUsers, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`Password` = ?", password).Find(&results).Error
 
 	return
 }
 
-// GetBatchFromPwd 批量查找
-func (obj *_EntUsersMgr) GetBatchFromPwd(pwds []string) (results []*EntUsers, err error) {
-	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`Pwd` IN (?)", pwds).Find(&results).Error
+// GetBatchFromPassword 批量查找
+func (obj *_EntUsersMgr) GetBatchFromPassword(passwords []string) (results []*EntUsers, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(EntUsers{}).Where("`Password` IN (?)", passwords).Find(&results).Error
 
 	return
 }

@@ -1,7 +1,7 @@
 package plat
 
 import (
-	"api.openfileplatform.com/internal/apis/platform"
+	"api.openfileplatform.com/internal/apis"
 	"api.openfileplatform.com/internal/routers/apis/plat/users"
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +13,7 @@ var (
 func InitPlatRouterGroup(engine *gin.RouterGroup) {
 	Api = engine.Group("plat")
 
-	var loginApi platform.LoginApiImpl
+	var loginApi apis.LoginApiImpl
 	Api.POST("/login", loginApi.LoginByPassword)
 
 	//Api.POST("/logout", loginApi.Logout)

@@ -68,9 +68,9 @@ func (obj *_PlatEnterprisesMgr) WithEnterpriseName(enterpriseName string) Option
 	return optionFunc(func(o *options) { o.query["EnterpriseName"] = enterpriseName })
 }
 
-// WithEnterprisePwd EnterprisePwd获取 企业登录密码
-func (obj *_PlatEnterprisesMgr) WithEnterprisePwd(enterprisePwd string) Option {
-	return optionFunc(func(o *options) { o.query["EnterprisePwd"] = enterprisePwd })
+// WithEnterprisePassword EnterprisePassword获取 企业登录密码
+func (obj *_PlatEnterprisesMgr) WithEnterprisePassword(enterprisePassword string) Option {
+	return optionFunc(func(o *options) { o.query["EnterprisePassword"] = enterprisePassword })
 }
 
 // WithAdminID AdminID获取 企业管理员ID
@@ -170,16 +170,16 @@ func (obj *_PlatEnterprisesMgr) GetBatchFromEnterpriseName(enterpriseNames []str
 	return
 }
 
-// GetFromEnterprisePwd 通过EnterprisePwd获取内容 企业登录密码
-func (obj *_PlatEnterprisesMgr) GetFromEnterprisePwd(enterprisePwd string) (results []*PlatEnterprises, err error) {
-	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`EnterprisePwd` = ?", enterprisePwd).Find(&results).Error
+// GetFromEnterprisePassword 通过EnterprisePassword获取内容 企业登录密码
+func (obj *_PlatEnterprisesMgr) GetFromEnterprisePassword(enterprisePassword string) (results []*PlatEnterprises, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`EnterprisePassword` = ?", enterprisePassword).Find(&results).Error
 
 	return
 }
 
-// GetBatchFromEnterprisePwd 批量查找 企业登录密码
-func (obj *_PlatEnterprisesMgr) GetBatchFromEnterprisePwd(enterprisePwds []string) (results []*PlatEnterprises, err error) {
-	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`EnterprisePwd` IN (?)", enterprisePwds).Find(&results).Error
+// GetBatchFromEnterprisePassword 批量查找 企业登录密码
+func (obj *_PlatEnterprisesMgr) GetBatchFromEnterprisePassword(enterprisePasswords []string) (results []*PlatEnterprises, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(PlatEnterprises{}).Where("`EnterprisePassword` IN (?)", enterprisePasswords).Find(&results).Error
 
 	return
 }

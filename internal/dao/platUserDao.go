@@ -21,6 +21,22 @@ func (m *PlatUsers) Get() error {
 	}).Where(m).Take(m).Error
 }
 
+func (m *PlatUsers)GetUserID()string{
+	return m.UserID
+}
+func (m *PlatUsers)SetUserID(id string){
+	m.UserID  = id
+}
+func (m *PlatUsers)GetIsAdmin()bool {
+	return true
+}
+func (m *PlatUsers)SetAccount(account string){
+	m.Account = account
+}
+func (m *PlatUsers) GetPassword() string {
+	return m.Password
+}
+
 func (m *PlatUsers) Add() error {
 	mysqlManager := database.GetMysqlClient()
 	return mysqlManager.Create(&m).Error
@@ -39,8 +55,8 @@ func (m *PlatUsers) Delete(updateUser int64) error {
 	}).Error
 }
 
-func (*PlatUsers)GetAll() (error,[]PlatUsers){
+func (*PlatUsers)GetAll() ([]PlatUsers,error){
 	mysqlManager := database.GetMysqlClient()
 	users := []PlatUsers{}
-	return mysqlManager.Model(&PlatUsers{}).Find(&users).Error,users
+	return users,mysqlManager.Model(&PlatUsers{}).Find(&users).Error
 }
