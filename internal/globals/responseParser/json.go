@@ -7,6 +7,7 @@ package responseParser
 
 import (
 	"api.openfileplatform.com/internal/globals/codes"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -33,19 +34,23 @@ func JsonParameterIllegal(c *gin.Context, msg string, err error) {
 	})
 }
 
-func JsonDataError(c *gin.Context, msg string) {
+func JsonDataError(c *gin.Context, msg string, err error) {
 	if msg == "" {
 		msg = "数据错误!"
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.DataError,
 		"message": msg,
+		"err":     err.Error(),
 	})
 }
 
 func JsonNotData(c *gin.Context, msg string, err error) {
 	if msg == "" {
 		msg = "无数据!"
+	}
+	if err == nil {
+		err = errors.New(msg)
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.DataError,
@@ -87,3 +92,46 @@ func JsonDBError(c *gin.Context, msg string, err error) {
 		"err":     err.Error(),
 	})
 }
+
+//func JsonDataExist(c *gin.Context, msg string){
+//	c.JSON(http.StatusOK,gin.H{
+//		"code":codes.DataExist,
+//		"message":msg,
+//	})
+//}
+//
+//func JsonAccessDenied(c *gin.Context, msg string) {
+//	c.JSON(http.StatusOK, gin.H{
+//		"code":    codes.AccessDenied,
+//		"message": msg,
+//	})
+//}
+//
+//func JsonLoginError(c *gin.Context, msg string, err error) {
+//	if err == nil {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code":    codes.LoginError,
+//			"message": msg,
+//		})
+//	}else {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code":    codes.LoginError,
+//			"message": msg,
+//			"err":     err,
+//		})
+//	}
+//}
+//
+//func JsonUnauthorizedUserId(c *gin.Context, msg string) {
+//	c.JSON(http.StatusOK, gin.H{
+//		"code":    codes.UnauthorizedUserId,
+//		"message": msg,
+//	})
+//}
+//
+//func JsonIncompleteRequest(c *gin.Context,msg string){
+//	c.JSON(http.StatusOK,gin.H{
+//		"code":		codes.ParameterIllegal,
+//		"message":	msg,
+//	})
+//}

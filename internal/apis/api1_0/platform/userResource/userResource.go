@@ -6,11 +6,9 @@
 package userResource
 
 import (
-	"api.openfileplatform.com/internal/dao"
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
-	"api.openfileplatform.com/internal/globals/snowflake"
-	"api.openfileplatform.com/internal/models/ginModels/platform"
+	"api.openfileplatform.com/internal/models/ginModels"
 	"api.openfileplatform.com/internal/services"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -19,95 +17,77 @@ import (
 //platform
 type UserApiImpl struct{}
 
-type RegisterParser struct {
+//type RegisterParser struct {
+//	UserName string `form:"UserName" json:"UserName" binding:""`
+//	Account  string `form:"Account" json:"Account" binding:"required"`
+//	Password string `form:"Password" json:"Password" binding:"required"`
+//	Phone    string `form:"Phone" json:"Phone" binding:""`
+//	Email    string `form:"Email" json:"Email" binding:""`
+//}
+//
+//func (*UserApiImpl) Register(c *gin.Context) {
+//	var parser RegisterParser
+//	var err error
+//	//解析参数
+//	err = c.ShouldBind(&parser)
+//	if err != nil {
+//		responseParser.JsonParameterIllegal(c,err)
+//		return
+//	}
+//
+//	userInfo := services.PlatUsersService{}
+//
+//	// 检验此注册方式是否已经注册过
+//	userInfo.Account = parser.Account
+//	err = userInfo.Get()
+//	if err == nil {
+//		responseParser.JsonDataExist(c,"账号已被注册！")
+//		return
+//	} else if err.Error() == "record not found" {
+//		// 未注册过则注册此登录方式
+//		hash, err := bcrypt.GenerateFromPassword([]byte(parser.Password), bcrypt.DefaultCost)
+//		if err != nil {
+//			responseParser.JsonInternalError(c,"密码加密错误！",err)
+//			return
+//		}
+//		userInfo.UserName = parser.UserName
+//		userInfo.Account = parser.Account
+//		userInfo.Password = string(hash)
+//		userInfo.UserID = snowflake.GetSnowflakeID()
+//		userInfo.Phone = parser.Phone
+//		userInfo.Email = parser.Email
+//		err1 := userInfo.Add()
+//		if err1 != nil {
+//			responseParser.JsonDBError(c,"",err1)
+//			return
+//		}
+//	} else {
+//		responseParser.JsonDBError(c,"",err)
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, gin.H{
+//		"code":    codes.OK,
+//		"message": "注册成功！",
+//	})
+//}
+
+type userListResponser struct {
 	UserName string `form:"UserName" json:"UserName" binding:""`
-	Account  string `form:"Account" json:"Account" binding:"required"`
-	Password string `form:"Password" json:"Password" binding:"required"`
+	UserID   string `form:"UserID" json:"UserID" binding:"required"`
 	Phone    string `form:"Phone" json:"Phone" binding:""`
 	Email    string `form:"Email" json:"Email" binding:""`
 }
 
-func (*UserApiImpl) Register(c *gin.Context) {
-	var Parser RegisterParser
-	var err error
-	//解析参数
-	err = c.ShouldBind(&Parser)
+func (*UserApiImpl) GetUserList(c *gin.Context) {
+	var platusers services.PlatUsersService
+	usersInfo,err := platusers.GetAll()
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.OK,
-			"message": "参数错误！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c,"",err)
 		return
 	}
-
-	userInfo := services.PlatUsersService{}
-
-	// 检验此注册方式是否已经注册过
-	userInfo.Account = Parser.Account
-	err = userInfo.Get()
-	if err == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DataExist,
-			"message": "账号已被注册！",
-		})
-		return
-	} else if err.Error() == "record not found" {
-		// 未注册过则注册此登录方式
-		hash, err := bcrypt.GenerateFromPassword([]byte(Parser.Password), bcrypt.DefaultCost)
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.InternalError,
-				"message": "密码加密错误！",
-				"err":     err,
-			})
-			return
-		}
-		userInfo.UserName = Parser.UserName
-		userInfo.Account = Parser.Account
-		userInfo.Password = string(hash)
-		userInfo.UserID = snowflake.GetSnowflakeID()
-		userInfo.Phone = Parser.Phone
-		userInfo.Email = Parser.Email
-		err1 := userInfo.Add()
-		if err1 != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.DBError,
-				"message": "数据库错误！",
-				"err":     err1,
-			})
-			return
-		}
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "数据库错误！",
-			"err":     err,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code":    codes.OK,
-		"message": "注册成功！",
-	})
-}
-
-func (*UserApiImpl) Get (c *gin.Context) {
-	var usersInfo []dao.PlatUsers
-	var platusers dao.PlatUsers
-	var err error
-	err,usersInfo = platusers.GetAll()
-	if err != nil {
-		c.JSON(http.StatusOK,gin.H{
-			"code":codes.DBError,
-			"message":"数据库错误",
-			"error":err,
-		})
-		return
-	}
-	userList := []platform.UserList{}
-	list := platform.UserList{}
+	userList := []userListResponser{}
+	list := userListResponser{}
 	for i := 0; i< len(usersInfo); i++{
 		list.UserID = usersInfo[i].UserID
 		list.UserName = usersInfo[i].UserName
@@ -116,10 +96,7 @@ func (*UserApiImpl) Get (c *gin.Context) {
 		userList = append(userList,list)
 	}
 
-	c.JSON(http.StatusOK,gin.H{
-		"code":codes.OK,
-		"message":userList,
-	})
+	responseParser.JsonOK(c,userList)
 }
 
 type changePasswordParser struct {
@@ -129,10 +106,10 @@ type changePasswordParser struct {
 }
 
 func (*UserApiImpl) ChangePassword(c *gin.Context) {
-	var Parser changePasswordParser
+	var parser changePasswordParser
 	var err error
 	//解析参数
-	err = c.ShouldBindJSON(&Parser)
+	err = c.ShouldBind(&parser)
 	if err != nil {
 		responseParser.JsonParameterIllegal(c, err)
 		return
@@ -141,30 +118,20 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 	//查询账号信息
 	temp, ok := c.Get("user")
 	if !ok {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.NotData,
-			"message": "用户未登录！",
-		})
+		responseParser.JsonLoginError(c,"用户未登录",nil)
 		return
 	}
 
-	user, _ := temp.(platform.UserModel)
+	user, _ := temp.(ginModels.UserModel)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.ParameterIllegal,
-			"message": "UserID错误！",
-			"err":     err,
-		})
+		responseParser.JsonParameterIllegal(c,err)
 		return
 	}
-	userID := Parser.UserID
+	userID := parser.UserID
 
 	if user.VerifyAdminRole() {
-		if user.UserID != userID {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.UnauthorizedUserId,
-				"message": "只能修改自己的密码！",
-			})
+		if user.UserID != userID || user.IsAdmin != true {
+			responseParser.JsonUnauthorizedUserId(c,"只能修改自己的密码！")
 			return
 		}
 	}
@@ -174,36 +141,21 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 	err = platUser.Get()
 	if err != nil {
 		if err.Error() == "record not found" {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.NotData,
-				"message": "无数据！",
-				"err":     err,
-			})
+			responseParser.JsonNotData(c,err)
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "数据库错误！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c,"",err)
 		return
 	}
 	//验证密码
-	err = bcrypt.CompareHashAndPassword([]byte(platUser.Password), []byte(Parser.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(platUser.Password), []byte(parser.Password))
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DataError,
-			"message": "密码错误！",
-		})
+		responseParser.JsonDataError(c,"密码错误！")
 		return
 	}
-	hash, err := bcrypt.GenerateFromPassword([]byte(Parser.NewPassword), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(parser.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "数据库错误！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c,"",err)
 		return
 	}
 
@@ -212,11 +164,7 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 		//"update_user": user.UserID,
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "更新密码出错！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c,"更新密码出错！",err)
 		return
 	}
 

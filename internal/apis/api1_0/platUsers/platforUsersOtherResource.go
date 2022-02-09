@@ -9,9 +9,10 @@ import (
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
 	"api.openfileplatform.com/internal/globals/snowflake"
-	"api.openfileplatform.com/internal/models/ginModels/platform"
+	"api.openfileplatform.com/internal/models/ginModels"
 	"api.openfileplatform.com/internal/services"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
@@ -95,25 +96,14 @@ func (*PlatformUserApi) ChangePassword(c *gin.Context) {
 	//查询账号信息
 	temp, ok := c.Get("user")
 	if !ok {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.NotData,
-			"message": "用户未登录！",
-		})
+		responseParser.JsonNotData(c, "用户未登录", nil)
 		return
 	}
 
-	user, _ := temp.(platform.UserModel)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.ParameterIllegal,
-			"message": "UserID错误！",
-			"err":     err,
-		})
-		return
-	}
+	user := temp.(ginModels.UserModel)
 	userID := Parser.UserID
 
-	if user.VerifyAdminRole() {
+	if !user.VerifyAdminRole() {
 		if user.UserID != userID {
 			c.JSON(http.StatusOK, gin.H{
 				"code":    codes.UnauthorizedUserId,
@@ -127,50 +117,26 @@ func (*PlatformUserApi) ChangePassword(c *gin.Context) {
 	platUser.UserID = userID
 	err = platUser.Get()
 	if err != nil {
-		if err.Error() == "record not found" {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    codes.NotData,
-				"message": "无数据！",
-				"err":     err,
-			})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "数据库错误！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c, "", err)
 		return
 	}
 	//验证密码
 	err = bcrypt.CompareHashAndPassword([]byte(platUser.Password), []byte(Parser.Password))
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DataError,
-			"message": "密码错误！",
-		})
+		responseParser.JsonDataError(c, "密码错误！", err)
 		return
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(Parser.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "数据库错误！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c, "", err)
 		return
 	}
 
 	err = platUser.Update(map[string]interface{}{
 		"password": string(hash),
-		//"update_user": user.UserID,
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DBError,
-			"message": "更新密码出错！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c, "密码出错", err)
 		return
 	}
 
@@ -194,7 +160,25 @@ func (*PlatformUserApi) RefreshPassword(c *gin.Context) {
 		return
 	}
 
+	//查询账号信息
+	temp, ok := c.Get("user")
+	if !ok {
+		responseParser.JsonNotData(c, "用户未登录", nil)
+		return
+	}
+
+	user := temp.(ginModels.UserModel)
 	userID := Parser.UserID
+
+	if !user.VerifyAdminRole() {
+		if user.UserID != userID {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    codes.UnauthorizedUserId,
+				"message": "只能修改自己的密码！",
+			})
+			return
+		}
+	}
 
 	var platUser services.PlatUsersService
 	platUser.UserID = userID
@@ -203,9 +187,10 @@ func (*PlatformUserApi) RefreshPassword(c *gin.Context) {
 		responseParser.JsonDBError(c, "", err)
 		return
 	}
-	hash, err := bcrypt.GenerateFromPassword([]byte("123456"), bcrypt.DefaultCost)
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(viper.GetString("user.defaultPassword")), bcrypt.DefaultCost)
 	if err != nil {
-		responseParser.JsonInternalError(c, "", err)
+		responseParser.JsonDBError(c, "", err)
 		return
 	}
 
@@ -213,13 +198,12 @@ func (*PlatformUserApi) RefreshPassword(c *gin.Context) {
 		"password": string(hash),
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DataError,
-			"message": "更新密码出错！",
-			"err":     err,
-		})
+		responseParser.JsonDBError(c, "密码出错", err)
 		return
 	}
 
-	responseParser.JsonOK(c, "", nil)
+	c.JSON(http.StatusOK, gin.H{
+		"code":    codes.OK,
+		"message": "密码重置成功！",
+	})
 }

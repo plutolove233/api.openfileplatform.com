@@ -15,4 +15,7 @@ func InitAPI1_0Router(engine *gin.Engine) {
 	Api.GET("version", api1_0.GetVersion)
 
 	platUsers.InitPlatUsersRouterGroup(Api)
+	var userApi api1_0.UserApi
+	Api.POST("loginByPassword", userApi.LoginByPassword)
+	Api.POST("refreshToken", userApi.RefreshToken)
 }

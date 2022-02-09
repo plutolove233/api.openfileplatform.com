@@ -7,7 +7,7 @@ package middlewares
 
 import (
 	"api.openfileplatform.com/internal/globals/codes"
-	"api.openfileplatform.com/internal/models/ginModels/platform"
+	"api.openfileplatform.com/internal/models/ginModels"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func AuthenticationMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		user := temp.(platform.UserModel)
+		user := temp.(ginModels.UserModel)
 		// 验证权限
 		if ok := user.VerifyAdminRole(); !ok {
 			c.JSON(http.StatusOK, gin.H{

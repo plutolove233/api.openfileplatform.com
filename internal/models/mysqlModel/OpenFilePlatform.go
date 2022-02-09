@@ -238,12 +238,12 @@ type EntUsers struct {
 	UserID       string    `gorm:"column:UserID;type:varchar(20)" json:"userId"`
 	EnterpriseID string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"` // 用户所属企业ID
 	Account      string    `gorm:"column:Account;type:varchar(255)" json:"account"`          //  账号（默认手机号）
-	Pwd          string    `gorm:"column:Pwd;type:varchar(255)" json:"pwd"`
+	Password     string    `gorm:"column:Password;type:varchar(255)" json:"password"`
 	UserName     string    `gorm:"column:UserName;type:varchar(255)" json:"userName"` // 用户姓名
 	Phone        string    `gorm:"column:Phone;type:varchar(255)" json:"phone"`
 	Email        string    `gorm:"column:Email;type:varchar(255)" json:"email"`
 	FacePicURL   string    `gorm:"column:FacePicUrl;type:varchar(255)" json:"facePicUrl"` // 头像
-	IsAdmin      int       `gorm:"column:IsAdmin;type:int(11)" json:"isAdmin"`
+	IsAdmin      bool      `gorm:"column:IsAdmin;type:tinyint(1);default:0" json:"isAdmin"`
 	IsDeleted    bool      `gorm:"column:IsDeleted;type:tinyint(1);default:0" json:"isDeleted"` // 是否已删除：0--未删除；1--已经删除
 	CreateTime   time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime"`
 	Token        string    `gorm:"column:Token;type:varchar(255)" json:"token"`
@@ -260,7 +260,7 @@ var EntUsersColumns = struct {
 	UserID       string
 	EnterpriseID string
 	Account      string
-	Pwd          string
+	Password     string
 	UserName     string
 	Phone        string
 	Email        string
@@ -274,7 +274,7 @@ var EntUsersColumns = struct {
 	UserID:       "UserID",
 	EnterpriseID: "EnterpriseID",
 	Account:      "Account",
-	Pwd:          "Pwd",
+	Password:     "Password",
 	UserName:     "UserName",
 	Phone:        "Phone",
 	Email:        "Email",
@@ -287,15 +287,15 @@ var EntUsersColumns = struct {
 
 // PlatEnterprises [...]
 type PlatEnterprises struct {
-	AutoID          int64  `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	EnterpriseID    string `gorm:"column:EnterpriseID;type:varchar(20);not null" json:"enterpriseId"`
-	EnterpriseName  string `gorm:"column:EnterpriseName;type:varchar(255)" json:"enterpriseName"`
-	EnterprisePwd   string `gorm:"column:EnterprisePwd;type:varchar(255)" json:"enterprisePwd"`     // 企业登录密码
-	AdminID         string `gorm:"column:AdminID;type:varchar(20)" json:"adminId"`                  // 企业管理员ID
-	Location        string `gorm:"column:Location;type:varchar(255)" json:"location"`               // 企业地址
-	EnterprisePhone string `gorm:"column:EnterprisePhone;type:varchar(255)" json:"enterprisePhone"` // 企业电话
-	EnterpriseURL   string `gorm:"column:EnterpriseUrl;type:varchar(255)" json:"enterpriseUrl"`     // 企业URL
-	LogoPicURL      string `gorm:"column:LogoPicUrl;type:varchar(255)" json:"logoPicUrl"`           // 企业logo地址
+	AutoID             int64  `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
+	EnterpriseID       string `gorm:"column:EnterpriseID;type:varchar(20);not null" json:"enterpriseId"`
+	EnterpriseName     string `gorm:"column:EnterpriseName;type:varchar(255)" json:"enterpriseName"`
+	EnterprisePassword string `gorm:"column:EnterprisePassword;type:varchar(255)" json:"enterprisePassword"` // 企业登录密码
+	AdminID            string `gorm:"column:AdminID;type:varchar(20)" json:"adminId"`                        // 企业管理员ID
+	Location           string `gorm:"column:Location;type:varchar(255)" json:"location"`                     // 企业地址
+	EnterprisePhone    string `gorm:"column:EnterprisePhone;type:varchar(255)" json:"enterprisePhone"`       // 企业电话
+	EnterpriseURL      string `gorm:"column:EnterpriseUrl;type:varchar(255)" json:"enterpriseUrl"`           // 企业URL
+	LogoPicURL         string `gorm:"column:LogoPicUrl;type:varchar(255)" json:"logoPicUrl"`                 // 企业logo地址
 }
 
 // TableName get sql table name.获取数据库表名
@@ -305,64 +305,23 @@ func (m *PlatEnterprises) TableName() string {
 
 // PlatEnterprisesColumns get sql column name.获取数据库列名
 var PlatEnterprisesColumns = struct {
-	AutoID          string
-	EnterpriseID    string
-	EnterpriseName  string
-	EnterprisePwd   string
-	AdminID         string
-	Location        string
-	EnterprisePhone string
-	EnterpriseURL   string
-	LogoPicURL      string
+	AutoID             string
+	EnterpriseID       string
+	EnterpriseName     string
+	EnterprisePassword string
+	AdminID            string
+	Location           string
+	EnterprisePhone    string
+	EnterpriseURL      string
+	LogoPicURL         string
 }{
-	AutoID:          "AutoID",
-	EnterpriseID:    "EnterpriseID",
-	EnterpriseName:  "EnterpriseName",
-	EnterprisePwd:   "EnterprisePwd",
-	AdminID:         "AdminID",
-	Location:        "Location",
-	EnterprisePhone: "EnterprisePhone",
-	EnterpriseURL:   "EnterpriseUrl",
-	LogoPicURL:      "LogoPicUrl",
-}
-
-// PlatUsers [...]
-type PlatUsers struct {
-	AutoID     int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	UserID     string    `gorm:"column:UserID;type:varchar(20)" json:"userId" form:"userId"`
-	UserName   string    `gorm:"column:UserName;type:varchar(255)" json:"userName" form:"userName"`
-	Account    string    `gorm:"column:Account;type:varchar(255)" json:"account" form:"account"`
-	Password   string    `gorm:"column:Password;type:varchar(255)" json:"password" form:"password"`
-	Phone      string    `gorm:"column:Phone;type:varchar(255)" json:"phone" form:"phone"`
-	Email      string    `gorm:"column:Email;type:varchar(255)" json:"email" form:"email"`
-	IsDeleted  bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted" form:"isDeleted"`
-	CreateTime time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime" form:"createTime"`
-}
-
-// TableName get sql table name.获取数据库表名
-func (m *PlatUsers) TableName() string {
-	return "plat_users"
-}
-
-// PlatUsersColumns get sql column name.获取数据库列名
-var PlatUsersColumns = struct {
-	AutoID     string
-	UserID     string
-	UserName   string
-	Account    string
-	Password   string
-	Phone      string
-	Email      string
-	IsDeleted  string
-	CreateTime string
-}{
-	AutoID:     "AutoID",
-	UserID:     "UserID",
-	UserName:   "UserName",
-	Account:    "Account",
-	Password:   "Password",
-	Phone:      "Phone",
-	Email:      "Email",
-	IsDeleted:  "IsDeleted",
-	CreateTime: "CreateTime",
+	AutoID:             "AutoID",
+	EnterpriseID:       "EnterpriseID",
+	EnterpriseName:     "EnterpriseName",
+	EnterprisePassword: "EnterprisePassword",
+	AdminID:            "AdminID",
+	Location:           "Location",
+	EnterprisePhone:    "EnterprisePhone",
+	EnterpriseURL:      "EnterpriseUrl",
+	LogoPicURL:         "LogoPicUrl",
 }

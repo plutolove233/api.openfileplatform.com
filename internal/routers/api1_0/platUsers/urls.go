@@ -7,6 +7,7 @@ package platUsers
 
 import (
 	"api.openfileplatform.com/internal/apis/api1_0/platUsers"
+	"api.openfileplatform.com/internal/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +20,8 @@ func InitPlatUsersRouterGroup(engine *gin.RouterGroup) {
 	initBaseAPI()
 
 	var platformUserApi platUsers.PlatformUserApi
-	Api.POST("refresh", platformUserApi.RefreshPassword)
-	Api.POST("changePassword", platformUserApi.ChangePassword)
 	Api.POST("register", platformUserApi.Register)
+	Api.Use(middlewares.TokenRequire())
+	Api.POST("refreshPassword", platformUserApi.RefreshPassword)
+	Api.POST("changePassword", platformUserApi.ChangePassword)
 }
