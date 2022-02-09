@@ -3,7 +3,7 @@
 // @Date : 2022/2/8 15:50
 // @Software: GoLand
 
-package baseSql
+package platUsers
 
 import (
 	"api.openfileplatform.com/internal/globals/responseParser"
@@ -12,9 +12,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PlatformUserImpl struct{}
+type PlatformUserApi struct{}
 
-func (*PlatformUserImpl) PlatformUserApi(c *gin.Context) {
+func (*PlatformUserApi) PlatformUserApi(c *gin.Context) {
 	var err error
 	var platUsersService services.PlatUsersService
 	err = c.ShouldBind(&platUsersService)
@@ -22,35 +22,37 @@ func (*PlatformUserImpl) PlatformUserApi(c *gin.Context) {
 	if c.Request.Method == "GET" {
 		err = platUsersService.Get()
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "POST" {
 		err = platUsersService.Add()
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "PUT" {
 		args, err := structs.StructToMap(platUsersService.PlatUsers.PlatUsers, "json")
 		if err != nil {
-			responseParser.JsonParameterIllegal(c, err)
+			responseParser.JsonParameterIllegal(c, "", err)
 		}
+		// todo userId为业务主键名
 		delete(args, "userId")
+
 		temp := services.PlatUsersService{}
 		temp.UserID = platUsersService.UserID
 		err = temp.Update(args)
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "DELETE" {
 		err = platUsersService.Delete()
 		if err != nil {
-			responseParser.JsonDBError(c, err)
+			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	}
 
-	responseParser.JsonOK(c, platUsersService)
+	responseParser.JsonOK(c, "", platUsersService)
 }

@@ -11,64 +11,79 @@ import (
 	"net/http"
 )
 
-func JsonOK(c *gin.Context, data interface{}) {
+func JsonOK(c *gin.Context, msg string, data interface{}) {
+	if msg == "" {
+		msg = "成功!"
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.OK,
-		"message": "成功!",
+		"message": msg,
 		"data":    data,
 	})
 }
 
-func JsonParameterIllegal(c *gin.Context, err error) {
+func JsonParameterIllegal(c *gin.Context, msg string, err error) {
+	if msg == "" {
+		msg = "参数非法!"
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.ParameterIllegal,
-		"message": "参数不合法!",
+		"message": msg,
 		"err":     err.Error(),
 	})
 }
 
 func JsonDataError(c *gin.Context, msg string) {
-	if msg != "" {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DataError,
-			"message": "数据错误: " + msg,
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    codes.DataError,
-			"message": "数据错误！",
-		})
+	if msg == "" {
+		msg = "数据错误!"
 	}
-}
-
-func JsonNotData(c *gin.Context, err error) {
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.DataError,
-		"message": "无数据！",
+		"message": msg,
+	})
+}
+
+func JsonNotData(c *gin.Context, msg string, err error) {
+	if msg == "" {
+		msg = "无数据!"
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code":    codes.DataError,
+		"message": msg,
 		"err":     err.Error(),
 	})
 }
 
-func JsonInternalError(c *gin.Context, err error) {
+func JsonInternalError(c *gin.Context, msg string, err error) {
+	if msg == "" {
+		msg = "系统错误!"
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.InternalError,
-		"message": "系统错误!",
+		"message": msg,
 		"err":     err.Error(),
 	})
+	return
 }
 
-func JsonDBError(c *gin.Context, err error) {
+func JsonDBError(c *gin.Context, msg string, err error) {
 	if err.Error() == "record not found" {
+		if msg == "" {
+			msg = "无数据!"
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"code":    codes.NotData,
-			"message": "无数据!",
+			"message": msg,
 			"err":     err.Error(),
 		})
 		return
 	}
+	if msg == "" {
+		msg = "数据库错误!"
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    codes.DBError,
-		"message": "数据库错误!",
+		"message": msg,
 		"err":     err.Error(),
 	})
 }

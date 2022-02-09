@@ -3,7 +3,7 @@
 // @Date : 2021/12/28 21:32
 // @Software: GoLand
 
-package apis
+package api1_0
 
 import (
 	"api.openfileplatform.com/internal/globals/codes"

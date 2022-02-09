@@ -225,3 +225,54 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 		"message": "修改成功！",
 	})
 }
+func (*UserApiImpl) RefreshPassword(c *gin.Context) {
+	var Parser changePasswordParser
+	var err error
+	//解析参数
+	err = c.ShouldBind(&Parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c, err)
+		return
+	}
+
+	userID := Parser.UserID
+
+	var platUser services.PlatUsersService
+	platUser.UserID = userID
+	err = platUser.Get()
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    codes.DataError,
+			"message": "密码错误！",
+		})
+		return
+	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(Parser.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    codes.DBError,
+			"message": "数据库错误！",
+			"err":     err,
+		})
+		return
+	}
+
+	err = platUser.Update(map[string]interface{}{
+		"password":    string(hash),
+		//"update_user": user.UserID,
+	})
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    codes.DBError,
+			"message": "更新密码出错！",
+			"err":     err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    codes.OK,
+		"message": "修改成功！",
+	})
+}
+
