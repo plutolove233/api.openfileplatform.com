@@ -116,3 +116,10 @@ func JsonUnauthorizedUserId(c *gin.Context, msg string) {
 		"message": msg,
 	})
 }
+
+func JsonIncompleteRequest(c *gin.Context,msg string){
+	c.JSON(http.StatusOK,gin.H{
+		"code":		codes.ParameterIllegal,
+		"message":	msg,
+	})
+}

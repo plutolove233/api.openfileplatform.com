@@ -36,6 +36,18 @@ func (m *PlatUsers)SetAccount(account string){
 func (m *PlatUsers) GetPassword() string {
 	return m.Password
 }
+func (m *PlatUsers) SetUserName(p string) {
+	m.UserName = p
+}
+func (m *PlatUsers) SetPassword(p string) {
+	m.Password = p
+}
+func (m *PlatUsers) SetPhone(p string) {
+	m.Phone = p
+}
+func (m *PlatUsers) SetEmail(p string) {
+	m.Email = p
+}
 
 func (m *PlatUsers) Add() error {
 	mysqlManager := database.GetMysqlClient()

@@ -7,6 +7,6 @@ import (
 
 func InitEntRouterGroup(engine *gin.RouterGroup){
 	Api := engine.Group("ent")
-	var loginApi apis.LoginApiImpl
+	var loginApi apis.UserApiImpl
 	Api.POST("/login",loginApi.LoginByPassword)
 }

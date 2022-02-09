@@ -8,8 +8,7 @@ package userResource
 import (
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
-	"api.openfileplatform.com/internal/globals/snowflake"
-	"api.openfileplatform.com/internal/models/ginModels/platform"
+	"api.openfileplatform.com/internal/models/ginModels"
 	"api.openfileplatform.com/internal/services"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -18,60 +17,60 @@ import (
 //platform
 type UserApiImpl struct{}
 
-type RegisterParser struct {
-	UserName string `form:"UserName" json:"UserName" binding:""`
-	Account  string `form:"Account" json:"Account" binding:"required"`
-	Password string `form:"Password" json:"Password" binding:"required"`
-	Phone    string `form:"Phone" json:"Phone" binding:""`
-	Email    string `form:"Email" json:"Email" binding:""`
-}
-
-func (*UserApiImpl) Register(c *gin.Context) {
-	var parser RegisterParser
-	var err error
-	//解析参数
-	err = c.ShouldBind(&parser)
-	if err != nil {
-		responseParser.JsonParameterIllegal(c,err)
-		return
-	}
-
-	userInfo := services.PlatUsersService{}
-
-	// 检验此注册方式是否已经注册过
-	userInfo.Account = parser.Account
-	err = userInfo.Get()
-	if err == nil {
-		responseParser.JsonDataExist(c,"账号已被注册！")
-		return
-	} else if err.Error() == "record not found" {
-		// 未注册过则注册此登录方式
-		hash, err := bcrypt.GenerateFromPassword([]byte(parser.Password), bcrypt.DefaultCost)
-		if err != nil {
-			responseParser.JsonInternalError(c,"密码加密错误！",err)
-			return
-		}
-		userInfo.UserName = parser.UserName
-		userInfo.Account = parser.Account
-		userInfo.Password = string(hash)
-		userInfo.UserID = snowflake.GetSnowflakeID()
-		userInfo.Phone = parser.Phone
-		userInfo.Email = parser.Email
-		err1 := userInfo.Add()
-		if err1 != nil {
-			responseParser.JsonDBError(c,"",err1)
-			return
-		}
-	} else {
-		responseParser.JsonDBError(c,"",err)
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code":    codes.OK,
-		"message": "注册成功！",
-	})
-}
+//type RegisterParser struct {
+//	UserName string `form:"UserName" json:"UserName" binding:""`
+//	Account  string `form:"Account" json:"Account" binding:"required"`
+//	Password string `form:"Password" json:"Password" binding:"required"`
+//	Phone    string `form:"Phone" json:"Phone" binding:""`
+//	Email    string `form:"Email" json:"Email" binding:""`
+//}
+//
+//func (*UserApiImpl) Register(c *gin.Context) {
+//	var parser RegisterParser
+//	var err error
+//	//解析参数
+//	err = c.ShouldBind(&parser)
+//	if err != nil {
+//		responseParser.JsonParameterIllegal(c,err)
+//		return
+//	}
+//
+//	userInfo := services.PlatUsersService{}
+//
+//	// 检验此注册方式是否已经注册过
+//	userInfo.Account = parser.Account
+//	err = userInfo.Get()
+//	if err == nil {
+//		responseParser.JsonDataExist(c,"账号已被注册！")
+//		return
+//	} else if err.Error() == "record not found" {
+//		// 未注册过则注册此登录方式
+//		hash, err := bcrypt.GenerateFromPassword([]byte(parser.Password), bcrypt.DefaultCost)
+//		if err != nil {
+//			responseParser.JsonInternalError(c,"密码加密错误！",err)
+//			return
+//		}
+//		userInfo.UserName = parser.UserName
+//		userInfo.Account = parser.Account
+//		userInfo.Password = string(hash)
+//		userInfo.UserID = snowflake.GetSnowflakeID()
+//		userInfo.Phone = parser.Phone
+//		userInfo.Email = parser.Email
+//		err1 := userInfo.Add()
+//		if err1 != nil {
+//			responseParser.JsonDBError(c,"",err1)
+//			return
+//		}
+//	} else {
+//		responseParser.JsonDBError(c,"",err)
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, gin.H{
+//		"code":    codes.OK,
+//		"message": "注册成功！",
+//	})
+//}
 
 type userListResponser struct {
 	UserName string `form:"UserName" json:"UserName" binding:""`
@@ -123,7 +122,7 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	user, _ := temp.(platform.UserModel)
+	user, _ := temp.(ginModels.UserModel)
 	if err != nil {
 		responseParser.JsonParameterIllegal(c,err)
 		return
@@ -131,7 +130,7 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 	userID := parser.UserID
 
 	if user.VerifyAdminRole() {
-		if user.UserID != userID {
+		if user.UserID != userID || user.IsAdmin != true {
 			responseParser.JsonUnauthorizedUserId(c,"只能修改自己的密码！")
 			return
 		}

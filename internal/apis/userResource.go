@@ -1,23 +1,24 @@
 package apis
 
 import (
-	"api.openfileplatform.com/internal/dao"
+	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
+	"api.openfileplatform.com/internal/globals/snowflake"
 	"api.openfileplatform.com/internal/services"
 	"api.openfileplatform.com/internal/utils/jwt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"net/http"
 )
 
-type LoginApiImpl struct{}
+type UserApiImpl struct{}
 
 type loginByPasswordParser struct {
 	Account  string `form:"Account" json:"Account" binding:"required"`
 	Password string `form:"Password" json:"Password" binding:"required"`
-	UserType string	`form:"UserType" json:"UserType" binding:"required"`
 }
 
-func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
+func (*UserApiImpl) LoginByPassword(c *gin.Context) {
 	var parser loginByPasswordParser
 	var err error
 	//解析参数
@@ -27,13 +28,21 @@ func (*LoginApiImpl) LoginByPassword(c *gin.Context) {
 		return
 	}
 	//session := sessions.Default(c)
+	userType := c.Request.Header.Get("userType")
+	if userType == "" {
+		responseParser.JsonIncompleteRequest(c,"请求头不完整")
+		return
+	}
 
-	var user dao.UserInterface
+	var user services.UserInterface
 	token := ""
-	if parser.UserType == "platform" {
+	if userType == "platform" {
 		user = &services.PlatUsersService{}
-	}else{
+	}else if userType == "enterprise"{
 		user = &services.EntUserService{}
+	}else {
+		responseParser.JsonDataError(c,"userType数据错误")
+		return
 	}
 	//查询账号信息
 	user.SetAccount(parser.Account)
@@ -123,7 +132,7 @@ type refreshTokenParser struct {
 	Token string `form:"Token" json:"Token" binding:"required"`
 }
 
-func (*LoginApiImpl) RefreshToken(c *gin.Context) {
+func (*UserApiImpl) RefreshToken(c *gin.Context) {
 	var parser refreshTokenParser
 	var err error
 	err = c.ShouldBindJSON(&parser)
@@ -144,7 +153,7 @@ func (*LoginApiImpl) RefreshToken(c *gin.Context) {
 	return
 }
 
-//func (*LoginApiImpl) Logout(c *gin.Context) {
+//func (*UserApiImpl) Logout(c *gin.Context) {
 //	temp, ok := c.GetUserList("TokenID")
 //	if ok == false {
 //		c.JSON(http.StatusOK, gin.H{
@@ -184,3 +193,71 @@ func (*LoginApiImpl) RefreshToken(c *gin.Context) {
 //	})
 //	return
 //}
+
+type RegisterParser struct {
+	UserName string `form:"UserName" json:"UserName" binding:""`
+	Account  string `form:"Account" json:"Account" binding:"required"`
+	Password string `form:"Password" json:"Password" binding:"required"`
+	Phone    string `form:"Phone" json:"Phone" binding:""`
+	Email    string `form:"Email" json:"Email" binding:""`
+}
+
+func (*UserApiImpl) Register(c *gin.Context) {
+	var parser RegisterParser
+	var err error
+	//解析参数
+	err = c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,err)
+		return
+	}
+	userType := c.Request.Header.Get("userType")
+	if userType == "" {
+		responseParser.JsonIncompleteRequest(c,"请求头不完整")
+		return
+	}
+	var userInfo services.UserInterface
+
+	if userType == "platform" {
+		userInfo = &services.PlatUsersService{}
+	}else if userType == "enterprise"{
+		userInfo = &services.EntUserService{}
+	}else {
+		responseParser.JsonDataError(c,"userType数据错误")
+		return
+	}
+
+	// 检验此注册方式是否已经注册过
+	userInfo.SetAccount(parser.Account)
+	err = userInfo.Get()
+	if err == nil {
+		responseParser.JsonDataExist(c,"账号已被注册！")
+		return
+	} else if err.Error() == "record not found" {
+		// 未注册过则注册此登录方式
+		hash, err := bcrypt.GenerateFromPassword([]byte(parser.Password), bcrypt.DefaultCost)
+		if err != nil {
+			responseParser.JsonInternalError(c,"密码加密错误！",err)
+			return
+		}
+		userInfo.SetUserName(parser.UserName)
+		userInfo.SetAccount(parser.Account)
+		userInfo.SetPassword(string(hash))
+		userInfo.SetUserID(snowflake.GetSnowflakeID())
+		userInfo.SetPhone(parser.Phone)
+		userInfo.SetEmail(parser.Email)
+		err1 := userInfo.Add()
+		if err1 != nil {
+			responseParser.JsonDBError(c,"",err1)
+			return
+		}
+	} else {
+		responseParser.JsonDBError(c,"",err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    codes.OK,
+		"message": "注册成功！",
+	})
+}

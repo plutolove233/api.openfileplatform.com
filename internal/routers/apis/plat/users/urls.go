@@ -6,6 +6,7 @@
 package users
 
 import (
+	"api.openfileplatform.com/internal/apis"
 	"api.openfileplatform.com/internal/apis/baseSql"
 	"api.openfileplatform.com/internal/apis/platform/userResource"
 	"api.openfileplatform.com/internal/middlewares"
@@ -23,10 +24,11 @@ func InitUsersRouterGroup(engine *gin.RouterGroup) {
 	var impl baseSql.PlatformUserImpl
 	Api.Any("", impl.PlatformUserApi)
 
-	var userApi userResource.UserApiImpl
-	Api.POST("register", userApi.Register)
+	var registerApi apis.UserApiImpl
+	Api.POST("register", registerApi.Register)
 
-	Api.Use(middlewares.PlatformTokenRequire())
+	Api.Use(middlewares.TokenRequire())
+	var userApi userResource.UserApiImpl
 	Api.POST("/changePassword", userApi.ChangePassword)
 	Api.GET("ping", func(context *gin.Context) {
 		context.JSON(http.StatusOK, "pong")

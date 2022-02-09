@@ -13,7 +13,7 @@ var (
 func InitPlatRouterGroup(engine *gin.RouterGroup) {
 	Api = engine.Group("plat")
 
-	var loginApi apis.LoginApiImpl
+	var loginApi apis.UserApiImpl
 	Api.POST("/login", loginApi.LoginByPassword)
 
 	//Api.POST("/logout", loginApi.Logout)

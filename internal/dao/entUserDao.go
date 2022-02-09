@@ -31,6 +31,18 @@ func (m *EntUsers)SetAccount(account string){
 func (m *EntUsers) GetPassword() string {
 	return m.Password
 }
+func (m *EntUsers) SetUserName(p string) {
+	m.UserName = p
+}
+func (m *EntUsers) SetPassword(p string) {
+	m.Password = p
+}
+func (m *EntUsers) SetPhone(p string) {
+	m.Phone = p
+}
+func (m *EntUsers) SetEmail(p string) {
+	m.Email = p
+}
 
 func (m *EntUsers)Add() error{
 	mysqlMamager := database.GetMysqlClient()
