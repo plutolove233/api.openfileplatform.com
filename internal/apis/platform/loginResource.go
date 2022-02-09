@@ -6,7 +6,6 @@
 package platform
 
 import (
-	"api.openfileplatform.com/internal/models/ginModels/platform"
 	"net/http"
 
 	"api.openfileplatform.com/internal/globals/codes"
