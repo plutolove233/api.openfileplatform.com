@@ -219,7 +219,10 @@ func (*EnterpriseUserApi) GetAllUsersList(c *gin.Context) {
 
 	user := temp.(ginModels.UserModel)
 	if !user.IsAdmin {
-		responseParser.JsonNotData(c,"用户未登录",nil)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    codes.UnauthorizedUserId,
+			"message": "只能由管理员查看用户列表",
+		})
 		return
 	}
 }
