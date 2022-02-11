@@ -8,7 +8,6 @@ package userResource
 import (
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
-	"api.openfileplatform.com/internal/models/ginModels"
 	"api.openfileplatform.com/internal/services"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -96,7 +95,7 @@ func (*UserApiImpl) GetUserList(c *gin.Context) {
 		userList = append(userList,list)
 	}
 
-	responseParser.JsonOK(c,userList)
+	responseParser.JsonOK(c,"",userList)
 }
 
 type changePasswordParser struct {
@@ -111,37 +110,37 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 	//解析参数
 	err = c.ShouldBind(&parser)
 	if err != nil {
-		responseParser.JsonParameterIllegal(c, err)
+		responseParser.JsonParameterIllegal(c, "", err)
 		return
 	}
 
 	//查询账号信息
-	temp, ok := c.Get("user")
-	if !ok {
-		responseParser.JsonLoginError(c,"用户未登录",nil)
-		return
-	}
+	//temp, ok := c.Get("user")
+	//if !ok {
+	//	responseParser.JsonLoginError(c,"用户未登录",nil)
+	//	return
+	//}
 
-	user, _ := temp.(ginModels.UserModel)
+	//user, _ := temp.(ginModels.UserModel)
 	if err != nil {
-		responseParser.JsonParameterIllegal(c,err)
+		responseParser.JsonParameterIllegal(c,"" ,err)
 		return
 	}
 	userID := parser.UserID
 
-	if user.VerifyAdminRole() {
-		if user.UserID != userID || user.IsAdmin != true {
-			responseParser.JsonUnauthorizedUserId(c,"只能修改自己的密码！")
-			return
-		}
-	}
+	//if user.VerifyAdminRole() {
+	//	if user.UserID != userID || user.IsAdmin != true {
+	//		responseParser.JsonUnauthorizedUserId(c,"只能修改自己的密码！")
+	//		return
+	//	}
+	//}
 
 	var platUser services.PlatUsersService
 	platUser.UserID = userID
 	err = platUser.Get()
 	if err != nil {
 		if err.Error() == "record not found" {
-			responseParser.JsonNotData(c,err)
+			responseParser.JsonNotData(c,"", err)
 			return
 		}
 		responseParser.JsonDBError(c,"",err)
@@ -150,7 +149,7 @@ func (*UserApiImpl) ChangePassword(c *gin.Context) {
 	//验证密码
 	err = bcrypt.CompareHashAndPassword([]byte(platUser.Password), []byte(parser.Password))
 	if err != nil {
-		responseParser.JsonDataError(c,"密码错误！")
+		responseParser.JsonDataError(c,"密码错误！",err)
 		return
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(parser.NewPassword), bcrypt.DefaultCost)
@@ -179,7 +178,7 @@ func (*UserApiImpl) RefreshPassword(c *gin.Context) {
 	//解析参数
 	err = c.ShouldBind(&Parser)
 	if err != nil {
-		responseParser.JsonParameterIllegal(c, err)
+		responseParser.JsonParameterIllegal(c, "", err)
 		return
 	}
 

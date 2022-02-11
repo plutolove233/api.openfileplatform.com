@@ -26,7 +26,7 @@ func (m *PlatEnterprise) Update(args map[string]interface{}) error {
 	return mysqlManager.Model(&m).Updates(args).Error
 }
 
-func (m *PlatEnterprise) Delete(updateUser int64) error {
+func (m *PlatEnterprise) Delete(updateUser string) error {
 	mysqlManager := database.GetMysqlClient()
 
 	return mysqlManager.Model(&m).Updates(map[string]interface{}{

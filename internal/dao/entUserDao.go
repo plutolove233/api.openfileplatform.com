@@ -54,7 +54,7 @@ func (m *EntUsers) Update(args map[string]interface{}) error {
 	return mysqlManager.Model(&m).Updates(args).Error
 }
 
-func (m *EntUsers) Delete(updateUser int64) error {
+func (m *EntUsers) Delete(updateUser string) error {
 	mysqlManager := database.GetMysqlClient()
 
 	return mysqlManager.Model(&m).Updates(map[string]interface{}{

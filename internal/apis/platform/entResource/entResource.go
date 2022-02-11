@@ -4,7 +4,6 @@ import (
 	"api.openfileplatform.com/internal/globals/codes"
 	"api.openfileplatform.com/internal/globals/responseParser"
 	"api.openfileplatform.com/internal/globals/snowflake"
-	"api.openfileplatform.com/internal/models/ginModels"
 	"api.openfileplatform.com/internal/services"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -24,7 +23,7 @@ func ( *EntRegisterParser) Register(c *gin.Context)  {
 	var parser EntRegisterParser
 	err := c.ShouldBind(&parser)
 	if err != nil {
-		responseParser.JsonParameterIllegal(c,err)
+		responseParser.JsonParameterIllegal(c,"", err)
 		return
 	}
 
@@ -32,7 +31,7 @@ func ( *EntRegisterParser) Register(c *gin.Context)  {
 	platEnt.EnterpriseName = parser.EnterpriseName
 	err = platEnt.Get()
 	if err == nil {
-		responseParser.JsonDataExist(c,"企业名称已存在")
+		//responseParser.JsonDataExist(c,"企业名称已存在")
 		return
 	}else if err.Error() == "record not found" {
 		hash, err1 := bcrypt.GenerateFromPassword([]byte(parser.EnterprisePassword),bcrypt.DefaultCost)
@@ -69,28 +68,28 @@ type changePwdParser struct {
 func (*PlatEntApiImpl) ChangePwd(c *gin.Context) {
 	var parser changePwdParser
 	err := c.ShouldBind(&parser)
-	if err != nil {
-		responseParser.JsonParameterIllegal(c,err)
-		return
-	}
-
-	temp,ok := c.Get("user")
-	if !ok {
-		responseParser.JsonLoginError(c,"用户未登录",nil)
-		return
-	}
-	user,_ := temp.(ginModels.UserModel)
-	if user.IsPlatUser == false{
-		responseParser.JsonAccessDenied(c,"仅允许平台修改密码")
-		return
-	}
+	//if err != nil {
+	//	responseParser.JsonParameterIllegal(c,err)
+	//	return
+	//}
+	//
+	//temp,ok := c.Get("user")
+	//if !ok {
+	//	responseParser.JsonLoginError(c,"用户未登录",nil)
+	//	return
+	//}
+	//user,_ := temp.(ginModels.UserModel)
+	//if user.IsPlatUser == false{
+	//	responseParser.JsonAccessDenied(c,"仅允许平台修改密码")
+	//	return
+	//}
 
 	enterpriseInfo := services.PlatEnterpriseService{}
 	enterpriseInfo.EnterpriseID = parser.EnterpriseID
 	err = enterpriseInfo.Get()
 	if err != nil {
 		if err.Error() == "record not found" {
-			responseParser.JsonNotData(c,err)
+			responseParser.JsonNotData(c,"", err)
 			return
 		}
 		responseParser.JsonDBError(c,"",err)
@@ -108,5 +107,5 @@ func (*PlatEntApiImpl) ChangePwd(c *gin.Context) {
 		responseParser.JsonDBError(c,"数据库密码更新失败",err)
 		return
 	}
-	responseParser.JsonOK(c,"密码更新成功")
+	responseParser.JsonOK(c,"","密码更新成功")
 }
