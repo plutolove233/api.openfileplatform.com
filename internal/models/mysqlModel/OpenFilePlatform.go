@@ -287,15 +287,17 @@ var EntUsersColumns = struct {
 
 // PlatEnterprises [...]
 type PlatEnterprises struct {
-	AutoID             int64  `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	EnterpriseID       string `gorm:"column:EnterpriseID;type:varchar(20);not null" json:"enterpriseId"`
-	EnterpriseName     string `gorm:"column:EnterpriseName;type:varchar(255)" json:"enterpriseName"`
-	EnterprisePassword string `gorm:"column:EnterprisePassword;type:varchar(255)" json:"enterprisePassword"` // 企业登录密码
-	AdminID            string `gorm:"column:AdminID;type:varchar(20)" json:"adminId"`                        // 企业管理员ID
-	Location           string `gorm:"column:Location;type:varchar(255)" json:"location"`                     // 企业地址
-	EnterprisePhone    string `gorm:"column:EnterprisePhone;type:varchar(255)" json:"enterprisePhone"`       // 企业电话
-	EnterpriseURL      string `gorm:"column:EnterpriseUrl;type:varchar(255)" json:"enterpriseUrl"`           // 企业URL
-	LogoPicURL         string `gorm:"column:LogoPicUrl;type:varchar(255)" json:"logoPicUrl"`                 // 企业logo地址
+	AutoID             int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
+	EnterpriseID       string    `gorm:"column:EnterpriseID;type:varchar(20);not null" json:"enterpriseId" form:"enterpriseId"`
+	EnterpriseName     string    `gorm:"column:EnterpriseName;type:varchar(255)" json:"enterpriseName"`
+	EnterprisePassword string    `gorm:"column:EnterprisePassword;type:varchar(255)" json:"enterprisePassword"` // 企业登录密码
+	AdminID            string    `gorm:"column:AdminID;type:varchar(20)" json:"adminId"`                        // 企业管理员ID
+	Location           string    `gorm:"column:Location;type:varchar(255)" json:"location"`                     // 企业地址
+	EnterprisePhone    string    `gorm:"column:EnterprisePhone;type:varchar(255)" json:"enterprisePhone"`       // 企业电话
+	EnterpriseURL      string    `gorm:"column:EnterpriseUrl;type:varchar(255)" json:"enterpriseUrl"`           // 企业URL
+	LogoPicURL         string    `gorm:"column:LogoPicUrl;type:varchar(255)" json:"logoPicUrl"`                 // 企业logo地址
+	IsDeleted          bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted" form:"isDeleted"`
+	CreateTime         time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime" form:"createTime"`
 }
 
 // TableName get sql table name.获取数据库表名
@@ -314,6 +316,8 @@ var PlatEnterprisesColumns = struct {
 	EnterprisePhone    string
 	EnterpriseURL      string
 	LogoPicURL         string
+	IsDeleted          string
+	CreateTime         string
 }{
 	AutoID:             "AutoID",
 	EnterpriseID:       "EnterpriseID",
@@ -324,4 +328,6 @@ var PlatEnterprisesColumns = struct {
 	EnterprisePhone:    "EnterprisePhone",
 	EnterpriseURL:      "EnterpriseUrl",
 	LogoPicURL:         "LogoPicUrl",
+	IsDeleted:          "IsDeleted",
+	CreateTime:         "CreateTime",
 }

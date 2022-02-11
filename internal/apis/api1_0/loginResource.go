@@ -18,6 +18,10 @@ type usersService interface {
 	SetAccount(string)
 }
 
+type EnterprisesApi struct{}
+type enterpriseService interface {
+}
+
 type loginByPasswordParser struct {
 	Account  string `form:"Account" json:"Account" binding:"required"`
 	Password string `form:"Password" json:"Password" binding:"required"`
