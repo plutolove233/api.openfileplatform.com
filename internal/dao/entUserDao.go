@@ -62,8 +62,8 @@ func (m *EntUsers) Delete(updateUser string) error {
 	}).Error
 }
 
-func (*EntUsers)GetAll() ([]EntUsers,error){
+func (*EntUsers)GetAll(id string) ([]EntUsers,error){
 	mysqlManager := database.GetMysqlClient()
 	users := []EntUsers{}
-	return users,mysqlManager.Model(&PlatUsers{}).Find(&users).Error
+	return users,mysqlManager.Model(&PlatUsers{}).Where("EnterpriseID = ?",id).Find(&users).Error
 }

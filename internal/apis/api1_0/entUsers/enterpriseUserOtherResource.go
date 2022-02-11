@@ -225,4 +225,27 @@ func (*EnterpriseUserApi) GetAllUsersList(c *gin.Context) {
 		})
 		return
 	}
+	entAdmin := services.EntUserService{}
+	entAdmin.UserID = user.UserID
+	err := entAdmin.Get()
+	if err != nil {
+		responseParser.JsonNotData(c,"获取用户企业ID失败",err)
+		return
+	}
+	entUsers,err := entAdmin.GetAll(entAdmin.EnterpriseID)
+	if err != nil {
+		responseParser.JsonDBError(c,"",err)
+		return
+	}
+
+	var enterpriseUserList []EnterpriseUserList
+	var oneUser EnterpriseUserList
+	for _,x := range entUsers{
+		oneUser.UserID = x.UserID
+		oneUser.UserName = x.UserName
+		oneUser.Email = x.Email
+		oneUser.Phone = x.Phone
+		enterpriseUserList = append(enterpriseUserList, oneUser)
+	}
+	responseParser.JsonOK(c,"企业用户列表",enterpriseUserList)
 }
