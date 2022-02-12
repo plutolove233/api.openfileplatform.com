@@ -2,6 +2,7 @@ package api1_0
 
 import (
 	"api.openfileplatform.com/internal/apis/api1_0"
+	"api.openfileplatform.com/internal/routers/api1_0/enterpriseUsers"
 	"api.openfileplatform.com/internal/routers/api1_0/platEnterprises"
 	"api.openfileplatform.com/internal/routers/api1_0/platUsers"
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,6 @@ func InitAPI1_0Router(engine *gin.Engine) {
 	Api.POST("loginByPassword", userApi.LoginByPassword)
 	Api.POST("refreshToken", userApi.RefreshToken)
 
-	platEnterprises.InitPlatEnterprisesRouteGroup(Api)
-
+	platEnterprises.InitPlatEnterprisesRouterGroup(Api)
+	enterpriseUsers.InitEnterpriseUsersRouterGroup(Api)
 }

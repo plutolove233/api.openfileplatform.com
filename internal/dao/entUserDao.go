@@ -51,12 +51,19 @@ func (m *EntUsers)Add() error{
 
 func (m *EntUsers) Update(args map[string]interface{}) error {
 	mysqlManager := database.GetMysqlClient()
+	err := m.Get()
+	if err != nil {
+		return err
+	}
 	return mysqlManager.Model(&m).Updates(args).Error
 }
 
-func (m *EntUsers) Delete(updateUser string) error {
+func (m *EntUsers) Delete() error {
 	mysqlManager := database.GetMysqlClient()
-
+	err := m.Get()
+	if err != nil {
+		return err
+	}
 	return mysqlManager.Model(&m).Updates(map[string]interface{}{
 		"IsDeleted": 1,
 	}).Error
@@ -65,5 +72,6 @@ func (m *EntUsers) Delete(updateUser string) error {
 func (*EntUsers)GetAll(id string) ([]EntUsers,error){
 	mysqlManager := database.GetMysqlClient()
 	users := []EntUsers{}
-	return users,mysqlManager.Model(&PlatUsers{}).Where("EnterpriseID = ?",id).Find(&users).Error
+	return users,mysqlManager.Model(&EntUsers{}).Where("EnterpriseID = ? AND isDeleted = ?",id,false).
+		Find(&users).Error
 }

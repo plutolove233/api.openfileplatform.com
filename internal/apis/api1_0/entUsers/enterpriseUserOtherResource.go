@@ -13,7 +13,7 @@ import (
 )
 
 type RegisterParser struct {
-	UserName string `form:"UserName" json:"UserName" binding:""`
+	UserName string `form:"UserName" json:"UserName" binding:"required"`
 	Account  string `form:"Account" json:"Account" binding:"required"`
 	Password string `form:"Password" json:"Password" binding:"required"`
 	Phone    string `form:"Phone" json:"Phone" binding:""`

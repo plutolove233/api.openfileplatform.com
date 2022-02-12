@@ -1,4 +1,10 @@
-package entUsers
+/*
+@Coding : utf-8
+@Time : 2022/2/12 9:31
+@Author : 刘浩宇
+@Software: GoLand
+*/
+package entDepartments
 
 import (
 	"api.openfileplatform.com/internal/globals/responseParser"
@@ -7,47 +13,47 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type EnterpriseUserApi struct{}
+type EntDepartmentApi struct{}
 
-func (*EnterpriseUserApi) EnterpriseUserApi(c *gin.Context) {
+func (*EntDepartmentApi) EntDepartmenrtApi(c *gin.Context) {
 	var err error
-	var entUsersService services.EntUserService
-	err = c.ShouldBind(&entUsersService)
+	var entDepartmentService services.EntDepartmentService
+	err = c.ShouldBind(&entDepartmentService)
 
 	if c.Request.Method == "GET" {
-		err = entUsersService.Get()
+		err = entDepartmentService.Get()
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "POST" {
-		err = entUsersService.Add()
+		err = entDepartmentService.Add()
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "PUT" {
-		args, err := structs.StructToMap(entUsersService.EntUsers.EntUsers, "json")
+		args, err := structs.StructToMap(entDepartmentService.EntDepartment.EntDepartments, "json")
 		if err != nil {
 			responseParser.JsonParameterIllegal(c, "", err)
 		}
-		// todo userId为业务主键名
+		// todo enterpriseId为业务主键名
 		delete(args, "userId")
 
-		temp := services.EntUserService{}
-		temp.UserID = entUsersService.UserID
+		temp := services.EntDepartmentService{}
+		temp.EnterpriseID = entDepartmentService.EnterpriseID
 		err = temp.Update(args)
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "DELETE" {
-		err = entUsersService.Delete()
+		err = entDepartmentService.Delete()
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	}
 
-	responseParser.JsonOK(c, "", entUsersService)
+	responseParser.JsonOK(c, "", entDepartmentService)
 }

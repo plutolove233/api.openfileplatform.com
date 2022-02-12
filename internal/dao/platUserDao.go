@@ -49,5 +49,6 @@ func (m *PlatUsers) Delete() error {
 func (*PlatUsers) GetAll() ([]PlatUsers, error) {
 	mysqlManager := database.GetMysqlClient()
 	users := []PlatUsers{}
-	return users, mysqlManager.Model(&PlatUsers{}).Find(&users).Error
+	return users, mysqlManager.Model(&PlatUsers{}).
+		Where("isDeleted = ?",false).Find(&users).Error
 }

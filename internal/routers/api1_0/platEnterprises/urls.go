@@ -13,7 +13,7 @@ var (
 	Api *gin.RouterGroup
 )
 
-func InitPlatEnterprisesRouteGroup(engine *gin.RouterGroup) {
+func InitPlatEnterprisesRouterGroup(engine *gin.RouterGroup) {
 	Api = engine.Group("platEnterprises")
 	initBaseAPI()
 
