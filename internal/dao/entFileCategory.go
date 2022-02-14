@@ -1,6 +1,6 @@
 /*
 @Coding : utf-8
-@Time : 2022/2/12 9:36
+@Time : 2022/2/14 15:52
 @Author : 刘浩宇
 @Software: GoLand
 */
@@ -11,11 +11,11 @@ import (
 	"api.openfileplatform.com/internal/models/mysqlModel"
 )
 
-type EntDepartment struct {
-	mysqlModel.EntDepartments
+type EntFileCategory struct {
+	mysqlModel.EntFileCategory
 }
 
-func (m *EntDepartment)Get() error {
+func (m *EntFileCategory)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
 		"IsDeleted":0,
@@ -23,12 +23,12 @@ func (m *EntDepartment)Get() error {
 }
 
 
-func (m *EntDepartment)Add() error{
+func (m *EntFileCategory)Add() error{
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Create(&m).Error
 }
 
-func (m *EntDepartment) Update(args map[string]interface{}) error {
+func (m *EntFileCategory) Update(args map[string]interface{}) error {
 	mysqlManager := database.GetMysqlClient()
 	err := m.Get()
 	if err != nil {
@@ -37,7 +37,7 @@ func (m *EntDepartment) Update(args map[string]interface{}) error {
 	return mysqlManager.Model(&m).Updates(args).Error
 }
 
-func (m *EntDepartment) Delete() error {
+func (m *EntFileCategory) Delete() error {
 	mysqlManager := database.GetMysqlClient()
 	err := m.Get()
 	if err != nil {
@@ -48,8 +48,8 @@ func (m *EntDepartment) Delete() error {
 	}).Error
 }
 
-func (*EntDepartment)GetAll(id string) ([]EntDepartment,error){
+func (*EntFileCategory)GetAll(id string) ([]EntFileCategory,error){
 	mysqlManager := database.GetMysqlClient()
-	users := []EntDepartment{}
-	return users,mysqlManager.Model(&PlatUsers{}).Where("EnterpriseID = ?",id).Find(&users).Error
+	users := []EntFileCategory{}
+	return users,mysqlManager.Model(&EntFileCategory{}).Where("EnterpriseID = ?",id).Find(&users).Error
 }
