@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func (*EntFilesApi)GetAllEntFiles(c *gin.Context){
+func (*EnterpriseFilesApi)GetAllEntFiles(c *gin.Context){
 	temp,ok := c.Get("user")
 	if !ok {
 		responseParser.JsonNotData(c,"用户未登录",nil)

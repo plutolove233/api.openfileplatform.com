@@ -42,8 +42,8 @@ func (m *PlatEnterprise) Delete() error {
 
 }
 
-func (*PlatEnterprise) GetAll() (error, []EntUsers) {
+func (*PlatEnterprise) GetAll() (error, []PlatEnterprise) {
 	mysqlManager := database.GetMysqlClient()
-	users := []EntUsers{}
-	return mysqlManager.Model(&PlatUsers{}).Find(&users).Error, users
+	enterprise := []PlatEnterprise{}
+	return mysqlManager.Model(&PlatEnterprise{}).Find(&enterprise).Error, enterprise
 }

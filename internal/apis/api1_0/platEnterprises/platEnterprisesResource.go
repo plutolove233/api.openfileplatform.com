@@ -37,7 +37,7 @@ func (*PlatformEnterpriseApi) PlatformEnterpriseApi(c *gin.Context) {
 			responseParser.JsonParameterIllegal(c, "", err)
 		}
 		// todo enterpriseId为业务主键名
-		delete(args, "userId")
+		delete(args, "enterpriseId")
 
 		temp := services.PlatEnterpriseService{}
 		temp.EnterpriseID = platEnterprisesService.EnterpriseID

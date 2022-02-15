@@ -51,5 +51,6 @@ func (m *EntFiles) Delete() error {
 func (*EntFiles)GetAll(id string) ([]EntFiles,error){
 	mysqlManager := database.GetMysqlClient()
 	files := []EntFiles{}
-	return files,mysqlManager.Model(&EntFiles{}).Where("EnterpriseID = ?",id).Find(&files).Error
+	return files,mysqlManager.Model(&EntFiles{}).Where("EnterpriseID = ? AND isDelete = ?",id,false).
+		Find(&files).Error
 }

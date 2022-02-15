@@ -13,9 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type EntFilesApi struct{}
+type EnterpriseFilesApi struct{}
 
-func (*EntFilesApi) EntFilesApi(c *gin.Context) {
+func (*EnterpriseFilesApi) EnterpriseFilesApi(c *gin.Context) {
 	var err error
 	var entFilesService services.EnterpriseFilesService
 	err = c.ShouldBind(&entFilesService)
@@ -37,11 +37,11 @@ func (*EntFilesApi) EntFilesApi(c *gin.Context) {
 		if err != nil {
 			responseParser.JsonParameterIllegal(c, "", err)
 		}
-		// todo enterpriseId为业务主键名
-		delete(args, "userId")
+		// todo fileId为业务主键名
+		delete(args, "fileId")
 
 		temp := services.EnterpriseFilesService{}
-		temp.EnterpriseID = entFilesService.EnterpriseID
+		temp.FileID = entFilesService.FileID
 		err = temp.Update(args)
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)

@@ -12,7 +12,7 @@ import (
 )
 
 func initEnterpriseFileCategory(engine *gin.RouterGroup) {
-	var impl entFileCategory.EntFileCategoryApi
+	var impl entFileCategory.EnterpriseFileCategoryApi
 
-	engine.Any("",impl.EntDepartmenrtApi)
+	engine.Any("",impl.EnterpriseFileCategoryApi)
 }

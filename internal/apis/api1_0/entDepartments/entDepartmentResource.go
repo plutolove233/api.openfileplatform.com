@@ -13,9 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type EntDepartmentApi struct{}
+type EnterpriseDepartmentApi struct{}
 
-func (*EntDepartmentApi) EntDepartmenrtApi(c *gin.Context) {
+func (*EnterpriseDepartmentApi) EnterpriseDepartmenrtApi(c *gin.Context) {
 	var err error
 	var entDepartmentService services.EntDepartmentService
 	err = c.ShouldBind(&entDepartmentService)
@@ -37,11 +37,11 @@ func (*EntDepartmentApi) EntDepartmenrtApi(c *gin.Context) {
 		if err != nil {
 			responseParser.JsonParameterIllegal(c, "", err)
 		}
-		// todo enterpriseId为业务主键名
-		delete(args, "userId")
+		// todo departmentId为业务主键名
+		delete(args, "departmentId")
 
 		temp := services.EntDepartmentService{}
-		temp.EnterpriseID = entDepartmentService.EnterpriseID
+		temp.DepartmentID = entDepartmentService.DepartmentID
 		err = temp.Update(args)
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)

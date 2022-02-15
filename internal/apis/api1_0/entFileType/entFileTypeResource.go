@@ -1,10 +1,10 @@
 /*
 @Coding : utf-8
-@Time : 2022/2/14 16:13
+@Time : 2022/2/15 16:30
 @Author : 刘浩宇
 @Software: GoLand
 */
-package entFileCategory
+package entFileType
 
 import (
 	"api.openfileplatform.com/internal/globals/responseParser"
@@ -13,47 +13,47 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type EnterpriseFileCategoryApi struct {}
+type EnterpriseFileTypeApi struct {}
 
-func (*EnterpriseFileCategoryApi) EnterpriseFileCategoryApi(c *gin.Context) {
+func (*EnterpriseFileTypeApi) EnterpriseFileTypeApi(c *gin.Context) {
 	var err error
-	var entFileCategoryService services.EnterpriseFileCategoryService
-	err = c.ShouldBind(&entFileCategoryService)
+	var entFileTypeService services.EnterpriseFileTypeService
+	err = c.ShouldBind(&entFileTypeService)
 
 	if c.Request.Method == "GET" {
-		err = entFileCategoryService.Get()
+		err = entFileTypeService.Get()
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "POST" {
-		err = entFileCategoryService.Add()
+		err = entFileTypeService.Add()
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "PUT" {
-		args, err := structs.StructToMap(entFileCategoryService.EntFileCategory.EntFileCategory, "json")
+		args, err := structs.StructToMap(entFileTypeService.EntFileType.EntFileType, "json")
 		if err != nil {
 			responseParser.JsonParameterIllegal(c, "", err)
 		}
-		// todo categoryId为业务主键名
-		delete(args, "categoryId")
+		// todo enterpriseId为业务主键名
+		delete(args, "fileTypeId")
 
-		temp := services.EnterpriseFileCategoryService{}
-		temp.CategoryID = entFileCategoryService.CategoryID
+		temp := services.EnterpriseFileTypeService{}
+		temp.FileTypeID = entFileTypeService.FileTypeID
 		err = temp.Update(args)
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	} else if c.Request.Method == "DELETE" {
-		err = entFileCategoryService.Delete()
+		err = entFileTypeService.Delete()
 		if err != nil {
 			responseParser.JsonDBError(c, "", err)
 			return
 		}
 	}
 
-	responseParser.JsonOK(c, "", entFileCategoryService)
+	responseParser.JsonOK(c, "", entFileTypeService)
 }
