@@ -11,24 +11,25 @@ import (
 	"api.openfileplatform.com/internal/models/mysqlModel"
 )
 
-type EntFileProject struct {
+type EntProject struct {
 	mysqlModel.EntProject
 }
 
-func (m *EntFileProject)Get() error {
+func (m *EntProject)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
+		"ProjectID":m.ProjectID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }
 
 
-func (m *EntFileProject)Add() error{
+func (m *EntProject)Add() error{
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Create(&m).Error
 }
 
-func (m *EntFileProject) Update(args map[string]interface{}) error {
+func (m *EntProject) Update(args map[string]interface{}) error {
 	mysqlManager := database.GetMysqlClient()
 	err := m.Get()
 	if err != nil {
@@ -37,7 +38,7 @@ func (m *EntFileProject) Update(args map[string]interface{}) error {
 	return mysqlManager.Model(&m).Updates(args).Error
 }
 
-func (m *EntFileProject) Delete() error {
+func (m *EntProject) Delete() error {
 	mysqlManager := database.GetMysqlClient()
 	err := m.Get()
 	if err != nil {
@@ -48,9 +49,11 @@ func (m *EntFileProject) Delete() error {
 	}).Error
 }
 
-func (*EntFileProject)GetAll(id string) ([]EntFileProject,error){
+func (*EntProject)GetAll(id string) ([]EntProject,error){
 	mysqlManager := database.GetMysqlClient()
-	department := []EntFileProject{}
-	return department,mysqlManager.Model(&EntFileProject{}).Where("EnterpriseID = ? AND isDelete = ?",id,false).
-		Find(&department).Error
+	department := []EntProject{}
+	return department,mysqlManager.Model(&EntProject{}).Where(map[string]interface{}{
+		"EnterpriseID":id,
+		"IsDeleted":0,
+	}).Find(&department).Error
 }

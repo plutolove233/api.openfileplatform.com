@@ -18,6 +18,7 @@ type EntDepartment struct {
 func (m *EntDepartment)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
+		"DepartmentID":m.DepartmentID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }
@@ -51,6 +52,8 @@ func (m *EntDepartment) Delete() error {
 func (*EntDepartment)GetAll(id string) ([]EntDepartment,error){
 	mysqlManager := database.GetMysqlClient()
 	department := []EntDepartment{}
-	return department,mysqlManager.Model(&PlatUsers{}).Where("EnterpriseID = ? AND isDelete = ?",id,false).
-		Find(&department).Error
+	return department,mysqlManager.Model(&PlatUsers{}).Where(map[string]interface{}{
+		"EnterpriseID":id,
+		"IsDeleted":0,
+	}).Find(&department).Error
 }

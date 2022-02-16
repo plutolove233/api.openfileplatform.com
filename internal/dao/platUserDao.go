@@ -17,8 +17,25 @@ type PlatUsers struct {
 func (m *PlatUsers) Get() error {
 	mysqlManager := database.GetMysqlClient()
 	return mysqlManager.Where(map[string]interface{}{
+		"UserID":m.UserID,
 		"IsDeleted": 0,
 	}).Where(m).Take(m).Error
+}
+
+func (m *PlatUsers)GetUserID()string{
+	return m.UserID
+}
+func (m *PlatUsers)SetUserID(id string){
+	m.UserID  = id
+}
+func (m *PlatUsers)GetIsAdmin()bool {
+	return true
+}
+func (m *PlatUsers)SetAccount(account string){
+	m.Account = account
+}
+func (m *PlatUsers) GetPassword() string {
+	return m.Password
 }
 
 func (m *PlatUsers) Add() error {
@@ -49,6 +66,7 @@ func (m *PlatUsers) Delete() error {
 func (*PlatUsers) GetAll() ([]PlatUsers, error) {
 	mysqlManager := database.GetMysqlClient()
 	users := []PlatUsers{}
-	return users, mysqlManager.Model(&PlatUsers{}).
-		Where("isDeleted = ?",false).Find(&users).Error
+	return users, mysqlManager.Model(&PlatUsers{}).Where(map[string]interface{}{
+		"IsDeleted":0,
+	}).Find(&users).Error
 }

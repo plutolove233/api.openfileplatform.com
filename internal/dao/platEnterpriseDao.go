@@ -12,6 +12,7 @@ type PlatEnterprise struct {
 func (m *PlatEnterprise) Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
+		"EnterpriseID":m.EnterpriseID,
 		"IsDeleted": 0,
 	}).Where(m).Take(m).Error
 }
@@ -45,5 +46,7 @@ func (m *PlatEnterprise) Delete() error {
 func (*PlatEnterprise) GetAll() (error, []PlatEnterprise) {
 	mysqlManager := database.GetMysqlClient()
 	enterprise := []PlatEnterprise{}
-	return mysqlManager.Model(&PlatEnterprise{}).Find(&enterprise).Error, enterprise
+	return mysqlManager.Model(&PlatEnterprise{}).Where(map[string]interface{}{
+		"IsDeleted":false,
+	}).Find(&enterprise).Error, enterprise
 }

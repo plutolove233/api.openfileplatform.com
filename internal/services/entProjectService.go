@@ -9,5 +9,5 @@ package services
 import "api.openfileplatform.com/internal/dao"
 
 type EnterpriseProjectService struct {
-	dao.EntFileProject
+	dao.EntProject
 }

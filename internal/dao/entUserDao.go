@@ -12,6 +12,7 @@ type EntUsers struct {
 func (m *EntUsers)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
+		"UserID":m.UserID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }
@@ -72,6 +73,8 @@ func (m *EntUsers) Delete() error {
 func (*EntUsers)GetAll(id string) ([]EntUsers,error){
 	mysqlManager := database.GetMysqlClient()
 	users := []EntUsers{}
-	return users,mysqlManager.Model(&EntUsers{}).Where("EnterpriseID = ? AND isDeleted = ?",id,false).
-		Find(&users).Error
+	return users,mysqlManager.Model(&EntUsers{}).Where(map[string]interface{}{
+		"EnterpriseID":id,
+		"IsDeleted":0,
+	}).Find(&users).Error
 }

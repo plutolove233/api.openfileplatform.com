@@ -18,6 +18,7 @@ type EntFiles struct {
 func (m *EntFiles)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
+		"FileID":m.FileID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }
@@ -51,6 +52,8 @@ func (m *EntFiles) Delete() error {
 func (*EntFiles)GetAll(id string) ([]EntFiles,error){
 	mysqlManager := database.GetMysqlClient()
 	files := []EntFiles{}
-	return files,mysqlManager.Model(&EntFiles{}).Where("EnterpriseID = ? AND isDelete = ?",id,false).
-		Find(&files).Error
+	return files,mysqlManager.Model(&EntFiles{}).Where(map[string]interface{}{
+		"EnterpriseID":id,
+		"IsDeleted":0,
+	}).Find(&files).Error
 }

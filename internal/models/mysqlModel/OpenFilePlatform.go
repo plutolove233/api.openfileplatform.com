@@ -43,16 +43,16 @@ var EntDepartmentsColumns = struct {
 type EntFile struct {
 	AutoID       int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
 	FileID       string    `gorm:"column:FileID;type:varchar(20)" json:"fileId"`             //  文件（档案）ID
-	CategoryID   int       `gorm:"column:CategoryID;type:int(11)" json:"categoryId"`         //  档案类别
+	CategoryID   string    `gorm:"column:CategoryID;type:varchar(20)" json:"categoryId"`     //  档案类别
 	ProjectID    string    `gorm:"column:ProjectID;type:varchar(20)" json:"projectId"`       // 文件所属项目
 	EnterpriseID string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"` // 文件所属公司ID
 	FileName     string    `gorm:"column:FileName;type:varchar(255)" json:"fileName"`        // 文件名
 	FileURL      string    `gorm:"column:FileURL;type:varchar(255)" json:"fileUrl"`          // 文件存放地址
-	FileTypeID   int       `gorm:"column:FileTypeID;type:int(11)" json:"fileTypeId"`         // 文件类型
+	FileTypeID   string    `gorm:"column:FileTypeID;type:varchar(20)" json:"fileTypeId"`     // 文件类型
 	Status       int8      `gorm:"column:Status;type:tinyint(11)" json:"status"`             // 0表示没有被借出，1表示已经借出
 	UserID       string    `gorm:"column:UserID;type:varchar(20)" json:"userId"`             // 文件上传人
 	FileCabinet  string    `gorm:"column:FileCabinet;type:varchar(30)" json:"fileCabinet"`   //  存放档案柜编号
-	IsDelete     bool      `gorm:"column:IsDelete;type:tinyint(1)" json:"isDelete"`          // 是否删除
+	IsDeleted    bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted"`        // 是否删除
 	UpdateTime   time.Time `gorm:"column:UpdateTime;type:timestamp" json:"updateTime"`       // 文件上传时间
 	CreatTime    time.Time `gorm:"column:CreatTime;type:timestamp" json:"creatTime"`         // 记录创建时间
 }
@@ -75,7 +75,7 @@ var EntFileColumns = struct {
 	Status       string
 	UserID       string
 	FileCabinet  string
-	IsDelete     string
+	IsDeleted    string
 	UpdateTime   string
 	CreatTime    string
 }{
@@ -90,7 +90,7 @@ var EntFileColumns = struct {
 	Status:       "Status",
 	UserID:       "UserID",
 	FileCabinet:  "FileCabinet",
-	IsDelete:     "IsDelete",
+	IsDeleted:    "IsDeleted",
 	UpdateTime:   "UpdateTime",
 	CreatTime:    "CreatTime",
 }
@@ -98,13 +98,13 @@ var EntFileColumns = struct {
 // EntFileCategory   档案类别表：合同，图纸,,,,,
 type EntFileCategory struct {
 	AutoID           int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	CategoryID       int       `gorm:"column:CategoryID;type:int(11)" json:"categoryId"`             // 文件种类ID
-	CategoryParentID int       `gorm:"column:CategoryParentID;type:int(11)" json:"categoryParentId"` //  父级ID
-	ProjectID        string    `gorm:"column:ProjectID;type:varchar(20)" json:"projectId"`           // 所属项目ID
-	EnterpriseID     string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"`     // 用户所属企业ID
-	CategoryName     string    `gorm:"column:CategoryName;type:varchar(50)" json:"categoryName"`     // 类别名称:  基建施工图纸，地建施工图纸
-	IsDelete         bool      `gorm:"column:IsDelete;type:tinyint(1)" json:"isDelete"`              // 是否删除
-	CreatTime        time.Time `gorm:"column:CreatTime;type:timestamp" json:"creatTime"`             // 记录创建时间
+	CategoryID       string    `gorm:"column:CategoryID;type:varchar(20)" json:"categoryId"`             // 文件种类ID
+	CategoryParentID string    `gorm:"column:CategoryParentID;type:varchar(20)" json:"categoryParentId"` //  父级ID
+	ProjectID        string    `gorm:"column:ProjectID;type:varchar(20)" json:"projectId"`               // 所属项目ID
+	EnterpriseID     string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"`         // 用户所属企业ID
+	CategoryName     string    `gorm:"column:CategoryName;type:varchar(50)" json:"categoryName"`         // 类别名称:  基建施工图纸，地建施工图纸
+	IsDeleted        bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted"`                // 是否删除
+	CreatTime        time.Time `gorm:"column:CreatTime;type:timestamp" json:"creatTime"`                 // 记录创建时间
 }
 
 // TableName get sql table name.获取数据库表名
@@ -120,7 +120,7 @@ var EntFileCategoryColumns = struct {
 	ProjectID        string
 	EnterpriseID     string
 	CategoryName     string
-	IsDelete         string
+	IsDeleted        string
 	CreatTime        string
 }{
 	AutoID:           "AutoID",
@@ -129,7 +129,7 @@ var EntFileCategoryColumns = struct {
 	ProjectID:        "ProjectID",
 	EnterpriseID:     "EnterpriseID",
 	CategoryName:     "CategoryName",
-	IsDelete:         "IsDelete",
+	IsDeleted:        "IsDeleted",
 	CreatTime:        "CreatTime",
 }
 
@@ -142,7 +142,7 @@ type EntFileLend struct {
 	BorrowTime   time.Time `gorm:"column:BorrowTime;type:timestamp" json:"borrowTime"`       // 借出时间
 	BorrowTerm   int8      `gorm:"column:BorrowTerm;type:tinyint(2)" json:"borrowTerm"`      //  借阅周期
 	ReturnTime   time.Time `gorm:"column:ReturnTime;type:timestamp" json:"returnTime"`       // 归还时间
-	IsDelete     bool      `gorm:"column:IsDelete;type:tinyint(1)" json:"isDelete"`          // 是否删除
+	IsDeleted    bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted"`        // 是否删除
 	CreatTime    time.Time `gorm:"column:CreatTime;type:timestamp" json:"creatTime"`         // 记录创建时间
 }
 
@@ -160,7 +160,7 @@ var EntFileLendColumns = struct {
 	BorrowTime   string
 	BorrowTerm   string
 	ReturnTime   string
-	IsDelete     string
+	IsDeleted    string
 	CreatTime    string
 }{
 	AutoID:       "AutoID",
@@ -170,14 +170,14 @@ var EntFileLendColumns = struct {
 	BorrowTime:   "BorrowTime",
 	BorrowTerm:   "BorrowTerm",
 	ReturnTime:   "ReturnTime",
-	IsDelete:     "IsDelete",
+	IsDeleted:    "IsDeleted",
 	CreatTime:    "CreatTime",
 }
 
 // EntFileType    档案基本信息表
 type EntFileType struct {
 	AutoID       int64  `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	FileTypeID   int    `gorm:"column:FileTypeID;type:int(11)" json:"fileTypeId"`         // 文件(格式)类型
+	FileTypeID   string `gorm:"column:FileTypeID;type:varchar(20)" json:"fileTypeId"`     // 文件(格式)类型
 	FileTypeName string `gorm:"column:FileTypeName;type:varchar(50)" json:"fileTypeName"` // 文件格式名称：DOC，PDF
 }
 
@@ -203,7 +203,7 @@ type EntProject struct {
 	ProjectID    string    `gorm:"column:ProjectID;type:varchar(20)" json:"projectId"`       //  文件（档案）ID
 	EnterpriseID string    `gorm:"column:EnterpriseID;type:varchar(20)" json:"enterpriseId"` // 文件所属公司ID
 	ProjectName  string    `gorm:"column:ProjectName;type:varchar(255)" json:"projectName"`  // 文件名
-	IsDelete     bool      `gorm:"column:IsDelete;type:tinyint(1)" json:"isDelete"`          // 是否删除
+	IsDeleted    bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted"`        // 是否删除
 	UpdateTime   time.Time `gorm:"column:UpdateTime;type:timestamp" json:"updateTime"`       // 文件上传时间
 	CreatTime    time.Time `gorm:"column:CreatTime;type:timestamp" json:"creatTime"`         // 记录创建时间
 }
@@ -219,7 +219,7 @@ var EntProjectColumns = struct {
 	ProjectID    string
 	EnterpriseID string
 	ProjectName  string
-	IsDelete     string
+	IsDeleted    string
 	UpdateTime   string
 	CreatTime    string
 }{
@@ -227,7 +227,7 @@ var EntProjectColumns = struct {
 	ProjectID:    "ProjectID",
 	EnterpriseID: "EnterpriseID",
 	ProjectName:  "ProjectName",
-	IsDelete:     "IsDelete",
+	IsDeleted:    "IsDeleted",
 	UpdateTime:   "UpdateTime",
 	CreatTime:    "CreatTime",
 }
@@ -243,7 +243,7 @@ type EntUsers struct {
 	Phone        string    `gorm:"column:Phone;type:varchar(255)" json:"phone"`
 	Email        string    `gorm:"column:Email;type:varchar(255)" json:"email"`
 	FacePicURL   string    `gorm:"column:FacePicUrl;type:varchar(255)" json:"facePicUrl"` // 头像
-	IsAdmin      bool      `gorm:"column:IsAdmin;type:tinyint(1);default:0" json:"isAdmin"`
+	IsAdmin      bool      `gorm:"column:IsAdmin;type:tinyint(1)" json:"isAdmin"`
 	IsDeleted    bool      `gorm:"column:IsDeleted;type:tinyint(1);default:0" json:"isDeleted"` // 是否已删除：0--未删除；1--已经删除
 	CreateTime   time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime"`
 	Token        string    `gorm:"column:Token;type:varchar(255)" json:"token"`
@@ -288,7 +288,7 @@ var EntUsersColumns = struct {
 // PlatEnterprises [...]
 type PlatEnterprises struct {
 	AutoID             int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
-	EnterpriseID       string    `gorm:"column:EnterpriseID;type:varchar(20);not null" json:"enterpriseId" form:"enterpriseId"`
+	EnterpriseID       string    `gorm:"column:EnterpriseID;type:varchar(20);not null" json:"enterpriseId"`
 	EnterpriseName     string    `gorm:"column:EnterpriseName;type:varchar(255)" json:"enterpriseName"`
 	EnterprisePassword string    `gorm:"column:EnterprisePassword;type:varchar(255)" json:"enterprisePassword"` // 企业登录密码
 	AdminID            string    `gorm:"column:AdminID;type:varchar(20)" json:"adminId"`                        // 企业管理员ID
@@ -296,8 +296,8 @@ type PlatEnterprises struct {
 	EnterprisePhone    string    `gorm:"column:EnterprisePhone;type:varchar(255)" json:"enterprisePhone"`       // 企业电话
 	EnterpriseURL      string    `gorm:"column:EnterpriseUrl;type:varchar(255)" json:"enterpriseUrl"`           // 企业URL
 	LogoPicURL         string    `gorm:"column:LogoPicUrl;type:varchar(255)" json:"logoPicUrl"`                 // 企业logo地址
-	IsDeleted          bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted" form:"isDeleted"`
-	CreateTime         time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime" form:"createTime"`
+	IsDeleted          bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted"`
+	CreateTime         time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime"`
 }
 
 // TableName get sql table name.获取数据库表名
@@ -330,4 +330,45 @@ var PlatEnterprisesColumns = struct {
 	LogoPicURL:         "LogoPicUrl",
 	IsDeleted:          "IsDeleted",
 	CreateTime:         "CreateTime",
+}
+
+// PlatUsers [...]
+type PlatUsers struct {
+	AutoID     int64     `gorm:"primaryKey;column:AutoID;type:bigint(22);not null" json:"-"`
+	UserID     string    `gorm:"column:UserID;type:varchar(20)" json:"userId"`
+	UserName   string    `gorm:"column:UserName;type:varchar(255)" json:"userName"`
+	Account    string    `gorm:"column:Account;type:varchar(255)" json:"account"`
+	Password   string    `gorm:"column:Password;type:varchar(255)" json:"password"`
+	Phone      string    `gorm:"column:Phone;type:varchar(255)" json:"phone"`
+	Email      string    `gorm:"column:Email;type:varchar(255)" json:"email"`
+	IsDeleted  bool      `gorm:"column:IsDeleted;type:tinyint(1)" json:"isDeleted"`
+	CreateTime time.Time `gorm:"column:CreateTime;type:timestamp;default:CURRENT_TIMESTAMP" json:"createTime"`
+}
+
+// TableName get sql table name.获取数据库表名
+func (m *PlatUsers) TableName() string {
+	return "plat_users"
+}
+
+// PlatUsersColumns get sql column name.获取数据库列名
+var PlatUsersColumns = struct {
+	AutoID     string
+	UserID     string
+	UserName   string
+	Account    string
+	Password   string
+	Phone      string
+	Email      string
+	IsDeleted  string
+	CreateTime string
+}{
+	AutoID:     "AutoID",
+	UserID:     "UserID",
+	UserName:   "UserName",
+	Account:    "Account",
+	Password:   "Password",
+	Phone:      "Phone",
+	Email:      "Email",
+	IsDeleted:  "IsDeleted",
+	CreateTime: "CreateTime",
 }

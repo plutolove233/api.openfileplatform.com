@@ -33,7 +33,7 @@ func (*EnterpriseProjectApi) EnterpriseProjectApi(c *gin.Context) {
 			return
 		}
 	} else if c.Request.Method == "PUT" {
-		args, err := structs.StructToMap(entFilesService.EntFileProject.EntProject, "json")
+		args, err := structs.StructToMap(entFilesService.EntProject.EntProject, "json")
 		if err != nil {
 			responseParser.JsonParameterIllegal(c, "", err)
 		}

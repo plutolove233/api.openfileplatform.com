@@ -18,6 +18,7 @@ type EntFileLend struct {
 func (m *EntFileLend)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
+		"FileID":m.FileID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }
@@ -51,6 +52,8 @@ func (m *EntFileLend) Delete() error {
 func (*EntFileLend)GetAll(id string) ([]EntFileLend,error){
 	mysqlManager := database.GetMysqlClient()
 	file_lend := []EntFileLend{}
-	return file_lend,mysqlManager.Model(&EntFileLend{}).Where("EnterpriseID = ? AND isDelete = ?",id,false).
-		Find(&file_lend).Error
+	return file_lend,mysqlManager.Model(&EntFileLend{}).Where(map[string]interface{}{
+		"EnterpriseID":id,
+		"IsDeleted":0,
+	}).Find(&file_lend).Error
 }

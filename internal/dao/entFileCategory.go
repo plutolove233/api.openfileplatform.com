@@ -18,6 +18,7 @@ type EntFileCategory struct {
 func (m *EntFileCategory)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
+		"CategoryID":m.CategoryID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }
@@ -51,6 +52,8 @@ func (m *EntFileCategory) Delete() error {
 func (*EntFileCategory)GetAll(id string) ([]EntFileCategory,error){
 	mysqlManager := database.GetMysqlClient()
 	category := []EntFileCategory{}
-	return category,mysqlManager.Model(&EntFileCategory{}).Where("EnterpriseID = ? AND isDelete = ?",id,false).
-		Find(&category).Error
+	return category,mysqlManager.Model(&EntFileCategory{}).Where(map[string]interface{}{
+		"EnterpriseID":id,
+		"IsDeleted":0,
+	}).Find(&category).Error
 }
