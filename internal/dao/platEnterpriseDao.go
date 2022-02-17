@@ -12,7 +12,6 @@ type PlatEnterprise struct {
 func (m *PlatEnterprise) Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
-		"EnterpriseID":m.EnterpriseID,
 		"IsDeleted": 0,
 	}).Where(m).Take(m).Error
 }

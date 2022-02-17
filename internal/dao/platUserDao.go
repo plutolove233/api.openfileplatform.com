@@ -17,7 +17,6 @@ type PlatUsers struct {
 func (m *PlatUsers) Get() error {
 	mysqlManager := database.GetMysqlClient()
 	return mysqlManager.Where(map[string]interface{}{
-		"UserID":m.UserID,
 		"IsDeleted": 0,
 	}).Where(m).Take(m).Error
 }

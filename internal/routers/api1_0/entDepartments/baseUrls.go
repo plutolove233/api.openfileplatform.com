@@ -7,11 +7,11 @@
 package entDepartments
 
 import (
-	"api.openfileplatform.com/internal/apis/api1_0/entFiles"
+	"api.openfileplatform.com/internal/apis/api1_0/entDepartments"
 	"github.com/gin-gonic/gin"
 )
 
 func initDepartmentsRouterGroup(engine *gin.RouterGroup){
-	var impl entFiles.EnterpriseFilesApi
-	engine.Any("",impl.EnterpriseFilesApi)
+	var impl entDepartments.EnterpriseDepartmentApi
+	engine.Any("",impl.EnterpriseDepartmentApi)
 }

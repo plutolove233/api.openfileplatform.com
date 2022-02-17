@@ -18,7 +18,6 @@ type EntFileLend struct {
 func (m *EntFileLend)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
-		"FileID":m.FileID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }

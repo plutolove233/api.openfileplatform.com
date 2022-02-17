@@ -18,7 +18,6 @@ type EntFileCategory struct {
 func (m *EntFileCategory)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
-		"CategoryID":m.CategoryID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }

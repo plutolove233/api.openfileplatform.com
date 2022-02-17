@@ -15,7 +15,7 @@ import (
 
 type EnterpriseDepartmentApi struct{}
 
-func (*EnterpriseDepartmentApi) EnterpriseDepartmenrtApi(c *gin.Context) {
+func (*EnterpriseDepartmentApi) EnterpriseDepartmentApi(c *gin.Context) {
 	var err error
 	var entDepartmentService services.EntDepartmentService
 	err = c.ShouldBind(&entDepartmentService)

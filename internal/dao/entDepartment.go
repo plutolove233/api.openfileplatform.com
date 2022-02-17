@@ -18,7 +18,6 @@ type EntDepartment struct {
 func (m *EntDepartment)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
-		"DepartmentID":m.DepartmentID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }

@@ -12,7 +12,6 @@ type EntUsers struct {
 func (m *EntUsers)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
-		"UserID":m.UserID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }

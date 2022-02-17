@@ -18,7 +18,6 @@ type EntFileType struct {
 func (m *EntFileType)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
-		"FileTypeID":m.FileTypeID,
 	}).Where(m).Take(m).Error
 }
 

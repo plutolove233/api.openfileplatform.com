@@ -18,7 +18,6 @@ type EntProject struct {
 func (m *EntProject)Get() error {
 	mysqlMamager := database.GetMysqlClient()
 	return mysqlMamager.Where(map[string]interface{}{
-		"ProjectID":m.ProjectID,
 		"IsDeleted":0,
 	}).Where(m).Take(m).Error
 }
