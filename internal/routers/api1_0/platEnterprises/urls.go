@@ -6,6 +6,8 @@
 package platEnterprises
 
 import (
+	"api.openfileplatform.com/internal/apis/api1_0/platEnterprises"
+	"api.openfileplatform.com/internal/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,5 +19,9 @@ func InitPlatEnterprisesRouterGroup(engine *gin.RouterGroup) {
 	Api = engine.Group("platEnterprises")
 	initBaseAPI()
 
-	//var platformEnterpriseApi platEnterprises.PlatformEnterpriseApi
+	var platformEnterpriseApi platEnterprises.PlatformEnterpriseApi
+	Api.POST("register",platformEnterpriseApi.Register)
+	Api.Use(middlewares.TokenRequire())
+	Api.POST("refreshPassword",platformEnterpriseApi.RefreshPassword)
+	Api.POST("changePassword",platformEnterpriseApi.ChangePassword)
 }
