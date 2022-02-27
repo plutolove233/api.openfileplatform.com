@@ -17,7 +17,7 @@ var (
 
 func InitAPI1_0Router(engine *gin.Engine) {
 	Api = engine.Group("api1_0")
-	Api.GET("version", api1_0.GetVersion)
+	Api.Any("version", api1_0.GetVersion)
 
 	platUsers.InitPlatUsersRouterGroup(Api)
 	var userApi api1_0.UserApi

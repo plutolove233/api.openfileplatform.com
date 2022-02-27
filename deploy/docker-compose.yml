@@ -1,6 +1,6 @@
 version: "3"
 services:
-  register_center:
+  api.openfileplatform.com:
     privileged: true
     stdin_open: true
     tty: true
