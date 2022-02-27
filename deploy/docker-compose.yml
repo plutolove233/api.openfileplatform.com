@@ -6,11 +6,11 @@ services:
     tty: true
     build: .
     image: api.openfileplatform.com
-#    container_name: api.openfileplatform.com
+    #    container_name: api.openfileplatform.com
     restart: always
     volumes:
-      - /docker/api.openfileplatform.com/configs:/apps/configs
-      - /docker/api.openfileplatform.com/logs:/apps/logs
+      - /docker/deploy/api.openfileplatform.com/configs:/apps/configs
+      - /docker/deploy/api.openfileplatform.com/logs:/apps/logs
     ports:
       - "9000:8000"
     command:
