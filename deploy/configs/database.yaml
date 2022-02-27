@@ -6,6 +6,6 @@ mysql:
   dbname: OpenFilePlatform
 
 redis:
-  addr: 127.0.0.1:6379
-  password: lpc123LPC
-  DB: 1
+  addr: 139.9.128.8:6379
+  password: idealwifi@2019
+  DB: 2

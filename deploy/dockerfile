@@ -25,7 +25,7 @@ ENV LANG C.UTF-8
 RUN chmod 777 /apps/golang_app
 
 # 暴露端口
-EXPOSE 9001
+EXPOSE 8000
 
 # 运行golang程序的命令
 # ENTRYPOINT ["/apps/golang_app"]
