@@ -24,4 +24,5 @@ func InitPlatUsersRouterGroup(engine *gin.RouterGroup) {
 	Api.Use(middlewares.TokenRequire())
 	Api.POST("refreshPassword", platformUserApi.RefreshPassword)
 	Api.POST("changePassword", platformUserApi.ChangePassword)
+	Api.POST("setAdmin", platformUserApi.SetEnterpriseAdmin)
 }

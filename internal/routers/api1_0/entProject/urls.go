@@ -6,9 +6,18 @@
 */
 package entProject
 
-import "github.com/gin-gonic/gin"
+import (
+	"api.openfileplatform.com/internal/apis/api1_0/entProject"
+	"api.openfileplatform.com/internal/middlewares"
+	"github.com/gin-gonic/gin"
+)
 
 func InitEnterpriseProjectRouterGroup(engine *gin.RouterGroup) {
 	Api := engine.Group("project")
 	initBaseUrls(Api)
+
+	var projectApi entProject.EnterpriseProjectApi
+	Api.Use(middlewares.TokenRequire())
+	Api.POST("add", projectApi.AddNewProject)
+	Api.PUT("changeName",projectApi.ChangeProjectName)
 }

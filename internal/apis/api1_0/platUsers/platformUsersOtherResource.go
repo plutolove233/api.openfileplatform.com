@@ -207,3 +207,46 @@ func (*PlatformUserApi) RefreshPassword(c *gin.Context) {
 		"message": "密码重置成功！",
 	})
 }
+
+type setEnterpriseAdminParser struct {
+	EnterpriseID	string	`json:"EnterpriseID" form:"EnterpriseID" binding:"required"`
+	UserID			string	`json:"UserID" form:"UserID" binding:"required"`
+}
+
+func (*PlatformUserApi)SetEnterpriseAdmin(c *gin.Context)  {
+	var parser setEnterpriseAdminParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取企业管理员信息失败",err)
+		return
+	}
+	temp,ok := c.Get("user")
+	if !ok {
+		responseParser.JsonNotData(c,"用户未登录",nil)
+		return
+	}
+	user := temp.(ginModels.UserModel)
+	if !user.IsPlatUser {
+		responseParser.JsonAccessDenied(c,"用户没有权限访问")
+		return
+	}
+
+	var platUserService services.PlatUsersService
+	platUserService.UserID = user.UserID
+	err = platUserService.Get()
+	if err != nil {
+		responseParser.JsonNotData(c,"未找到平台用户",err)
+		return
+	}
+
+	msg,err := platUserService.SetEntUserAdmin(parser.EnterpriseID,parser.UserID)
+	if err != nil {
+		responseParser.JsonDBError(c,msg,err)
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"message":msg,
+	})
+}

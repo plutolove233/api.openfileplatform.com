@@ -43,6 +43,9 @@ func (m *EntUsers) SetPhone(p string) {
 func (m *EntUsers) SetEmail(p string) {
 	m.Email = p
 }
+func (m *EntUsers) GetUserName() string{
+	return m.UserName
+}
 
 func (m *EntUsers)Add() error{
 	mysqlMamager := database.GetMysqlClient()

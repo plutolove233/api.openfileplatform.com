@@ -6,9 +6,18 @@
 */
 package entFileCategory
 
-import "github.com/gin-gonic/gin"
+import (
+	"api.openfileplatform.com/internal/apis/api1_0/entFileCategory"
+	"api.openfileplatform.com/internal/middlewares"
+	"github.com/gin-gonic/gin"
+)
 
 func InitEnterpriseFileCategoryRouterGroup(engine *gin.RouterGroup){
 	Api := engine.Group("category")
 	initEnterpriseFileCategory(Api)
+
+	var fileCategoryApi entFileCategory.EnterpriseFileCategoryApi
+	Api.POST("path",fileCategoryApi.GetFileCategoryPath)
+	Api.Use(middlewares.TokenRequire())
+	Api.POST("add",fileCategoryApi.AddFileCategory)
 }

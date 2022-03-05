@@ -6,9 +6,17 @@
 */
 package entDepartments
 
-import "github.com/gin-gonic/gin"
+import (
+	"api.openfileplatform.com/internal/apis/api1_0/entDepartments"
+	"api.openfileplatform.com/internal/middlewares"
+	"github.com/gin-gonic/gin"
+)
 
 func InitEntDepartmentsRouterGroup(engine *gin.RouterGroup){
 	Api := engine.Group("department")
 	initDepartmentsRouterGroup(Api)
+
+	var departmentApi entDepartments.EnterpriseDepartmentApi
+	Api.Use(middlewares.TokenRequire())
+	Api.POST("setHeader",departmentApi.SetHeader)
 }

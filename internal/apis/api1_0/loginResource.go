@@ -13,6 +13,7 @@ type usersService interface {
 	Get() error
 	Add() error
 	GetPassword() string
+	GetUserName() string
 	GetIsAdmin() bool
 	GetUserID() string
 	SetAccount(string)
@@ -103,6 +104,7 @@ func (*UserApi) LoginByPassword(c *gin.Context) {
 
 	//返回
 	responseParser.JsonOK(c, "登录成功！", gin.H{
+		"UserName":user.GetUserName(),
 		"token": token,
 	})
 	return

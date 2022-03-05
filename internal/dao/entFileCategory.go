@@ -56,3 +56,32 @@ func (*EntFileCategory)GetAll(id string) ([]EntFileCategory,error){
 		"IsDeleted":0,
 	}).Find(&category).Error
 }
+
+func (m *EntFileCategory)GetPath()(string,string,error){
+	var name_path,id_path string
+	var err error
+	err = nil
+	mysqlManager := database.GetMysqlClient()
+	category := EntFileCategory{}
+	nowId := m.CategoryID
+	for{
+		//如果遍历到根节点 则退出
+		if nowId == "" {
+			break
+		}
+		//如果无法找到分类信息则退出
+		err = mysqlManager.Model(&EntFileCategory{}).Where(map[string]interface{}{
+			"CategoryID":nowId,
+			"IsDeleted":0,
+		}).Take(&category).Error
+		if err != nil {
+			break
+		}
+
+		name_path = category.CategoryName + "/" + name_path
+		id_path = category.CategoryID + "/" + id_path
+		nowId = category.CategoryParentID
+		category = EntFileCategory{}
+	}
+	return name_path, id_path, err
+}
