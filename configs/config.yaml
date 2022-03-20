@@ -31,7 +31,7 @@ system:
   #  使用mysql
   UseMysql: true
   #  使用redis
-  UseRedis: true
+  UseRedis: false
 remote:
   #  ES路由
   ESUrl: http://192.168.41.100:9200

@@ -17,6 +17,7 @@ func (*PlatUsersService)SetEntUserAdmin(entprise_id string, user_id string) (msg
 	var entUsers dao.EntUsers
 	var platEnterprise dao.PlatEnterprise
 	entUsers.UserID = user_id
+	entUsers.EnterpriseID = entprise_id
 	platEnterprise.EnterpriseID = entprise_id
 
 	err = entUsers.Get()

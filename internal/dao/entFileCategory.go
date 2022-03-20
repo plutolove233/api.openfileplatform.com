@@ -85,3 +85,18 @@ func (m *EntFileCategory)GetPath()(string,string,error){
 	}
 	return name_path, id_path, err
 }
+
+func (m *EntFileCategory)GetRootPath()(string,string,error){
+	var name_path,id_path string
+	var err error
+	err = nil
+	mysqlManager := database.GetMysqlClient()
+	category := EntFileCategory{}
+	err = mysqlManager.Model(&EntFileCategory{}).Where(map[string]interface{}{
+		"EnterpriseID":m.EnterpriseID,
+		"CategoryParentID":"",
+	}).Take(&category).Error
+	name_path = category.CategoryName + "/"
+	id_path = category.CategoryID + "/"
+	return name_path, id_path, err
+}
