@@ -62,6 +62,12 @@ func (*PlatformEnterpriseApi)Register(c *gin.Context){
 		return
 	}
 
+	err1 = platEnterpriseService.CreatePartition()
+	if err1 != nil {
+		responseParser.JsonInternalError(c,"企业分区创建失败",err1)
+		return
+	}
+
 	responseParser.JsonOK(c,"企业信息注册成功",platEnterpriseService)
 }
 
@@ -187,4 +193,66 @@ func (*PlatformEnterpriseApi)RefreshPassword(c *gin.Context)  {
 		"code":codes.OK,
 		"message":"密码重置成功",
 	})
+}
+
+type platEnterpriseParser struct {
+	EnterpriseID	string	`json:"EnterpriseID"`
+	EnterpriseName	string	`json:"EnterpriseName"`
+}
+
+func (*PlatformEnterpriseApi) GetAll(c *gin.Context)  {
+	platEnterpriseService := services.PlatEnterpriseService{}
+	err, enterprise_info := platEnterpriseService.GetAll()
+	if err != nil {
+		responseParser.JsonDBError(c,"获取平台所有企业信息失败",err)
+		return
+	}
+
+	data := []platEnterpriseParser{}
+	for _, item := range enterprise_info{
+		x := platEnterpriseParser{
+			EnterpriseID: item.EnterpriseID,
+			EnterpriseName: item.EnterpriseName,
+		}
+		data = append(data, x)
+	}
+	responseParser.JsonOK(c,"获取平台企业信息成功",data)
+}
+
+type entUsersParser struct {
+	UserID		string	`json:"UserID"`
+	UserName	string	`json:"UserName"`
+	Phone 		string 	`json:"Phone"`
+	Email 		string	`json:"Email"`
+}
+
+type queryParser struct {
+	EnterpriseID	string	`json:"EnterpriseID" form:"EnterpriseID" binding:"required"`
+}
+
+func (*PlatformEnterpriseApi) GetAllUsers(c *gin.Context) {
+	var parser queryParser
+	if err := c.ShouldBind(&parser); err != nil{
+		responseParser.JsonParameterIllegal(c,"获取企业id失败",err)
+		return
+	}
+
+	entUserService := services.EntUserService{}
+	entUserInfo ,err := entUserService.GetAll(parser.EnterpriseID)
+	if err != nil {
+		responseParser.JsonDBError(c,"获取企业用户信息失败",err)
+		return
+	}
+
+	data := []entUsersParser{}
+	for _, item := range entUserInfo{
+		x := entUsersParser{
+			UserID: item.UserID,
+			UserName: item.UserName,
+			Phone: item.Phone,
+			Email: item.Email,
+		}
+		data = append(data, x)
+	}
+	responseParser.JsonOK(c,"获取企业用户信息成功",data)
 }

@@ -14,6 +14,7 @@ import (
 	"api.openfileplatform.com/internal/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -47,7 +48,6 @@ func (*EnterpriseFileCategoryApi)GetFileCategoryPath(c *gin.Context) {
 type addFileCategoryParser struct {
 	CategoryParentID	string 	`json:"CategoryParentID" form:"CategoryParentID" binding:""`
 	ProjectID			string	`json:"ProjectID" form:"ProjectID" binding:"required"`
-	EnterpriseID		string	`json:"EnterpriseID" form:"EnterpriseID" binding:"required"`
 	CategoryName		string	`json:"CategoryName" form:"CategoryName" binding:"required"`
 }
 
@@ -65,14 +65,17 @@ func (*EnterpriseFileCategoryApi)AddFileCategory(c *gin.Context)  {
 		return
 	}
 	user := temp.(ginModels.UserModel)
-	if !user.VerifyAdminRole() {
-		responseParser.JsonAccessDenied(c,"用户没有权限访问")
+	entUserService := services.EntUserService{}
+	entUserService.UserID = user.UserID
+	err = entUserService.Get()
+	if err != nil {
+		responseParser.JsonNotData(c,"该用户不存在",err)
 		return
 	}
 
 	var fileCategoryService services.EnterpriseFileCategoryService
 	fileCategoryService.CategoryName = parser.CategoryName
-	fileCategoryService.EnterpriseID = parser.EnterpriseID
+	fileCategoryService.EnterpriseID = entUserService.EnterpriseID
 	fileCategoryService.ProjectID = parser.ProjectID
 	err = fileCategoryService.Get()
 	if err == nil {
@@ -88,11 +91,65 @@ func (*EnterpriseFileCategoryApi)AddFileCategory(c *gin.Context)  {
 	fileCategoryService.CategoryID = snowflake.GetSnowflakeID()
 	fileCategoryService.CategoryParentID = parser.CategoryParentID
 	fileCategoryService.CreatTime = time.Now()
+	path := ""
+	if parser.CategoryParentID == "" {
+		_,id,err1 := fileCategoryService.GetRootPath()
+		if err1 != nil {
+			responseParser.JsonDBError(c,"获取文件分类根分类失败",err1)
+			return
+		}
+		fileCategoryService.CategoryParentID = id[0:len(id)-1]
+	}
 	err = fileCategoryService.Add()
 	if err != nil {
 		responseParser.JsonDBError(c,"创建新的文件分类信息失败",err)
 		return
 	}
+	path,_,err = fileCategoryService.GetPath()
+	if err != nil {
+		responseParser.JsonDBError(c,"获取相关路径失败",err)
+		return
+	}
+	err = os.Mkdir("save/"+path,os.ModePerm)
+	if err != nil {
+		responseParser.JsonInternalError(c,"文件夹创建失败",err)
+		return
+	}
 
 	responseParser.JsonOK(c,"添加新的文件分类信息成功",fileCategoryService)
+}
+
+type categoryParser struct {
+	CategoryID	    string	`json:"CategoryID"`
+	CategoryName	string	`json:"DepartmentName"`
+}
+
+func (*EnterpriseFileCategoryApi) GetAllCategory(c *gin.Context) {
+	temp,ok := c.Get("user")
+	if !ok {
+		responseParser.JsonNotData(c,"用户未登录",nil)
+		return
+	}
+	user := temp.(ginModels.UserModel)
+	entUser := services.EntUserService{}
+	entUser.UserID = user.UserID
+	if err := entUser.Get(); err != nil{
+		responseParser.JsonNotData(c,"该用户不存在",err)
+		return
+	}
+	categoryService := services.EnterpriseFileCategoryService{}
+	categoryinfo,err1 := categoryService.GetAll(entUser.EnterpriseID)
+	if err1 != nil {
+		responseParser.JsonDBError(c,"获取所有分类失败",err1)
+		return
+	}
+	data := []categoryParser{}
+	for _,item := range categoryinfo{
+		x := categoryParser{
+			CategoryID: item.CategoryID,
+			CategoryName: item.CategoryName,
+		}
+		data = append(data, x)
+	}
+	responseParser.JsonOK(c,"获取所有分类成功",data)
 }

@@ -18,6 +18,7 @@ func InitEnterpriseProjectRouterGroup(engine *gin.RouterGroup) {
 
 	var projectApi entProject.EnterpriseProjectApi
 	Api.Use(middlewares.TokenRequire())
-	Api.POST("add", projectApi.AddNewProject)
-	Api.PUT("changeName",projectApi.ChangeProjectName)
+	Api.POST("add", middlewares.AuthenticationMiddleware(),projectApi.AddNewProject)
+	Api.PUT("changeName",middlewares.AuthenticationMiddleware(),projectApi.ChangeProjectName)
+	Api.GET("all",projectApi.GetAllProject)
 }

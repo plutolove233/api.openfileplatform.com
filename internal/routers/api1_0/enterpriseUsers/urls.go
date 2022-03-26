@@ -19,7 +19,8 @@ func InitEnterpriseUsersRouterGroup(engine *gin.RouterGroup){
 	var entUserImpl entUsers.EnterpriseUserApi
 	Api.POST("register",entUserImpl.Register)
 	Api.Use(middlewares.TokenRequire())
-	Api.POST("refushPassword",entUserImpl.RefreshPassword)
+	Api.POST("refreshPassword",entUserImpl.RefreshPassword)
 	Api.POST("changePassword",entUserImpl.ChangePassword)
 	Api.GET("getUsers",entUserImpl.GetAllUsersList)
+	Api.POST("setAdmin",middlewares.AuthenticationMiddleware(),entUserImpl.SetAdmin)
 }

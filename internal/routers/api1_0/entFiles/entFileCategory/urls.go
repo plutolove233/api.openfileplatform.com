@@ -19,5 +19,6 @@ func InitEnterpriseFileCategoryRouterGroup(engine *gin.RouterGroup){
 	var fileCategoryApi entFileCategory.EnterpriseFileCategoryApi
 	Api.POST("path",fileCategoryApi.GetFileCategoryPath)
 	Api.Use(middlewares.TokenRequire())
-	Api.POST("add",fileCategoryApi.AddFileCategory)
+	Api.POST("add",middlewares.AuthenticationMiddleware(),fileCategoryApi.AddFileCategory)
+	Api.GET("getall",fileCategoryApi.GetAllCategory)
 }

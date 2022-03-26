@@ -18,5 +18,6 @@ func InitEntDepartmentsRouterGroup(engine *gin.RouterGroup){
 
 	var departmentApi entDepartments.EnterpriseDepartmentApi
 	Api.Use(middlewares.TokenRequire())
-	Api.POST("setHeader",departmentApi.SetHeader)
+	Api.POST("setHeader",middlewares.AuthenticationMiddleware(),departmentApi.SetHeader)
+	Api.GET("getAll",departmentApi.GetAllDepartment)
 }

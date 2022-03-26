@@ -42,3 +42,24 @@ func (m *EntUserService)BorrowFile(file_id string,borrow_term int8)(dao.EntFileL
 	}
 	return msg,err
 }
+
+func (m *EntUserService)ReturnFile(file_id string) error{
+	fileLend := dao.EntFileLend{}
+	fileLend.FileID = file_id
+	fileLend.BorrowerID = m.UserID
+	fileLend.EnterpriseID = m.EnterpriseID
+	err := fileLend.Update(map[string]interface{}{
+		"ReturnTime": time.Now(),
+	})
+	if err != nil {
+		return err
+	}
+
+	file := dao.EntFiles{}
+	file.FileID = file_id
+	file.EnterpriseID = m.EnterpriseID
+	err = file.Update(map[string]interface{}{
+		"Status":0,
+	})
+	return err
+}

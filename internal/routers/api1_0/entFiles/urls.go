@@ -24,6 +24,8 @@ func InitEnterpriseFileRouterGroup(engine *gin.RouterGroup){
 	Api.Use(middlewares.TokenRequire())
 	Api.GET("all",middlewares.AuthenticationMiddleware(),entFileApi.GetAllEntFiles)
 	Api.POST("upload",entFileApi.UploadFile)
+	Api.PUT("move",middlewares.AuthenticationMiddleware(),entFileApi.MoveFile)
+	Api.DELETE("delete",middlewares.AuthenticationMiddleware(),entFileApi.DeleteFile)
 
 	entFileCategory.InitEnterpriseFileCategoryRouterGroup(Api)
 	fileType.InitFileTypeRouterGroup(Api)

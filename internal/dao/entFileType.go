@@ -47,10 +47,8 @@ func (m *EntFileType) Delete() error {
 	}).Delete(EntFileType{}).Error
 }
 
-func (*EntFileType)GetAll(id string) ([]EntFileType,error){
+func (*EntFileType)GetAll() ([]EntFileType,error){
 	mysqlManager := database.GetMysqlClient()
 	file_types := []EntFileType{}
-	return file_types,mysqlManager.Model(&EntFileType{}).Where(map[string]interface{}{
-		"EnterpriseID":id,
-	}).Find(&file_types).Error
+	return file_types,mysqlManager.Model(&EntFileType{}).Find(&file_types).Error
 }

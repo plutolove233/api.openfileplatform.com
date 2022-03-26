@@ -21,6 +21,8 @@ func InitPlatEnterprisesRouterGroup(engine *gin.RouterGroup) {
 
 	var platformEnterpriseApi platEnterprises.PlatformEnterpriseApi
 	Api.POST("register",platformEnterpriseApi.Register)
+	Api.GET("getAll",platformEnterpriseApi.GetAll)
+	Api.POST("getAllUsers",platformEnterpriseApi.GetAllUsers)
 	Api.Use(middlewares.TokenRequire())
 	Api.POST("refreshPassword",platformEnterpriseApi.RefreshPassword)
 	Api.POST("changePassword",platformEnterpriseApi.ChangePassword)

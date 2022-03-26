@@ -13,11 +13,12 @@ import (
 )
 
 type RegisterParser struct {
-	UserName string `form:"UserName" json:"UserName" binding:"required"`
-	Account  string `form:"Account" json:"Account" binding:"required"`
-	Password string `form:"Password" json:"Password" binding:"required"`
-	Phone    string `form:"Phone" json:"Phone" binding:""`
-	Email    string `form:"Email" json:"Email" binding:""`
+	UserName 		string `form:"UserName" json:"UserName" binding:"required"`
+	EnterpriseID	string `form:"EnterpriseID" json:"EnterpriseID" binding:"required"`
+	Account 		string `form:"Account" json:"Account" binding:"required"`
+	Password 		string `form:"Password" json:"Password" binding:"required"`
+	Phone    		string `form:"Phone" json:"Phone" binding:""`
+	Email    		string `form:"Email" json:"Email" binding:""`
 }
 
 func (*EnterpriseUserApi) Register(c *gin.Context) {
@@ -50,6 +51,7 @@ func (*EnterpriseUserApi) Register(c *gin.Context) {
 		responseParser.JsonInternalError(c, "密码加密错误", err)
 		return
 	}
+	entUsersService.EnterpriseID = Parser.EnterpriseID
 	entUsersService.UserName = Parser.UserName
 	entUsersService.Account = Parser.Account
 	entUsersService.Password = string(hash)
@@ -208,6 +210,7 @@ type EnterpriseUserList struct {
 	UserName 	string	`form:"UserName" json:"UserName" binding:"required"`
 	Phone		string	`form:"Phone" json:"Phone" binding:"required"`
 	Email 		string	`form:"Email" json:"Email" binding:"required"`
+	IsAdmin		bool	`form:"IsAdmin" json:"IsAdmin" binding:"required"`
 }
 //获取企业用户信息表
 func (*EnterpriseUserApi) GetAllUsersList(c *gin.Context) {
@@ -245,7 +248,39 @@ func (*EnterpriseUserApi) GetAllUsersList(c *gin.Context) {
 		oneUser.UserName = x.UserName
 		oneUser.Email = x.Email
 		oneUser.Phone = x.Phone
+		oneUser.IsAdmin = x.IsAdmin
 		enterpriseUserList = append(enterpriseUserList, oneUser)
 	}
 	responseParser.JsonOK(c,"企业用户列表",enterpriseUserList)
+}
+
+type setAdminParser struct {
+	UserID	string	`json:"UserID" form:"UserID" binding:"required"`
+}
+
+func (*EnterpriseUserApi) SetAdmin(c *gin.Context) {
+	var parser setAdminParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取用户id失败",err)
+		return
+	}
+
+	entUser := services.EntUserService{}
+	entUser.UserID = parser.UserID
+	if err = entUser.Get();err != nil{
+		responseParser.JsonNotData(c,"该用户信息不存在",err)
+		return
+	}
+
+	if err = entUser.Update(map[string]interface{}{
+		"IsAdmin":1,
+	}); err != nil{
+		responseParser.JsonDBError(c,"设置用户为管理员失败",err)
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"message":"设置管理员成功",
+	})
 }

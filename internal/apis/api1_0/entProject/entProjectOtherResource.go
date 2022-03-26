@@ -41,17 +41,6 @@ func (*EnterpriseProjectApi)AddNewProject(c *gin.Context){
 		return
 	}
 
-	temp,ok := c.Get("user")
-	if !ok {
-		responseParser.JsonNotData(c,"用户未登录",nil)
-		return
-	}
-	user := temp.(ginModels.UserModel)
-	if !user.VerifyAdminRole() {
-		responseParser.JsonAccessDenied(c,"用户没有权限创建项目信息")
-		return
-	}
-
 	projectService.ProjectID = snowflake.GetSnowflakeID()
 	projectService.UpdateTime = time.Now()
 
@@ -77,18 +66,6 @@ func (*EnterpriseProjectApi)ChangeProjectName(c *gin.Context){
 		return
 	}
 
-	temp,ok := c.Get("user")
-	if !ok {
-		responseParser.JsonNotData(c,"用户未登录",nil)
-		return
-	}
-
-	user := temp.(ginModels.UserModel)
-	if !user.VerifyAdminRole() {
-		responseParser.JsonAccessDenied(c,"用户没有权限访问")
-		return
-	}
-
 	var projectService services.EnterpriseProjectService
 	projectService.ProjectID = parser.ProjectID
 	err = projectService.Update(map[string]interface{}{
@@ -99,4 +76,40 @@ func (*EnterpriseProjectApi)ChangeProjectName(c *gin.Context){
 		return
 	}
 	responseParser.JsonOK(c,"信息更新成功",nil)
-} 
+}
+
+type projectParser struct {
+	ProjectID   string `json:"ProjectID"`
+	ProjectName string `json:"ProjectName"`
+}
+
+func (*EnterpriseProjectApi) GetAllProject(c *gin.Context) {
+	temp,ok := c.Get("user")
+	if !ok {
+		responseParser.JsonNotData(c,"用户未登录",nil)
+		return
+	}
+	user := temp.(ginModels.UserModel)
+	entUser := services.EntUserService{}
+	entUser.UserID = user.UserID
+	if err := entUser.Get(); err != nil{
+		responseParser.JsonNotData(c,"该用户不存在",err)
+		return
+	}
+
+	projectService := services.EnterpriseProjectService{}
+	projectinfo,err1 := projectService.GetAll(entUser.EnterpriseID)
+	if err1 != nil {
+		responseParser.JsonDBError(c,"获取所有分类失败",err1)
+		return
+	}
+	data := []projectParser{}
+	for _,item := range projectinfo {
+		x := projectParser{
+			ProjectID: item.ProjectID,
+			ProjectName: item.ProjectName,
+		}
+		data = append(data, x)
+	}
+	responseParser.JsonOK(c,"获取所有分类成功",data)
+}

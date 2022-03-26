@@ -28,17 +28,6 @@ func (*EnterpriseDepartmentApi)SetHeader(c *gin.Context) {
 		return
 	}
 
-	temp,ok := c.Get("user")
-	if !ok {
-		responseParser.JsonNotData(c,"用户未登录",nil)
-		return
-	}
-	user := temp.(ginModels.UserModel)
-	if !user.VerifyAdminRole() {
-		responseParser.JsonAccessDenied(c,"用户没有权限访问")
-		return
-	}
-
 	var departmentService services.EntDepartmentService
 	departmentService.DepartmentID = parser.DepartmentID
 	departmentService.EnterpriseID = parser.EnterpriseID
@@ -61,4 +50,39 @@ func (*EnterpriseDepartmentApi)SetHeader(c *gin.Context) {
 		"code":codes.OK,
 		"message":"设置部门管理员成功",
 	})
+}
+
+type departmentParser struct {
+	DepartmentID   string `json:"DepartmentID"`
+	DepartmentName string `json:"DepartmentName"`
+}
+
+func (*EnterpriseDepartmentApi) GetAllDepartment(c *gin.Context) {
+	temp,ok := c.Get("user")
+	if !ok {
+		responseParser.JsonNotData(c,"用户未登录",nil)
+		return
+	}
+	user := temp.(ginModels.UserModel)
+	entUser := services.EntUserService{}
+	entUser.UserID = user.UserID
+	if err := entUser.Get(); err != nil{
+		responseParser.JsonNotData(c,"该用户不存在",err)
+		return
+	}
+	departmentService := services.EntDepartmentService{}
+	departmentinfo,err1 := departmentService.GetAll(entUser.EnterpriseID)
+	if err1 != nil {
+		responseParser.JsonDBError(c,"获取所有部门失败",err1)
+		return
+	}
+	data := []departmentParser{}
+	for _,item := range departmentinfo {
+		x := departmentParser{
+			DepartmentID: item.DepartmentID,
+			DepartmentName: item.DepartmentName,
+		}
+		data = append(data, x)
+	}
+	responseParser.JsonOK(c,"获取所有部门成功",data)
 }

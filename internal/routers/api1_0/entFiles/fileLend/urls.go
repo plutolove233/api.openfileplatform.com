@@ -19,4 +19,5 @@ func InitFileLendRouterGroup(engine *gin.RouterGroup){
 	var fileLendApi entFileLend.EnterpriseFileLendApi
 	Api.Use(middlewares.TokenRequire())
 	Api.POST("borrow",middlewares.AuthenticationMiddleware(),fileLendApi.BorrowFile)
+	Api.POST("return",middlewares.AuthenticationMiddleware(),fileLendApi.ReturnFile)
 }

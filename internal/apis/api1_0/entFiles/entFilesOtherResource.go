@@ -14,6 +14,7 @@ import (
 	"api.openfileplatform.com/internal/services"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"os"
 	"time"
 )
 
@@ -125,5 +126,100 @@ func (*EnterpriseFilesApi) UploadFile(c *gin.Context) {
 	c.JSON(200,gin.H{
 		"code":codes.OK,
 		"message":"文件上传成功",
+	})
+}
+
+type moveFileParser struct {
+	FileID        string	`json:"FileID" form:"FileID" binding:"required" `
+	NewCategoryID string	`json:"NewCategoryID" form:"NewCategoryID" binding:"required"`
+}
+
+func (*EnterpriseFilesApi) MoveFile(c *gin.Context) {
+	var parser moveFileParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取转移信息失败",err)
+		return
+	}
+	fileService := services.EnterpriseFilesService{}
+	fileService.FileID = parser.FileID
+	err = fileService.Get()
+	from := fileService.FileURL
+	if err != nil {
+		responseParser.JsonNotData(c,"该文件信息不存在",err)
+		return
+	}
+	categoryService := services.EnterpriseFileCategoryService{}
+	categoryService.CategoryID = parser.NewCategoryID
+	to,_,err1 := categoryService.GetPath()
+	if err1 != nil {
+		responseParser.JsonInternalError(c,"获取文件路径失败",err1)
+		return
+	}
+	to = "save/" + to + fileService.FileName
+
+	err = os.Rename(from,to)
+	if err != nil {
+		responseParser.JsonInternalError(c,"移动文件路径失败",err)
+		return
+	}
+
+	err = fileService.Update(map[string]interface{}{
+		"CategoryID":parser.NewCategoryID,
+		"FileURL":to,
+	})
+	if err != nil {
+		responseParser.JsonDBError(c,"修改文件所属类别失败",err)
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"message":"修改文件路径成功",
+	})
+}
+
+type deleteFileParser struct {
+	FileID	string	`json:"FileID" form:"FileID" binding:"required"`
+}
+
+func (*EnterpriseFilesApi)DeleteFile(c *gin.Context){
+	var parser deleteFileParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取删除的文件信息失败",err)
+		return
+	}
+
+	fileService := services.EnterpriseFilesService{}
+	fileService.FileID = parser.FileID
+	err = fileService.Get()
+	if err != nil {
+		responseParser.JsonNotData(c,"该文件不存在",err)
+		return
+	}
+	categoryID := fileService.CategoryID
+
+	categoryService := services.EnterpriseFileCategoryService{}
+	categoryService.CategoryID = categoryID
+	path,_,err := categoryService.GetPath()
+	if err != nil {
+		responseParser.JsonInternalError(c,"获取被删文件路径失败",err)
+		return
+	}
+	err = os.Rename(fileService.FileURL,"save/"+path+parser.FileID)
+	if err != nil {
+		responseParser.JsonInternalError(c,"删除文件失败",err)
+		return
+	}
+	err = fileService.Delete()
+	if err != nil {
+		responseParser.JsonDBError(c,"删除文件失败",err)
+		return
+	}
+
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"meesage":"删除文件成功",
 	})
 }

@@ -51,7 +51,7 @@ func (m *EntDepartment) Delete() error {
 func (*EntDepartment)GetAll(id string) ([]EntDepartment,error){
 	mysqlManager := database.GetMysqlClient()
 	department := []EntDepartment{}
-	return department,mysqlManager.Model(&PlatUsers{}).Where(map[string]interface{}{
+	return department,mysqlManager.Model(&EntDepartment{}).Where(map[string]interface{}{
 		"EnterpriseID":id,
 		"IsDeleted":0,
 	}).Find(&department).Error
