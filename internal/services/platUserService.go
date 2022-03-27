@@ -50,3 +50,30 @@ func (*PlatUsersService)SetEntUserAdmin(entprise_id string, user_id string) (msg
 
 	return "企业管理员设置成功",nil
 }
+
+func (*PlatUsersService) RemoveEntUserAdmin(enterpriseID string,userID string) (string, error) {
+	entUser := dao.EntUsers{}
+	entUser.UserID = userID
+	entUser.IsAdmin = true
+	entUser.EnterpriseID = enterpriseID
+	if err := entUser.Get(); err != nil {
+		return "无法找到该用户",err
+	}
+	platEnterprise := dao.PlatEnterprise{}
+	platEnterprise.EnterpriseID = enterpriseID
+	platEnterprise.AdminID = userID
+	if err := platEnterprise.Get(); err != nil {
+		return "无法找到相关企业",err
+	}
+	if err:=entUser.Update(map[string]interface{}{
+		"IsAdmin":false,
+	});err!=nil {
+		return "移除管理员身份失败",err
+	}
+	if err:=platEnterprise.Update(map[string]interface{}{
+		"AdminID":"",
+	});err!=nil {
+		return "移除管理员身份失败",err
+	}
+	return "移除管理员身份成功",nil
+}

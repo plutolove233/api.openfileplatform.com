@@ -121,7 +121,7 @@ func (*EnterpriseFileCategoryApi)AddFileCategory(c *gin.Context)  {
 
 type categoryParser struct {
 	CategoryID	    string	`json:"CategoryID"`
-	CategoryName	string	`json:"DepartmentName"`
+	CategoryName	string	`json:"CategoryName"`
 }
 
 func (*EnterpriseFileCategoryApi) GetAllCategory(c *gin.Context) {

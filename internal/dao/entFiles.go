@@ -48,11 +48,10 @@ func (m *EntFiles) Delete() error {
 	}).Error
 }
 
-func (*EntFiles)GetAll(id string) ([]EntFiles,error){
+func (m *EntFiles)GetAll() ([]EntFiles,error){
 	mysqlManager := database.GetMysqlClient()
 	files := []EntFiles{}
 	return files,mysqlManager.Model(&EntFiles{}).Where(map[string]interface{}{
-		"EnterpriseID":id,
 		"IsDeleted":0,
-	}).Find(&files).Error
+	}).Where(m).Find(&files).Error
 }

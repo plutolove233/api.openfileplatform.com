@@ -198,6 +198,11 @@ func (*PlatformEnterpriseApi)RefreshPassword(c *gin.Context)  {
 type platEnterpriseParser struct {
 	EnterpriseID	string	`json:"EnterpriseID"`
 	EnterpriseName	string	`json:"EnterpriseName"`
+	EnterprisePhone	string 	`json:"EnterprisePhone"`
+	AdminUserID		string	`json:"AdminUserID"`
+	AdminUserName	string	`json:"AdminUserName"`
+	AdminUserPhone	string	`json:"AdminUserPhone"`
+	AdminUserEmail	string 	`json:"AdminUserEmail"`
 }
 
 func (*PlatformEnterpriseApi) GetAll(c *gin.Context)  {
@@ -210,9 +215,24 @@ func (*PlatformEnterpriseApi) GetAll(c *gin.Context)  {
 
 	data := []platEnterpriseParser{}
 	for _, item := range enterprise_info{
+		entusers := services.EntUserService{}
+		entusers.EnterpriseID = item.EnterpriseID
+		entusers.IsAdmin = true
+		entusers.UserID = item.AdminID
+		if err1 := entusers.Get(); err1 != nil{
+			if err1.Error() != "record not found"{
+				responseParser.JsonDBError(c,"数据库错误",err1)
+				return
+			}
+		}
 		x := platEnterpriseParser{
 			EnterpriseID: item.EnterpriseID,
 			EnterpriseName: item.EnterpriseName,
+			EnterprisePhone: item.EnterprisePhone,
+			AdminUserID: item.AdminID,
+			AdminUserName: entusers.UserName,
+			AdminUserPhone: entusers.Phone,
+			AdminUserEmail: entusers.Email,
 		}
 		data = append(data, x)
 	}
@@ -224,6 +244,7 @@ type entUsersParser struct {
 	UserName	string	`json:"UserName"`
 	Phone 		string 	`json:"Phone"`
 	Email 		string	`json:"Email"`
+	IsAdmin		bool	`json:"IsAdmin"`
 }
 
 type queryParser struct {
@@ -251,6 +272,7 @@ func (*PlatformEnterpriseApi) GetAllUsers(c *gin.Context) {
 			UserName: item.UserName,
 			Phone: item.Phone,
 			Email: item.Email,
+			IsAdmin: item.IsAdmin,
 		}
 		data = append(data, x)
 	}

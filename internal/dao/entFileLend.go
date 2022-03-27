@@ -56,3 +56,11 @@ func (*EntFileLend)GetAll(id string) ([]EntFileLend,error){
 		"IsDeleted":0,
 	}).Find(&file_lend).Error
 }
+
+func (m *EntFileLend) GetAllLendInfo() ([]EntFileLend, error) {
+	mysqlManager := database.GetMysqlClient()
+	file_lend := []EntFileLend{}
+	return file_lend,mysqlManager.Model(&EntFileLend{}).Where(map[string]interface{}{
+		"IsDeleted":0,
+	}).Where(m).Find(&file_lend).Error
+}

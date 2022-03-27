@@ -250,3 +250,34 @@ func (*PlatformUserApi)SetEnterpriseAdmin(c *gin.Context)  {
 		"message":msg,
 	})
 }
+
+type removeAdminParser struct {
+	EnterpriseID	string	`json:"EnterpriseID" form:"EnterpriseID" binding:"required"`
+	UserID			string 	`json:"UserID" form:"UserID" binding:"required"`
+}
+
+func (*PlatformUserApi) RemoveEnterpriseAdmin(c *gin.Context) {
+	var parser removeAdminParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取管理员信息失败",err)
+		return
+	}
+
+	temp,_ := c.Get("user")
+	user := temp.(ginModels.UserModel)
+	if user.IsPlatUser == false{
+		responseParser.JsonAccessDenied(c, "没有权限修改管理员信息")
+		return
+	}
+	platUser := services.PlatUsersService{}
+	msg,err := platUser.RemoveEntUserAdmin(parser.EnterpriseID,parser.UserID)
+	if err != nil {
+		responseParser.JsonInternalError(c,msg,err)
+		return
+	}
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"message":msg,
+	})
+}

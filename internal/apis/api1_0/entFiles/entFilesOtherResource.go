@@ -18,7 +18,22 @@ import (
 	"time"
 )
 
+type getAllFileParser struct {
+	FileID		string	`json:"FileID" form:"FileID" binding:""`
+	CategoryID	string 	`json:"CategoryID" form:"CategoryID" binding:""`
+	FileTypeID	string 	`json:"FileTypeID" form:"FileTypeID" binding:""`
+	ProjectID	string 	`json:"ProjectID" form:"ProjectID" binding:""`
+	Status		int8	`json:"Status" form:"Status" binding:""`
+}
+
 func (*EnterpriseFilesApi) GetAllEntFiles(c *gin.Context) {
+	var parser getAllFileParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取请求失败",err)
+		return
+	}
+
 	temp, ok := c.Get("user")
 	if !ok {
 		responseParser.JsonNotData(c, "用户未登录", nil)
@@ -29,14 +44,19 @@ func (*EnterpriseFilesApi) GetAllEntFiles(c *gin.Context) {
 
 	entUser := services.EntUserService{}
 	entUser.UserID = user.UserID
-	err := entUser.Get()
+	err = entUser.Get()
 	if err != nil {
 		responseParser.JsonNotData(c, "该用户id不存在", err)
 		return
 	}
 
 	file := services.EnterpriseFilesService{}
-	info, err := file.GetAll(entUser.EnterpriseID)
+	file.EnterpriseID = entUser.EnterpriseID
+	file.FileID = parser.FileID
+	file.FileTypeID = parser.FileTypeID
+	file.Status = parser.Status
+	file.CategoryID = parser.CategoryID
+	info, err := file.GetFileInformation()
 	if err != nil {
 		responseParser.JsonDBError(c, "获取企业文件信息失败", err)
 		return

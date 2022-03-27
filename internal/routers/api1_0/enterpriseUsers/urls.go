@@ -23,4 +23,6 @@ func InitEnterpriseUsersRouterGroup(engine *gin.RouterGroup){
 	Api.POST("changePassword",entUserImpl.ChangePassword)
 	Api.GET("getUsers",entUserImpl.GetAllUsersList)
 	Api.POST("setAdmin",middlewares.AuthenticationMiddleware(),entUserImpl.SetAdmin)
+	Api.PUT("removeAdmin",middlewares.AuthenticationMiddleware(),entUserImpl.RemoveAdmin)
+	Api.GET("getLendInfo",entUserImpl.GetUserLendInformation)
 }
