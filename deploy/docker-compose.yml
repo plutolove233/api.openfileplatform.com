@@ -12,6 +12,6 @@ services:
       - /docker/deploy/api.openfileplatform.com/configs:/apps/configs
       - /docker/deploy/api.openfileplatform.com/logs:/apps/logs
     ports:
-      - "9000:8000"
+      - "8000:8000"
     command:
       - /apps/golang_app
