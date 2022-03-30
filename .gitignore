@@ -1,1 +1,7 @@
-deployment/main
+.idea/
+cmd/gormt/err/
+logs/
+go_build_api_openfileplatform_com.exe
+
+save/
+openfile
