@@ -16,7 +16,6 @@ import (
 )
 
 type addPreojectParser struct {
-	EnterpriseID 	string	`json:"EnterpriseID" form:"EnterpriseID" binding:"required"`
 	ProjectName		string	`json:"ProjectName" form:"ProjectName" binding:"required"`
 }
 
@@ -28,9 +27,22 @@ func (*EnterpriseProjectApi)AddNewProject(c *gin.Context){
 		return
 	}
 
+	temp,ok := c.Get("user")
+	if !ok {
+		responseParser.JsonNotData(c,"用户未登录",nil)
+		return
+	}
+	user := temp.(ginModels.UserModel)
+	entuser := services.EntUserService{}
+	entuser.UserID = user.UserID
+	if err = entuser.Get(); err != nil{
+		responseParser.JsonDBError(c,"获取用户信息失败",err)
+		return
+	}
+
 	var projectService services.EnterpriseProjectService
 	projectService.ProjectName = parser.ProjectName
-	projectService.EnterpriseID = parser.EnterpriseID
+	projectService.EnterpriseID = entuser.EnterpriseID
 	projectService.CreatTime = time.Now()
 	err = projectService.Get()
 	if err == nil {

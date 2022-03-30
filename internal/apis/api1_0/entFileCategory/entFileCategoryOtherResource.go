@@ -124,7 +124,19 @@ type categoryParser struct {
 	CategoryName	string	`json:"CategoryName"`
 }
 
+type queryCategoryParser struct {
+	CategoryID	string	`json:"CategoryID" form:"CategoryID" binding:""`
+	ProjectID	string	`json:"ProjectID" form:"ProjectID" binding:""`
+}
+
 func (*EnterpriseFileCategoryApi) GetAllCategory(c *gin.Context) {
+	var parser queryCategoryParser
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取文件类型查询信息失败",err)
+		return
+	}
+
 	temp,ok := c.Get("user")
 	if !ok {
 		responseParser.JsonNotData(c,"用户未登录",nil)
@@ -137,8 +149,12 @@ func (*EnterpriseFileCategoryApi) GetAllCategory(c *gin.Context) {
 		responseParser.JsonNotData(c,"该用户不存在",err)
 		return
 	}
+
 	categoryService := services.EnterpriseFileCategoryService{}
-	categoryinfo,err1 := categoryService.GetAll(entUser.EnterpriseID)
+	categoryService.CategoryID = parser.CategoryID
+	categoryService.ProjectID = parser.ProjectID
+	categoryService.EnterpriseID = entUser.EnterpriseID
+	categoryinfo,err1 := categoryService.GetAll()
 	if err1 != nil {
 		responseParser.JsonDBError(c,"获取所有分类失败",err1)
 		return

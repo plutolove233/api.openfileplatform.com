@@ -23,7 +23,7 @@ system:
   #  数据中心ID
   DataCenterID: 00001
   #  fs本地文件系统路径
-  FsPath: fs
+  FsPath: save
   #  部署服务器ip
   SysIP: 0.0.0.0
   #  部署服务器端口

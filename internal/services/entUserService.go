@@ -10,7 +10,19 @@ type EntUserService struct {
 	dao.EntUsers
 }
 
-func (m *EntUserService)BorrowFile(file_id string,borrow_term int8)(dao.EntFileLend,error){
+type borrowFileParser struct {
+	FileId       	string    `json:"FileId"`
+	FileName		string	  `json:"FileName"`
+	FileURL	     	string    `json:"FileURL"`
+	EnterpriseId 	string    `json:"EnterpriseId"`
+	BorrowerId   	string    `json:"BorrowerId"`
+	BorrowerName	string	  `json:"BorrowerName"`
+	BorrowTime   	time.Time `json:"BorrowTime"`
+	BorrowTerm   	int8      `json:"BorrowTerm"`
+	ReturnTime   	time.Time `json:"ReturnTime"`
+}
+
+func (m *EntUserService)BorrowFile(file_id string,borrow_term int8)(borrowFileParser,error){
 	msg := dao.EntFileLend{}
 	msg.FileID = file_id
 	msg.BorrowTime = time.Now()
@@ -23,24 +35,35 @@ func (m *EntUserService)BorrowFile(file_id string,borrow_term int8)(dao.EntFileL
 	file.FileID = file_id
 	err := file.Get()
 	if err != nil {
-		return msg,err
+		return borrowFileParser{},err
+	}
+	data := borrowFileParser{
+		FileId: file_id,
+		FileName: file.FileName,
+		FileURL: file.FileURL,
+		EnterpriseId: m.EnterpriseID,
+		BorrowTime: msg.BorrowTime,
+		BorrowTerm: msg.BorrowTerm,
+		BorrowerId: m.UserID,
+		BorrowerName: m.UserName,
+		ReturnTime: msg.ReturnTime,
 	}
 	if file.EnterpriseID != m.EnterpriseID{
 		err = errors.New("Enterprise is not matched")
-		return msg,err
+		return borrowFileParser{},err
 	}
 	if file.Status == 1 {
 		err = errors.New("This book has been borrowed")
-		return msg,err
+		return borrowFileParser{},err
 	}
 	err = file.Update(map[string]interface{}{
 		"Status":1,
 	})
 	err = msg.Add()
 	if err != nil {
-		return msg,err
+		return borrowFileParser{},err
 	}
-	return msg,err
+	return data,err
 }
 
 func (m *EntUserService)ReturnFile(file_id string) error{
@@ -50,6 +73,7 @@ func (m *EntUserService)ReturnFile(file_id string) error{
 	fileLend.EnterpriseID = m.EnterpriseID
 	err := fileLend.Update(map[string]interface{}{
 		"ReturnTime": time.Now(),
+		"IsDeleted":1,
 	})
 	if err != nil {
 		return err

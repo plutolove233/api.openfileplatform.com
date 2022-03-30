@@ -48,13 +48,12 @@ func (m *EntFileCategory) Delete() error {
 	}).Error
 }
 
-func (*EntFileCategory)GetAll(id string) ([]EntFileCategory,error){
+func (m *EntFileCategory)GetAll() ([]EntFileCategory,error){
 	mysqlManager := database.GetMysqlClient()
 	category := []EntFileCategory{}
 	return category,mysqlManager.Model(&EntFileCategory{}).Where(map[string]interface{}{
-		"EnterpriseID":id,
 		"IsDeleted":0,
-	}).Find(&category).Error
+	}).Where(m).Find(&category).Error
 }
 
 func (m *EntFileCategory)GetPath()(string,string,error){

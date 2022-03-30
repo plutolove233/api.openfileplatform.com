@@ -350,6 +350,7 @@ func (*EnterpriseUserApi) RemoveAdmin(c *gin.Context) {
 type getUserLendParser struct {
 	BorrowerID	string		`json:"BorrowerID"`
 	BorrowTime	time.Time	`json:"BorrowTime"`
+	ReturnTime	time.Time	`json:"ReturnTime"`
 	BorrowTerm	int8		`json:"BorrowTerm"`
 }
 
@@ -376,6 +377,7 @@ func (*EnterpriseUserApi) GetUserLendInformation(c *gin.Context)  {
 		x := getUserLendParser{
 			BorrowerID: item.BorrowerID,
 			BorrowTime: item.BorrowTime,
+			ReturnTime: item.ReturnTime,
 			BorrowTerm: item.BorrowTerm,
 		}
 		parser = append(parser, x)

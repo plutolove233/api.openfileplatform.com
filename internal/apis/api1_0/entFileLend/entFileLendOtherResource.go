@@ -70,8 +70,8 @@ func (*EnterpriseFileLendApi) BorrowFile(c *gin.Context) {
 		responseParser.JsonNotData(c,path+"该文件无法下载",err)
 		return
 	}
+	info.FileURL = "http://39.99.146.111:8000/statics/" + info.FileURL
 	responseParser.JsonOK(c,"文件借阅成功",info)
-	c.File(path)
 }
 
 type returnFileParser struct {

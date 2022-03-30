@@ -26,6 +26,8 @@ type entFilesParser struct {
 	FileUrl      string    `json:"FileUrl"`
 	FileTypeId   string    `json:"FileTypeId"`
 	Status       int8      `json:"Status"`
+	BorrowTime	 time.Time `json:"BorrowTime"`
+	ReturnTime	 time.Time `json:"ReturnTime"`
 	UserId       string    `json:"UserId"`
 	UserName	 string	   `json:"UserName"`
 	FileCabinet  string    `json:"FileCabinet"`
@@ -67,6 +69,15 @@ func (m *EnterpriseFilesService)GetFileInformation()([]entFilesParser,error){
 		entuser.UserID = item.UserID
 		if err = entuser.Get(); err != nil {
 			return nil,err
+		}
+		if item.Status==1 {
+			fileLend := dao.EntFileLend{}
+			fileLend.FileID = item.FileID
+			if err = fileLend.Get(); err != nil {
+				return nil, err
+			}
+			a.BorrowTime = fileLend.BorrowTime
+			a.ReturnTime = fileLend.ReturnTime
 		}
 		a.ProjectName  = project.ProjectName
 		a.CategoryName = category.CategoryName

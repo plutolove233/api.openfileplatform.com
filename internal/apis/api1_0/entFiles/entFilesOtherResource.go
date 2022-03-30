@@ -75,7 +75,7 @@ func (*EnterpriseFilesApi) UploadFile(c *gin.Context) {
 	var parser fileUploadParser
 	err := c.ShouldBind(&parser)
 	if err != nil {
-		responseParser.JsonParameterIllegal(c, "获取文件上传参数成功", err)
+		responseParser.JsonParameterIllegal(c, "获取文件上传参数失败", err)
 		return
 	}
 
@@ -98,6 +98,8 @@ func (*EnterpriseFilesApi) UploadFile(c *gin.Context) {
 		responseParser.JsonParameterIllegal(c, "获取上传文件列表失败", err)
 		return
 	}
+
+	data := []services.EnterpriseFilesService{}
 
 	files := form.File["file"]
 	for _, file := range files {
@@ -138,15 +140,9 @@ func (*EnterpriseFilesApi) UploadFile(c *gin.Context) {
 		file_service.ProjectID = parser.ProjectID
 		file_service.FileURL = filePath
 		file_service.CreatTime = time.Now()
-		if err = file_service.Add(); err != nil {
-			responseParser.JsonDBError(c,"上传文件信息数据库保存失败",err)
-			return
-		}
+		data = append(data, file_service)
 	}
-	c.JSON(200,gin.H{
-		"code":codes.OK,
-		"message":"文件上传成功",
-	})
+	responseParser.JsonOK(c,"文件上传成功",data)
 }
 
 type moveFileParser struct {
@@ -241,5 +237,25 @@ func (*EnterpriseFilesApi)DeleteFile(c *gin.Context){
 	c.JSON(200,gin.H{
 		"code":codes.OK,
 		"meesage":"删除文件成功",
+	})
+}
+
+func (*EnterpriseFilesApi) Confirm(c *gin.Context) {
+	var parser []services.EnterpriseFilesService
+	err := c.ShouldBind(&parser)
+	if err != nil {
+		responseParser.JsonParameterIllegal(c,"获取文件信息失败",err)
+		return
+	}
+	for _,item := range parser{
+		item.UpdateTime = time.Now()
+		if err1 := item.Add(); err1 != nil{
+			responseParser.JsonDBError(c,"保存到数据库失败",err1)
+			return
+		}
+	}
+	c.JSON(200,gin.H{
+		"code":codes.OK,
+		"message":"保存到数据库成功",
 	})
 }
